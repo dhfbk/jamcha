@@ -1,6 +1,8 @@
 package eu.fbk.dh.jamcha.feature;
 
+import com.sun.istack.internal.NotNull;
 import java.util.ArrayList;
+import java.util.Arrays;
 
 /**
  * Abstract class that represents a feature: NAME, pattern, values constraints. It reads feature string and extracts rows and columns
@@ -45,27 +47,32 @@ public abstract class FeatureValidator
      * @param name                   feature name(command)
      * @param sectionSeparator       Feature section separator (example ":")
      * @param valueSeparator         Feature values separator within same section (value may not be in order and may not be consecutive)
-     * @param rangeValueSeparator    Is similar to "Value separator", but this is used when user indicates a range and not every single value (e.g. every single value -2,-1,0,1 range: -2..1)
+     * @param rangeValueSeparator    Is similar to "Value separator", but this is used when user indicates a range and not every single value (e.g. every single value
+     *                               -2,-1,0,1 range: -2..1)
      * @param sectionSeparatorCount  Number of sections of this feature. A section is a part of string divided by "section separator"
-     * @param listSectionConstraints Costraints for every section of this feature. First element of this list represents the first sections constraints and so on. Can be NULL if none of the
-     *                               sections have any restriction
+     * @param listSectionConstraints Costraints for every section of this feature. First element of this list represents the first sections constraints and so on. Can be
+     *                               NULL if none of the sections have any restriction
      *
      * @exception IllegalArgumentException If number of constraints is not sectionSeparatorCount + 1
      */
-    public FeatureValidator(final String name, final char sectionSeparator, final char valueSeparator, final String rangeValueSeparator, final int sectionSeparatorCount, final FeatureSectionValuesConstraints... listSectionConstraints)
+    public FeatureValidator(@NotNull final String name, @NotNull final char sectionSeparator, @NotNull final char valueSeparator,
+                            @NotNull final String rangeValueSeparator,
+                            final int sectionSeparatorCount,
+                            final FeatureSectionValuesConstraints... listSectionConstraints)
     {
-        //TODO: aggiungere numero massimo colonne da prendere dall'esterno
-        if (name == null || sectionSeparatorCount < 0)
+        if (sectionSeparatorCount < 0)
         {
-            this.NAME = name;
+            throw new IllegalArgumentException("SectionSeparatorCount must be >= zero");
         }
+        this.NAME = name;
         this.SECTION_SEPARATOR = sectionSeparator;
         this.VALUE_SEPARATOR = valueSeparator;
         this.RANGE_VALUE_SEPARATOR = rangeValueSeparator;
         this.SECTION_SEPARATORS_COUNT = sectionSeparatorCount;
         sectionValueConstraintsList = new ArrayList<FeatureSectionValuesConstraints>();
 
-        // If there are no constraints will be generated default constraints
+        // 
+        // If there are no constraints, will be generated default constraints
         if (listSectionConstraints == null)
         {
             for (int i = 0; i < SECTION_SEPARATORS_COUNT; i ++)
@@ -76,15 +83,16 @@ public abstract class FeatureValidator
         }
         else
         {
-
+            // If number of constraints is not equal of feature section count, throws an exception
             if (listSectionConstraints.length != SECTION_SEPARATORS_COUNT + 1)
             {
                 throw new IllegalArgumentException("Constraints must be equal to sectionSeparatorCount + 1");
             }
-        }
-        for (FeatureSectionValuesConstraints constraints : listSectionConstraints)
-        {
-            sectionValueConstraintsList.add(constraints);
+            else
+            {
+                // Constraints are good
+                sectionValueConstraintsList.addAll(Arrays.asList(listSectionConstraints));
+            }
         }
     }
 
@@ -95,14 +103,14 @@ public abstract class FeatureValidator
      *
      * @return
      *
-     * @exception IllegalArgumentException stringToParse is null or empty
+     * @exception IllegalArgumentException stringToParse is empty
      * @exception Exception                invalid feature pattern
      */
-    public FeatureSchema parseFeature(String stringToParse) throws Exception, IllegalArgumentException
+    public FeatureSchema parseFeature(@NotNull String stringToParse) throws Exception, IllegalArgumentException
     {
-        if (stringToParse == null || stringToParse.isEmpty())
+        if (stringToParse.isEmpty())
         {
-            throw new IllegalArgumentException("String must be not null and not empty");
+            throw new IllegalArgumentException("String must be not empty");
         }
 
         // Split string on character separator (e.g. : )
@@ -129,7 +137,7 @@ public abstract class FeatureValidator
         builder.append(':');
         for (int i = 0; i < SECTION_SEPARATORS_COUNT; i ++)
         {
-            builder.append("values" + SECTION_SEPARATOR);
+            builder.append("values").append(SECTION_SEPARATOR);
         }
 
         // Deletes last char appendend (the section separator)

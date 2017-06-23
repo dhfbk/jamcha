@@ -1,7 +1,7 @@
 package eu.fbk.dh.jamcha.feature;
 
 /**
- * Class that represents and manage static feature (F).
+ * Singleton Class that represents and manage static feature (F).
  *
  * @author dan92
  */

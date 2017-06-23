@@ -30,7 +30,7 @@ public class FeatureParser
     }
 
     //TODO: implementare parsing iniziale della feature(del comando) e chiamata al parser specifico e ritorno della FeatureSchema
-    //TODO: implementare aggiunta dei tutte le feature schema ottenute nella treemultimap
+    //TODO: implementare aggiunta di tutte le feature schema ottenute nella treemultimap
     private FeatureParser()
     {
 
