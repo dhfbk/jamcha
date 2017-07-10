@@ -1,13 +1,13 @@
 Struttura delle classi: (spiegazioni e appunti)
 FeatureSelector: classe che coordina il parsing delle feature e che si occupa di chiamare la classe appropriata per ogni singola feature.
-                Inoltre aggiungerà i dati ottenuti nella treeMultimap. Questa sarà la classe da chiamare nel Main
+                Inoltre aggiungerà i dati ottenuti nella treeMultimap. Questa sarà la classe da chiamare direttamente.
                 
-FeatureParser: classe astratta che funge da "base" per le classi specializzate nel trattare uan specifica feature (ogni feature
-                  avrà la sua classe specifica)
+FeatureParser: classe astratta che funge da "base" per le classi specializzate nel trattare una specifica feature (ogni feature
+                  avrà la sua classe specifica). Implementa quasi tutti i metodi. 
 
 StaticFeatureParser: classe che esegue effettivamente il parsing e l'estrazione dei dati da una stringa che rappresenta
                         la feature static (F)
-DynamicFeatureParser: uguale alla StaticFeatureVaidator, ma si occupa della feature dynamic (T)
+DynamicFeatureParser: uguale alla StaticFeatureParser, ma si occupa della feature dynamic (T)
 
 FeatureSectionValuesConstraints: classe che contiene i valori massimi e minimi di ogni singola sezione di una feature.
                                   Una sezione è una porzione di stringa separata da ':' (due punti).
