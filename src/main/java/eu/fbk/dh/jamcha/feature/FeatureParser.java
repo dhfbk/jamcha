@@ -3,6 +3,7 @@ package eu.fbk.dh.jamcha.feature;
 import com.sun.istack.internal.NotNull;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 /**
  * Abstract class that represents a feature: NAME, pattern, values constraints. It reads feature string and extracts rows and columns
@@ -89,7 +90,7 @@ public abstract class FeatureParser
     }
 
     /**
-     * Parse and validate feature values
+     * Parse and isValid feature values
      *
      * @param stringToParse list of values, written using feature pattern
      *
@@ -118,11 +119,153 @@ public abstract class FeatureParser
     }
 
     /**
-     * Creates feature pattern as string (featureName:values:values:values)
      *
-     * @return
+     * @param section     feature section to parse
+     * @param constraints section constraints
+     *
+     * @return section values list
+     *
+     * @throws NumberFormatException this section does not respects right pattern
+     * @throws Exception             there at least one invalid value that does not satisfies section restrictions (e.g. in dynamic feature, rowNumber > -1)
      */
-    protected String createStringSchema()
+    @NotNull
+    protected List<Integer> parseSection(@NotNull String section, @NotNull FeatureSectionValuesConstraints constraints) throws NumberFormatException, Exception
+    {
+        if (section.isEmpty())
+        {
+            throw new IllegalArgumentException("Section to parse cannot be empty");
+        }
+
+        ArrayList<Integer> list = new ArrayList<Integer>();
+
+        String[] valuesList = section.split(String.valueOf(VALUE_SEPARATOR));
+        // Section contains multiple values? If length > 1 yes
+        if (valuesList.length > 1)
+        {
+            // Condition: a section may contain multiple single values or a range values, but not both (e.g. not x,x,x and ..). Therefore must have one of these three
+            // patterns ( 1) x,x,x or 2) x..x or 3) x.. ).
+            // A malformed string of valuesList satisfies one of these cases: (remember that at this point there are no ','
+            // 1) there are '..' -> ERROR (parseInt fails) Explanation: valuesList length is > 1 therefore there is at least one ','. This violates initial condition.
+            // 2) is empty -> ERROR (parseInt fails) Explanation: this happens when count of ',' is >= count of values (not digits)
+
+            // Add all values to list
+            for (String str : valuesList)
+            {
+                int number = Integer.parseInt(str);
+                if (constraints.isValid(number))
+                {
+                    list.add(number);
+                }
+                else
+                {
+                    throw new Exception(constraints.errorMessage(number));
+                }
+            }
+        }
+        else
+        {
+            // Section contains no ',' therefore it must contains a RANGE_VALUE_SEPARATOR.
+            valuesList = section.split(RANGE_VALUE_SEPARATOR);
+
+            // If length is not 2 range pattern (x..x or x..) is not satisfied therefore feature is malformed and there is an exception
+            if (valuesList.length == 2)
+            {
+                // There may be two cases:
+                // 1) the pattern is x..x -> both valuesList strings have length > 0
+                // 2) the pattern is x.. -> first valuesList string has length > 0 and second string have lenth 0.
+
+                // First valuesList string must have valid value otherwise this feature section has invalid pattern and there is an error
+                int minValue = Integer.parseInt(valuesList[0]);
+                int maxValue;
+
+                // Getting range max value
+                // If empty wil be used default max value otherwise will be used parsed value
+                if (valuesList[1].isEmpty())
+                {
+                    maxValue = constraints.VALUE_MAX;
+                }
+                else
+                {
+                    maxValue = Integer.parseInt(valuesList[1]);
+                }
+
+                // If minValue and maxValue are valid, will be created and added to list all numbers from minValue to maxValue (a sequence from minValue to maxValue)
+                if (constraints.isValid(minValue) && constraints.isValid(maxValue))
+                {
+                    for (int i = minValue; i <= maxValue; i ++)
+                    {
+                        list.add(i);
+                    }
+                }
+                else
+                {
+                    int invalid = constraints.isValid(minValue) ? maxValue : minValue;
+                    throw new Exception(constraints.errorMessage(invalid));
+                }
+
+            }
+        }
+        return list;
+
+//        boolean mustBeNumber = true;
+//        char[] charArray = section.toCharArray();
+//        StringBuilder builder = new StringBuilder();
+//
+//        for (int i = 0; i < charArray.length; i ++)
+//        {
+//            char c = charArray[i];
+//            if (Character.isDigit(c) || c == '-')
+//            {
+//                builder.append(c);
+//                mustBeNumber = false;
+//            }
+//            else
+//            {
+//                if (mustBeNumber)
+//                {
+//                    throw new ParseException("Malformed section, expected a minValue or '-'", i);
+//                }
+//
+//                if (c == VALUE_SEPARATOR)
+//                {
+//                    try
+//                    {
+//                        // Parse int, add it to values list and reset builder
+//                        int minValue = Integer.parseInt(builder.toString());
+//                        list.add(minValue);
+//                        builder.setLength(0);
+//                        mustBeNumber = true;
+//                    }
+//                    catch (NumberFormatException e)
+//                    {
+//                        // Invalid value
+//                        int startIndex = charArray.length - builder.length() - 1;
+//                        String error = "Substring of this section, from " + charArray[startIndex] + " to " + charArray[i] + " is not a valid value";
+//                        throw new ParseException(error, i);
+//                    }
+//                }
+//                else
+//                {
+//                    // Is a values range?
+//                    if (c == RANGE_VALUE_SEPARATOR.charAt(1) && c == lastChar)
+//                    {
+//                        
+//
+//                    }
+//                }
+//
+//            }
+//
+//        }
+    }
+}
+
+/**
+ * Creates feature pattern as string (featureName:values:values:values)
+ *
+ * @return
+ */
+protected String createStringSchema()
     {
         StringBuilder builder = new StringBuilder();
         builder.append(NAME);
