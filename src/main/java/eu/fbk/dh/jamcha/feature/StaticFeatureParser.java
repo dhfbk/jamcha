@@ -11,7 +11,7 @@ public final class StaticFeatureParser extends FeatureParser
 
     private StaticFeatureParser()
     {
-        super("F", 1);
+        super("F", 1, new FeatureSectionValuesConstraints(Integer.MIN_VALUE, Integer.MAX_VALUE), new FeatureSectionValuesConstraints(Integer.MIN_VALUE, -1));
     }
 
     public static StaticFeatureParser getInstance()

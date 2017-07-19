@@ -1,6 +1,6 @@
 package eu.fbk.dh.jamcha.feature;
 
-import com.sun.istack.internal.NotNull;
+import javax.annotation.Nonnull;
 
 /**
  * Define which values are permitted for a feature section (i.e. in static feature, tag columns cannot be included)
@@ -51,7 +51,7 @@ public class FeatureSectionValuesConstraints
      *
      * @return error message if value is not valid, empty string otherwise
      */
-    public @NotNull
+    public @Nonnull
     String errorMessage(int value)
     {
         String error;

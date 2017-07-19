@@ -26,9 +26,10 @@ public abstract class FeatureParser
     protected static char VALUE_SEPARATOR = ',';
 
     /**
-     * Is similar to "Value separator", but this is used when user indicates a range and not every single value (e.g. every single value -2,-1,0,1 range: -2..1)
+     * Is similar to "Value separator", but this is used when user indicates a range and not every single value (e.g. every single value -2,-1,0,1 range: -2..1) Delete \\
+     * if not used with String.split() function
      */
-    protected static final String RANGE_VALUE_SEPARATOR = "..";
+    protected static final String RANGE_VALUE_SEPARATOR = "\\..";
 
     /**
      * Number of sections of this feature. A section is a part of string divided by "section separator"
@@ -165,7 +166,7 @@ public abstract class FeatureParser
         else
         {
             // Section contains no ',' therefore it must contains a RANGE_VALUE_SEPARATOR.
-            valuesList = section.split(RANGE_VALUE_SEPARATOR);
+            valuesList = section.split(RANGE_VALUE_SEPARATOR, -1);
 
             // If length is not 2 range pattern (x..x or x..) is not satisfied therefore feature is malformed and there is an exception
             if (valuesList.length == 2)
