@@ -1,9 +1,7 @@
 package eu.fbk.dh.jamcha.feature;
 
-import com.sun.istack.internal.NotNull;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
+import javax.annotation.Nonnull;
 
 /**
  * Abstract class that represents a feature: NAME, pattern, values constraints. It reads feature string and extracts rows and columns
@@ -52,7 +50,7 @@ public abstract class FeatureParser
      *
      * @exception IllegalArgumentException If number of constraints is not sectionSeparatorCount + 1
      */
-    public FeatureParser(@NotNull final String name,
+    public FeatureParser(@Nonnull final String name,
                          final int sectionSeparatorCount,
                          final FeatureSectionValuesConstraints... listSectionConstraints)
     {
@@ -99,7 +97,8 @@ public abstract class FeatureParser
      * @exception IllegalArgumentException stringToParse is empty
      * @exception Exception                invalid feature pattern
      */
-    public FeatureSchema parseFeature(@NotNull String stringToParse) throws Exception, IllegalArgumentException
+    @Nonnull
+    public FeatureSchema parseFeature(@Nonnull String stringToParse) throws Exception, IllegalArgumentException
     {
         if (stringToParse.isEmpty())
         {
@@ -116,6 +115,7 @@ public abstract class FeatureParser
         }
 
         //TODO: implementare lettura delle sottostringhe e generare lista di righe e colonne
+        return null;
     }
 
     /**
@@ -125,11 +125,11 @@ public abstract class FeatureParser
      *
      * @return section values list
      *
-     * @throws NumberFormatException this section does not respects right pattern
-     * @throws Exception             there at least one invalid value that does not satisfies section restrictions (e.g. in dynamic feature, rowNumber > -1)
+     * @throws NumberFormatException    this section does not respects right pattern
+     * @throws IllegalArgumentException this section is empty or uses invalid value
      */
-    @NotNull
-    protected List<Integer> parseSection(@NotNull String section, @NotNull FeatureSectionValuesConstraints constraints) throws NumberFormatException, Exception
+    @Nonnull
+    public List<Integer> parseSection(@Nonnull String section, @Nonnull FeatureSectionValuesConstraints constraints) throws NumberFormatException, IllegalArgumentException
     {
         if (section.isEmpty())
         {
@@ -158,7 +158,7 @@ public abstract class FeatureParser
                 }
                 else
                 {
-                    throw new Exception(constraints.errorMessage(number));
+                    throw new IllegalArgumentException(constraints.errorMessage(number));
                 }
             }
         }
@@ -200,9 +200,13 @@ public abstract class FeatureParser
                 else
                 {
                     int invalid = constraints.isValid(minValue) ? maxValue : minValue;
-                    throw new Exception(constraints.errorMessage(invalid));
+                    throw new IllegalArgumentException(constraints.errorMessage(invalid));
                 }
 
+            }
+            else
+            {
+                throw new IllegalArgumentException("Section range pattern must be: x..x or x..");
             }
         }
         return list;
@@ -258,14 +262,13 @@ public abstract class FeatureParser
 //
 //        }
     }
-}
 
-/**
- * Creates feature pattern as string (featureName:values:values:values)
- *
- * @return
- */
-protected String createStringSchema()
+    /**
+     * Creates feature pattern as string (featureName:values:values:values)
+     *
+     * @return
+     */
+    protected String createStringSchema()
     {
         StringBuilder builder = new StringBuilder();
         builder.append(NAME);
