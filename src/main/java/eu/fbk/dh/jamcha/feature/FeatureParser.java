@@ -290,10 +290,13 @@ public abstract class FeatureParser
 
    /**
     * Creates list of rows and columns for a specific feature. Therefore, every feature must implement this method and create
-    * a valid list of rows and columns values according to own constraints (Dynamic feature T cannot have multiple columns)
+    * a valid list of rows and columns values according to own constraints (Dynamic feature T cannot have multiple columns).
+    * Please call this method from parseFeature().
     *
-    * @param stringToParse list of values, written using feature pattern
+    * @param listOfSections list of sections, each written using feature pattern. ATTENTION: Size is not controlled.(there is
+    * no control if number of passed sections respects feature pattern)
     * @return all values for rows and columns (in other words, a matrix)
     */
-   protected abstract FeatureSchema createValuesSchema(@Nonnull String[] stringToParse);
+   @Nonnull
+   protected abstract FeatureSchema createValuesSchema(String[] listOfSections);
 }
