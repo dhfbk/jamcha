@@ -1,5 +1,8 @@
 package eu.fbk.dh.jamcha.feature;
 
+import java.util.List;
+import javax.annotation.Nonnull;
+
 /**
  * Singleton Class that represents and manage static feature (F).
  *
@@ -22,4 +25,16 @@ public final class StaticFeatureParser extends FeatureParser
         }
         return feature;
     }
+
+   @Override
+   protected FeatureSchema createValuesSchema(@Nonnull String[] listOfSections)
+   {
+      FeatureSchema schema=new FeatureSchema();
+      for(int i=0; i<SECTION_SEPARATORS_COUNT+1;i++)
+      {
+         List<Integer> listToAdd= parseSection(listOfSections[i], sectionValueConstraintsList.get(i));
+         schema.addList(listToAdd, i);
+      }
+      return schema;
+   }
 }
