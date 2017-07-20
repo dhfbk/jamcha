@@ -6,7 +6,7 @@ Struttura delle classi: (spiegazioni e appunti)
 * `DynamicFeatureParser`: uguale alla `StaticFeatureParser`, ma si occupa della feature dynamic (T)
 * `FeatureSectionValuesConstraints`: classe che contiene i valori massimi e minimi di ogni singola sezione di una feature.  
   Una sezione è una porzione di stringa separata da ':' (due punti).  
-  Ogni classe "FeatureParser" conterrà una lista di classi di questo tipo di lunghezza uguale al  
+  Ogni classe `FeatureParser` conterrà una lista di classi di questo tipo di lunghezza uguale al  
   numero di sezioni della feature stessa  
   Es. T:-5..   il valore massimo dopo i puntini sarà -1, il valore minimo non è definito  
   Es. F:-2,-1:x..y  il valore minimo di x è zero(non esiste una colonna negativa). Il valore massimo sia di x che y è il numero delle colonne meno 1 (perchè l'ultima è quella dei TAG)  
