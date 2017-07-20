@@ -29,7 +29,7 @@ public abstract class FeatureParser
      * Is similar to "Value separator", but this is used when user indicates a range and not every single value (e.g. every single value -2,-1,0,1 range: -2..1) Delete \\
      * if not used with String.split() function
      */
-    protected static final String RANGE_VALUE_SEPARATOR = "\\..";
+    protected static final String RANGE_VALUE_SEPARATOR = "\\.\\.";
 
     /**
      * Number of sections of this feature. A section is a part of string divided by "section separator"

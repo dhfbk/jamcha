@@ -52,10 +52,10 @@ public class FeatureParserTest
     public void testParseSection()
     {
         System.out.println("parseSection");
-        String section = "-4..";
+        String section = "-4..-2";
         Integer[] arr =
         {
-            -4, -3, -2, -1
+            -4, -3, -2
         };
         FeatureSectionValuesConstraints constraints = new FeatureSectionValuesConstraints(-8, -1);
         FeatureParser instance = StaticFeatureParser.getInstance();
