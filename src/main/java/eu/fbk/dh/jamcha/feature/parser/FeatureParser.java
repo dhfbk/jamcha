@@ -1,5 +1,7 @@
-package eu.fbk.dh.jamcha.feature;
+package eu.fbk.dh.jamcha.feature.parser;
 
+import eu.fbk.dh.jamcha.feature.FeatureValues;
+import eu.fbk.dh.jamcha.feature.FeatureSectionValuesConstraints;
 import java.util.*;
 import javax.annotation.Nonnull;
 
@@ -55,7 +57,7 @@ public abstract class FeatureParser
     *
     * @exception IllegalArgumentException If number of constraints is not sectionSeparatorCount + 1
     */
-   public FeatureParser(@Nonnull final String name,
+   protected FeatureParser(@Nonnull final String name,
          final int sectionSeparatorCount,
          final FeatureSectionValuesConstraints... listSectionConstraints)
    {
@@ -93,32 +95,33 @@ public abstract class FeatureParser
    }
 
    /**
-    * Parse and isValid feature values
+    * Parse and obtains feature values
     *
-    * @param stringToParse list of values, written using feature pattern
+    * @param stringToParse list of values, written using feature pattern without feature name. E.g. Considering F:-5..3:-3..-1 , substring passed as parameter is -5..3:-3..-1
     *
     * @return
     *
-    * @exception IllegalArgumentException stringToParse is empty
+    * @exception IllegalArgumentException stringToParse is empty or invalid feature pattern
     * @exception Exception invalid feature pattern
     */
    @Nonnull
-   public FeatureSchema parseFeature(@Nonnull String stringToParse) throws Exception, IllegalArgumentException
+   public FeatureValues parseFeature(@Nonnull String stringToParse) throws Exception, IllegalArgumentException
    {
       if (stringToParse.isEmpty())
       {
          throw new IllegalArgumentException("String must be not empty");
       }
 
-      // Split string on character separator (e.g. : )
+      // Split string on character separator (e.g. : ) creating a list of sections
       String[] typeList = stringToParse.split(String.valueOf(SECTION_SEPARATOR));
 
       // Creates feature pattern to show in error message
       if (typeList.length != SECTION_SEPARATORS_COUNT + 1)
       {
-         throw new Exception("Feature " + NAME + " must have the form: " + createStringSchema());
+         throw new IllegalArgumentException("Feature " + NAME + " must have the form: " + createStringSchema());
       }
 
+      // Creates values matrix for this feature and return it
       return createValuesSchema(typeList);
    }
 
@@ -298,5 +301,5 @@ public abstract class FeatureParser
     * @return all values for rows and columns (in other words, a matrix)
     */
    @Nonnull
-   protected abstract FeatureSchema createValuesSchema(String[] listOfSections);
+   protected abstract FeatureValues createValuesSchema(String[] listOfSections);
 }

@@ -9,7 +9,7 @@ import javax.annotation.Nonnull;
  *
  * @author dan92
  */
-public final class FeatureSchema
+public final class FeatureValues
 {
 
    private ArrayList<Integer> rows;
@@ -81,5 +81,4 @@ public final class FeatureSchema
             new IllegalArgumentException("Position value must be 0 or 1");
       }
    }
-
 }

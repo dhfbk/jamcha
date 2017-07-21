@@ -1,9 +1,4 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
-package eu.fbk.dh.jamcha.feature;
+package eu.fbk.dh.jamcha.feature.parser;
 
 import java.util.Arrays;
 import java.util.List;
@@ -13,6 +8,7 @@ import static org.junit.Assert.assertEquals;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import eu.fbk.dh.jamcha.feature.*;
 
 /**
  *
@@ -51,6 +47,7 @@ public class FeatureParserTest
     @Test
     public void testParseSection()
     {
+       int columnsNumber=5;
         System.out.println("parseSection");
         String section = "-4..-2";
         Integer[] arr =
@@ -58,7 +55,7 @@ public class FeatureParserTest
             -4, -3, -2
         };
         FeatureSectionValuesConstraints constraints = new FeatureSectionValuesConstraints(-8, -1);
-        FeatureParser instance = StaticFeatureParser.getInstance();
+        FeatureParser instance = StaticFeatureParser.getInstance(columnsNumber);
         List<Integer> expResult = Arrays.asList(arr);
         List<Integer> result = instance.parseSection(section, constraints);
         assertEquals(expResult, result);
