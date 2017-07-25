@@ -1,4 +1,4 @@
-package eu.fbk.dh.jamcha.feature.parser;
+package eu.fbk.dh.jamcha.feature.parameterparser;
 
 import eu.fbk.dh.jamcha.feature.FeatureValues;
 import eu.fbk.dh.jamcha.feature.FeatureSectionValuesConstraints;

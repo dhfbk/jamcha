@@ -1,4 +1,4 @@
-package eu.fbk.dh.jamcha.feature.parser;
+package eu.fbk.dh.jamcha.feature.parameterparser;
 
 import eu.fbk.dh.jamcha.feature.FeatureValues;
 import eu.fbk.dh.jamcha.feature.FeatureSectionValuesConstraints;
@@ -16,7 +16,6 @@ public class DynamicFeatureParser extends FeatureParser
 
    private static DynamicFeatureParser parser = null;
    private final static int ROWS_MIN_VALUE = -500;
-   private final static int ROWS_MAX_VALUE = 500;
 
    /**
     * In dynamic feature we consider only one column, tag column. This is an arbitrary value. Do not choose a value >-1
@@ -26,7 +25,7 @@ public class DynamicFeatureParser extends FeatureParser
 
    private DynamicFeatureParser()
    {
-      super("T", 0, new FeatureSectionValuesConstraints(ROWS_MIN_VALUE, ROWS_MAX_VALUE));
+      super("T", 0, new FeatureSectionValuesConstraints(ROWS_MIN_VALUE, COLUMN_VALUE));
    }
 
    public static DynamicFeatureParser getInstance()

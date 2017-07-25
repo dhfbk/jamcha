@@ -1,5 +1,7 @@
-package eu.fbk.dh.jamcha.feature.parser;
+package eu.fbk.dh.jamcha.feature.parameterparser;
 
+import eu.fbk.dh.jamcha.feature.parameterparser.FeatureParser;
+import eu.fbk.dh.jamcha.feature.parameterparser.StaticFeatureParser;
 import java.util.Arrays;
 import java.util.List;
 import org.junit.After;

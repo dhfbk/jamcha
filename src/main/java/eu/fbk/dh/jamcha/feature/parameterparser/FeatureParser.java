@@ -1,4 +1,4 @@
-package eu.fbk.dh.jamcha.feature.parser;
+package eu.fbk.dh.jamcha.feature.parameterparser;
 
 import eu.fbk.dh.jamcha.feature.FeatureValues;
 import eu.fbk.dh.jamcha.feature.FeatureSectionValuesConstraints;
@@ -27,7 +27,7 @@ public abstract class FeatureParser
    /**
     * Feature values separator within same section (value may not be in order and may not be consecutive)
     */
-   protected static char VALUE_SEPARATOR = ',';
+   protected static final char VALUE_SEPARATOR = ',';
 
    /**
     * Is similar to "Value separator", but this is used when user indicates a range and not every single value (e.g. every

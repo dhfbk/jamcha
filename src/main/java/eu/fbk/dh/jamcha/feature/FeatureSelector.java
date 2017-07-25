@@ -1,8 +1,8 @@
 package eu.fbk.dh.jamcha.feature;
 
-import eu.fbk.dh.jamcha.feature.parser.FeatureParser;
-import eu.fbk.dh.jamcha.feature.parser.DynamicFeatureParser;
-import eu.fbk.dh.jamcha.feature.parser.StaticFeatureParser;
+import eu.fbk.dh.jamcha.feature.parameterparser.FeatureParser;
+import eu.fbk.dh.jamcha.feature.parameterparser.DynamicFeatureParser;
+import eu.fbk.dh.jamcha.feature.parameterparser.StaticFeatureParser;
 import javax.annotation.Nonnull;
 import com.google.common.collect.TreeMultimap;
 
