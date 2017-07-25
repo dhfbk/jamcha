@@ -8,6 +8,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 /**
  * This class parses train file and inserts all rows feature in a specific data structure
@@ -19,6 +20,7 @@ public class FeatureFileReader
 
    private int colsNumber = 0;
    private final Path filePath;
+   
    /**
     * List of all features of each token
     */
@@ -30,17 +32,15 @@ public class FeatureFileReader
    }
 
    /**
-    * Parse train file and all tokens features
-    * @return list of feature for each line (token)
+    * Parse train file and all tokens features. Call getTokensFeatures() to retrieve the result of this method.
     * @throws java.io.IOException cannot open/read file or file does not have same words number for every line
     */
-   protected SortedSetMultimap parseFile() throws IOException
+   protected void parseFile() throws IOException
    {
-      TreeMultimap<Integer, String> lineFeaturesMap;
-      // Open file to read
+         // Open file to read
          BufferedReader reader = Files.newBufferedReader(filePath);
          getColumnsNumber();
-         lineFeaturesMap=TreeMultimap.create();
+         TreeMultimap<Integer, String> lineFeaturesMap=TreeMultimap.create();
          
          String line;
          int rowCounter = 0;
@@ -69,8 +69,6 @@ public class FeatureFileReader
             rowCounter++;
          }
          this.tokenFeatures=lineFeaturesMap;
-      
-      return lineFeaturesMap;
    }
 
    /**
@@ -95,6 +93,16 @@ public class FeatureFileReader
 
       }
       return colsNumber;
+   }
+   
+   /**
+    * GET: all features values for each token, tokens included
+    * @return multimap of tokens values
+    */
+   @Nullable
+   public SortedSetMultimap getTokensFeatures()
+   {
+      return tokenFeatures;
    }
    
 }
