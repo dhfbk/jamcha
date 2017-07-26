@@ -1,7 +1,8 @@
 package eu.fbk.dh.jamcha.feature.filereader;
 
-import com.google.common.collect.SortedSetMultimap;
-import com.google.common.collect.TreeMultimap;
+import com.google.common.collect.ArrayListMultimap;
+import com.google.common.collect.ListMultimap;
+import eu.fbk.dh.jamcha.feature.FeatureInfo;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -24,23 +25,23 @@ public class FeatureFileReader
    /**
     * List of all features of each token
     */
-   private TreeMultimap tokenFeatures=null; 
+   private ArrayListMultimap<Integer, FeatureInfo> tokenFeatures;
 
    public FeatureFileReader(@Nonnull Path filePath)
    {
       this.filePath = filePath;
+      tokenFeatures= ArrayListMultimap.create();
    }
 
    /**
     * Parse train file and all tokens features. Call getTokensFeatures() to retrieve the result of this method.
     * @throws java.io.IOException cannot open/read file or file does not have same words number for every line
     */
-   protected void parseFile() throws IOException
+   protected final void parseFile() throws IOException
    {
          // Open file to read
          BufferedReader reader = Files.newBufferedReader(filePath);
          getColumnsNumber();
-         TreeMultimap<Integer, String> lineFeaturesMap=TreeMultimap.create();
          
          String line;
          int rowCounter = 0;
@@ -55,20 +56,19 @@ public class FeatureFileReader
                throw new IOException("All file lines must have same number of words");
             }
 
-            ArrayList<String> lineFeatures = new ArrayList<>(colsNumber);
+            ArrayList<FeatureInfo> lineFeatures = new ArrayList<>(colsNumber);
 
-            // For each line word create a string with this pattern: 0_wordNumber_featureValue
+            // For each line word create an object containing row, column and feature value
             // WordNumber is order number of word in line, starting from zero
-            for (int wordNumber = 0; wordNumber < lineWords.length; wordNumber++)
+            for (short wordNumber = 0; wordNumber < lineWords.length; wordNumber++)
             {
-               lineFeatures.add("0_" + wordNumber + "_" + lineWords[wordNumber]);
+               lineFeatures.add(new FeatureInfo(0, wordNumber, lineWords[wordNumber].toCharArray()));
             }
 
             // Put all line features in all features schema
-            lineFeaturesMap.putAll(rowCounter, lineFeatures);
+            tokenFeatures.putAll(rowCounter, lineFeatures);
             rowCounter++;
          }
-         this.tokenFeatures=lineFeaturesMap;
    }
 
    /**
@@ -97,10 +97,10 @@ public class FeatureFileReader
    
    /**
     * GET: all features values for each token, tokens included
-    * @return multimap of tokens values
+    * @return listmultimap of tokens values
     */
    @Nullable
-   public SortedSetMultimap getTokensFeatures()
+   public ListMultimap<Integer, FeatureInfo> getTokensFeatures()
    {
       return tokenFeatures;
    }

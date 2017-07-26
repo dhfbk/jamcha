@@ -1,14 +1,10 @@
 package eu.fbk.dh.jamcha.feature.filereader;
 
-import com.google.common.collect.Multimaps;
 import com.google.common.collect.SortedSetMultimap;
 import com.google.common.collect.TreeMultimap;
+import eu.fbk.dh.jamcha.feature.FeatureInfo;
 import java.io.IOException;
 import java.nio.file.Paths;
-import org.junit.After;
-import org.junit.AfterClass;
-import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
@@ -25,26 +21,6 @@ public class FeatureFileReaderTest
       fileReader= new FeatureFileReader(Paths.get("/home/mazzetti/Documents/test"));
    }
 
-   @BeforeClass
-   public static void setUpClass()
-   {
-   }
-
-   @AfterClass
-   public static void tearDownClass()
-   {
-   }
-
-   @Before
-   public void setUp()
-   {
-   }
-
-   @After
-   public void tearDown()
-   {
-   }
-
    /**
     * Test of parseFile method, of class FeatureFileReader.
     */
@@ -53,29 +29,32 @@ public class FeatureFileReaderTest
    {
       System.out.println("parseFile");
       SortedSetMultimap result = TreeMultimap.create();
-      result.put(0, "0_0_token1");
-      result.put(0, "0_1_a1");
-      result.put(0, "0_2_a2");
-      result.put(0, "0_3_r1");
 
-      result.put(1, "0_0_token2");
-      result.put(1, "0_1_b1");
-      result.put(1, "0_2_b2");
-      result.put(1, "0_3_r2");
+      // token1 a1 b1 c1
+      result.put(0, new FeatureInfo(0, (short)0, "token1".toCharArray()));
+      result.put(0, new FeatureInfo(0, (short)1, "a1".toCharArray()));
+      result.put(0, new FeatureInfo(0, (short)2, "b1".toCharArray()));
+      result.put(0, new FeatureInfo(0, (short)3, "c1".toCharArray()));
 
-      result.put(2, "0_0_token3");
-      result.put(2, "0_1_c1");
-      result.put(2, "0_2_c2");
-      result.put(2, "0_3_r3");
+      // token2 a2 b2 c2
+      result.put(1, new FeatureInfo(0, (short)0, "token2".toCharArray()));
+      result.put(1, new FeatureInfo(0, (short)1, "a2".toCharArray()));
+      result.put(1, new FeatureInfo(0, (short)2, "b2".toCharArray()));
+      result.put(1, new FeatureInfo(0, (short)3, "c2".toCharArray()));
+
+      //token3 a3 b3 c3
+      result.put(2, new FeatureInfo(0, (short)0, "token3".toCharArray()));
+      result.put(2, new FeatureInfo(0, (short)1, "a3".toCharArray()));
+      result.put(2, new FeatureInfo(0, (short)2, "b3".toCharArray()));
+      result.put(2, new FeatureInfo(0, (short)3, "c3".toCharArray()));
       try
       {
          fileReader.parseFile();
       }
       catch (IOException e)
       {
-         System.out.println("" + e.getLocalizedMessage());
+         System.out.println(e.getLocalizedMessage());
       }
-      
       assertEquals(result, fileReader.getTokensFeatures());
 
    }
