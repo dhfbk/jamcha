@@ -7,7 +7,7 @@ import javax.annotation.Nonnull;
 import com.google.common.collect.TreeMultimap;
 
 /**
- * Singleton class that manage feature parsing and trasformation
+ * Singleton class that manage feature parsing and transformation
  *
  * @author dan92
  */
@@ -45,7 +45,7 @@ public final class FeatureSelector
     */
    private TreeMultimap<Integer, Integer> treeMultimap = null;
 
-   private static FeatureSelector parser = null;
+   private static FeatureSelector selector;
 
    /**
     *
@@ -54,11 +54,11 @@ public final class FeatureSelector
     */
    public static FeatureSelector getInstance(int numberOfColumns)
    {
-      if (parser == null)
+      if (selector == null)
       {
-         parser = new FeatureSelector(numberOfColumns);
+         selector = new FeatureSelector(numberOfColumns);
       }
-      return parser;
+      return selector;
    }
 
    /**
@@ -69,21 +69,23 @@ public final class FeatureSelector
     * method reads only featureName, that must consist of only one char. If last condition (one char) is not respected no
     * exception is thrown.
     */
-   public FeatureValues parseFeature(@Nonnull String featureToParse)
+   public void parseFeature(@Nonnull String featureToParse)
    {
       // -------------------------------------------------------------------------------
       //                       VALIDATE INPUT
       // ********************************************************************************
       if (featureToParse.isEmpty())
       {
-         return null;
+         System.out.println("FeatureSelector.parseFeature(): Parametro empty");
+         return;
       }
-      // Splits string, reads first char(feature name) and calls right feature parser
+      // Splits string, reads first char(feature name) and calls right feature selector
       String[] splittedString = featureToParse.split(String.valueOf(FEATURE_COMMAND_END_LETTER), 2);
       // First array string contains feature name, that is a char. If length is not 1 therefore all string does not represents a valid or supported feature
       if (splittedString[0].length() != 1)
       {
-         return null;
+         System.out.println("FeatureSelector.parseFeature(): Numero sezioni sbagliato");
+         return;
       }
       // ***********************************************************************************
 
@@ -92,22 +94,24 @@ public final class FeatureSelector
       //                         CHOOSE AND CALL FEATURE PARSER
       // ************************************************************************************
       FeatureParser featureParser = null;
-      // Choose right feature parser
+      // Choose right feature selector
       switch (splittedString[0].charAt(0))
       {
          case FeatureNames.FEATURE_STATIC:
             featureParser = StaticFeatureParser.getInstance(columsNumber);
+            System.out.println("FeatureSelector.parseFeature(): Feature F");
             break;
          case FeatureNames.FEATURE_DYNAMIC:
             featureParser = DynamicFeatureParser.getInstance();
+            System.out.println("FeatureSelector.parseFeature(): Feature T");
             break;
       }
-      FeatureValues schema = null;
+      
       if (featureParser != null)
       {
          try
          {
-            schema = featureParser.parseFeature(splittedString[1]);
+            FeatureValues schema = featureParser.parseFeature(splittedString[1]);
             insertFeatureValuesToGlobalSchema(schema);
          }
          catch (Exception e)
@@ -116,8 +120,6 @@ public final class FeatureSelector
          }
 
       }
-      return schema;
-
    }
 
    /**
@@ -137,7 +139,7 @@ public final class FeatureSelector
    {
       for (int col : schema.getColumns())
       {
-         treeMultimap.putAll(col, schema.getRows());
+         getGlobalValuesSchema().putAll(col, schema.getRows());
       }
    }
 

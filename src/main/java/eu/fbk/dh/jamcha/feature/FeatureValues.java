@@ -23,7 +23,7 @@ public final class FeatureValues
    {
       if(rows==null)
       {
-         rows=new ArrayList<Integer>();
+         rows=new ArrayList<>();
       }
       return rows;
    }
@@ -34,7 +34,7 @@ public final class FeatureValues
    @Nonnull
    public void setRows(@Nonnull List<Integer> rows)
    {
-      this.rows = new ArrayList<Integer>(rows);
+      this.rows = new ArrayList<>(rows);
    }
 
    /**
@@ -45,7 +45,7 @@ public final class FeatureValues
    {
       if(columns==null)
       {
-         columns=new ArrayList<Integer>();
+         columns=new ArrayList<>();
       }
       return columns;
    }
@@ -56,7 +56,7 @@ public final class FeatureValues
    @Nonnull
    public void setColumns(@Nonnull List<Integer> columns)
    {
-      this.columns = new ArrayList<Integer>(columns);
+      this.columns = new ArrayList<>(columns);
    }
 
    /**
@@ -80,5 +80,17 @@ public final class FeatureValues
             throw
             new IllegalArgumentException("Position value must be 0 or 1");
       }
+   }
+   
+   @Override
+   public boolean equals(Object obj)
+   {
+      if(!(obj instanceof FeatureValues))
+      {
+         return false;
+      }
+      
+      return ((FeatureValues)obj).rows.equals(this.rows) && ((FeatureValues)obj).columns.equals(this.columns);
+      
    }
 }

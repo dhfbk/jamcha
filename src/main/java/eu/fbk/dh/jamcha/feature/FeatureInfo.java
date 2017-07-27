@@ -46,7 +46,7 @@ public final class FeatureInfo implements Comparable<FeatureInfo>
    {
       this.column = col;
    }
-   
+
    public String getFeatureValue()
    {
       return Arrays.toString(this.value);
@@ -57,7 +57,7 @@ public final class FeatureInfo implements Comparable<FeatureInfo>
    {
       StringBuilder build = new StringBuilder(value.length);
       build.append(value);
-      return row + column + build.toString();
+      return row + "_" + column + "_" + build.toString();
    }
 
    @Override
@@ -108,10 +108,10 @@ public final class FeatureInfo implements Comparable<FeatureInfo>
       {
          return false;
       }
-      boolean rowsFlag=((FeatureInfo) obj).getRow() == this.getRow();
-      boolean colsFlag=((FeatureInfo) obj).getColumn() == this.getColumn();     
-      boolean valuesFlag=Arrays.equals(((FeatureInfo) obj).value, this.value);
-      return  rowsFlag && colsFlag && valuesFlag;
+      boolean rowsFlag = ((FeatureInfo) obj).getRow() == this.getRow();
+      boolean colsFlag = ((FeatureInfo) obj).getColumn() == this.getColumn();
+      boolean valuesFlag = Arrays.equals(((FeatureInfo) obj).value, this.value);
+      return rowsFlag && colsFlag && valuesFlag;
    }
 
    @Override

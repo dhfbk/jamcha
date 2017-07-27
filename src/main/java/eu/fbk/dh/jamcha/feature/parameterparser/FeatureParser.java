@@ -97,7 +97,8 @@ public abstract class FeatureParser
    /**
     * Parse and obtains feature values
     *
-    * @param stringToParse list of values, written using feature pattern without feature name. E.g. Considering F:-5..3:-3..-1 , substring passed as parameter is -5..3:-3..-1
+    * @param stringToParse list of values, written using feature pattern without feature name. E.g. Considering
+    * F:-5..3:-3..-1 , substring passed as parameter is -5..3:-3..-1
     *
     * @return
     *
@@ -143,7 +144,7 @@ public abstract class FeatureParser
          throw new IllegalArgumentException("Section to parse cannot be empty");
       }
 
-      ArrayList<Integer> list = new ArrayList<Integer>();
+      ArrayList<Integer> list = new ArrayList<>();
 
       String[] valuesList = section.split(String.valueOf(VALUE_SEPARATOR));
       // Section contains multiple values? If length > 1 yes
@@ -217,57 +218,6 @@ public abstract class FeatureParser
          }
       }
       return list;
-
-//        boolean mustBeNumber = true;
-//        char[] charArray = section.toCharArray();
-//        StringBuilder builder = new StringBuilder();
-//
-//        for (int i = 0; i < charArray.length; i ++)
-//        {
-//            char c = charArray[i];
-//            if (Character.isDigit(c) || c == '-')
-//            {
-//                builder.append(c);
-//                mustBeNumber = false;
-//            }
-//            else
-//            {
-//                if (mustBeNumber)
-//                {
-//                    throw new ParseException("Malformed section, expected a minValue or '-'", i);
-//                }
-//
-//                if (c == VALUE_SEPARATOR)
-//                {
-//                    try
-//                    {
-//                        // Parse int, add it to values list and reset builder
-//                        int minValue = Integer.parseInt(builder.toString());
-//                        list.add(minValue);
-//                        builder.setLength(0);
-//                        mustBeNumber = true;
-//                    }
-//                    catch (NumberFormatException e)
-//                    {
-//                        // Invalid value
-//                        int startIndex = charArray.length - builder.length() - 1;
-//                        String error = "Substring of this section, from " + charArray[startIndex] + " to " + charArray[i] + " is not a valid value";
-//                        throw new ParseException(error, i);
-//                    }
-//                }
-//                else
-//                {
-//                    // Is a values range?
-//                    if (c == RANGE_VALUE_SEPARATOR.charAt(1) && c == lastChar)
-//                    {
-//                        
-//
-//                    }
-//                }
-//
-//            }
-//
-//        }
    }
 
    /**
@@ -302,4 +252,9 @@ public abstract class FeatureParser
     */
    @Nonnull
    protected abstract FeatureValues createValuesSchema(String[] listOfSections);
+   
+   protected List<FeatureSectionValuesConstraints> getConstraintsList()
+   {
+      return sectionValueConstraintsList;
+   }
 }

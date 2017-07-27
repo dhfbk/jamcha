@@ -70,7 +70,7 @@ public class FeatureIntegrator
     * @param row line number, starting from zero, which we want to get the default features
     * @return
     */
-   private List<FeatureInfo> extractDefaultFeatures(int row)
+   public List<FeatureInfo> extractDefaultFeatures(int row)
    {
       List<FeatureInfo> rowFeatures = tokensFeatures.get(row);
       List<FeatureInfo> retval = new ArrayList<>(rowFeatures.size());
@@ -89,7 +89,7 @@ public class FeatureIntegrator
     *
     * @return
     */
-   private ListMultimap<Integer, Integer> fromColRowsToRowCols()
+   public ListMultimap<Integer, Integer> fromColRowsToRowCols()
    {
       Set<Integer> keySet = featuresParameters.keySet();
       ArrayListMultimap<Integer, Integer> rowCols = ArrayListMultimap.create(keySet.size(), featuresParameters.size() / keySet.size());
@@ -104,7 +104,7 @@ public class FeatureIntegrator
       return rowCols;
    }
 
-   private List<FeatureInfo> getLineFeatures(int requestedline, final int baseLine, @Nonnull final List<Integer> featsNumbers)
+   public List<FeatureInfo> getLineFeatures(int requestedline, final int baseLine, @Nonnull final List<Integer> featsNumbers)
    {
       if (requestedline < 0)
       {

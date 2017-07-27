@@ -1,16 +1,11 @@
 package eu.fbk.dh.jamcha.feature.parameterparser;
 
-import eu.fbk.dh.jamcha.feature.parameterparser.FeatureParser;
-import eu.fbk.dh.jamcha.feature.parameterparser.StaticFeatureParser;
 import java.util.Arrays;
 import java.util.List;
-import org.junit.After;
-import org.junit.AfterClass;
 import static org.junit.Assert.assertEquals;
-import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
 import eu.fbk.dh.jamcha.feature.*;
+import java.util.ArrayList;
 
 /**
  *
@@ -19,48 +14,51 @@ import eu.fbk.dh.jamcha.feature.*;
 public class FeatureParserTest
 {
 
-    public FeatureParserTest()
-    {
-    }
+   private final String featureParameter;
+   private final int numCols;
+   private final FeatureValues featureValues = new FeatureValues();
+   private final FeatureParser parser;
+   private final List<FeatureSectionValuesConstraints> constraints=new ArrayList<>(2);
 
-    @BeforeClass
-    public static void setUpClass()
-    {
-    }
+   public FeatureParserTest()
+   {
+      numCols = 4;
+      parser=StaticFeatureParser.getInstance(numCols);
+      
+      featureParameter = "-4..-2:0..2";
+      Integer[] section1Values =
+      {
+         -4, -3, -2
+      };
+      Integer[] section2Values =
+      {
+         0, 1, 2
+      };
+      featureValues.setRows(Arrays.asList(section1Values));
+      featureValues.setColumns(Arrays.asList(section2Values));
+   }
 
-    @AfterClass
-    public static void tearDownClass()
-    {
-    }
+   /**
+    * Test of parseSection method, of class FeatureParser.
+    */
+   @Test
+   public void testParseSection()
+   {
+      System.out.println("parseSection");
+      
+      String[] sections= featureParameter.split(String.valueOf(FeatureParser.SECTION_SEPARATOR));
+     List<Integer> section= parser.parseSection(sections[0], parser.getConstraintsList().get(0));
+      assertEquals(featureValues.getRows(), section);
+   }
 
-    @Before
-    public void setUp()
-    {
-    }
-
-    @After
-    public void tearDown()
-    {
-    }
-
-    /**
-     * Test of parseSection method, of class FeatureParser.
-     */
-    @Test
-    public void testParseSection()
-    {
-       int columnsNumber=5;
-        System.out.println("parseSection");
-        String section = "-4..-2";
-        Integer[] arr =
-        {
-            -4, -3, -2
-        };
-        FeatureSectionValuesConstraints constraints = new FeatureSectionValuesConstraints(-8, -1);
-        FeatureParser instance = StaticFeatureParser.getInstance(columnsNumber);
-        List<Integer> expResult = Arrays.asList(arr);
-        List<Integer> result = instance.parseSection(section, constraints);
-        assertEquals(expResult, result);
-    }
+   /**
+    * Test of parseFeature method, of class FeatureParser.
+    */
+   @Test
+   public void testParseFeature() throws Exception
+   {
+      System.out.println("parseFeature");
+      assertEquals(featureValues, parser.parseFeature(featureParameter));
+   }
 
 }

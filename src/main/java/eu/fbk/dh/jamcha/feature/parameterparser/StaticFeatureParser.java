@@ -46,17 +46,14 @@ public final class StaticFeatureParser extends FeatureParser
       FeatureValues schema = new FeatureValues();
 
       // Parse each section: first is rows section, second columns section
+      // ROWS
       List<Integer> listToAdd = parseSection(listOfSections[0], sectionValueConstraintsList.get(0));
       schema.setRows(listToAdd);
 
-      // COLUMN
+      // COLUMNS
       listToAdd = parseSection(listOfSections[1], sectionValueConstraintsList.get(1));;
       schema.setColumns(listToAdd);
-//      for(int i=0; i<SECTION_SEPARATORS_COUNT+1;i++)
-//      {
-//         List<Integer> listToAdd= parseSection(listOfSections[i], sectionValueConstraintsList.get(i));
-//         schema.addList(listToAdd, i);
-//      }
+
       return schema;
    }
 }

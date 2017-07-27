@@ -1,9 +1,6 @@
 package eu.fbk.dh.jamcha.feature.filereader;
 
 import com.google.common.collect.ArrayListMultimap;
-import com.google.common.collect.ListMultimap;
-import com.google.common.collect.SortedSetMultimap;
-import com.google.common.collect.TreeMultimap;
 import eu.fbk.dh.jamcha.feature.FeatureInfo;
 import java.io.IOException;
 import java.nio.file.Paths;
@@ -17,7 +14,7 @@ import static org.junit.Assert.*;
 public class FeatureFileReaderTest
 {
 
-   FeatureFileReader fileReader;
+   private FeatureFileReader fileReader;
    public FeatureFileReaderTest()
    {
       fileReader= new FeatureFileReader(Paths.get("/home/mazzetti/Documents/test"));
@@ -30,7 +27,7 @@ public class FeatureFileReaderTest
    public void testParseFile()
    {
       System.out.println("parseFile");
-      ListMultimap<Integer, FeatureInfo> result = ArrayListMultimap.create();
+      ArrayListMultimap<Integer, FeatureInfo> result = ArrayListMultimap.create();
 
       // token1 a1 b1 c1
       result.put(0, new FeatureInfo(0, (short)0, "token1".toCharArray()));

@@ -1,18 +1,9 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package eu.fbk.dh.jamcha.feature;
 
+import com.google.common.collect.TreeMultimap;
 import java.util.ArrayList;
-import java.util.Arrays;
-import org.junit.After;
-import org.junit.AfterClass;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
 import static org.junit.Assert.*;
+import org.junit.Test;
 
 /**
  *
@@ -20,30 +11,49 @@ import static org.junit.Assert.*;
  */
 public class FeatureSelectorTest
 {
-   private static FeatureSelector selector;
+
+   private final ArrayList<String> parametersListValues = new ArrayList<>();
+   private final TreeMultimap<Integer, Integer> expected = TreeMultimap.create();
+
    public FeatureSelectorTest()
    {
-   }
-   
-   @BeforeClass
-   public static void setUpClass()
-   {
-      selector=FeatureSelector.getInstance(5);
-   }
-   
-   @AfterClass
-   public static void tearDownClass()
-   {
-   }
-   
-   @Before
-   public void setUp()
-   {
-   }
-   
-   @After
-   public void tearDown()
-   {
+      // ***********************************************************
+      //                         PARAMETRI FEATURES
+      // ***********************************************************
+      String parameter = "F:-2..2:1..1";
+      parametersListValues.add(parameter);
+
+      parameter = "F:-3..-2:0..1";
+      parametersListValues.add(parameter);
+
+      parameter = "T:-4..-1";
+      parametersListValues.add(parameter);
+
+      parameter = "T:-5..-3";
+      parametersListValues.add(parameter);
+
+      // ***********************************************************
+      //                         VALORI CORRETTI PARAMETRI FEATURES
+      // ***********************************************************
+      // column 0
+      expected.put(0, -3);
+      expected.put(0, -2);
+
+      // column 1
+      expected.put(1, -3);
+      expected.put(1, -2);
+      expected.put(1, -1);
+      expected.put(1, 0);
+      expected.put(1, 1);
+      expected.put(1, 2);
+
+      // column -1
+      expected.put(-1, -5);
+      expected.put(-1, -4);
+      expected.put(-1, -3);
+      expected.put(-1, -2);
+      expected.put(-1, -1);
+
    }
 
    /**
@@ -52,19 +62,14 @@ public class FeatureSelectorTest
    @Test
    public void testParseFeature()
    {
-      System.out.println("parseFeature");
-      String featureToParse = "F:-2,-1,3,5:-5..-2";
-      
-      Integer[] expRows={-2,-1,3,5};
-      Integer[] expCols = {-5,-4,-3,-2};
-      
-      FeatureValues expVal= new FeatureValues();
-      expVal.setRows(Arrays.asList(expRows));
-      expVal.setColumns(Arrays.asList(expCols));
-      FeatureValues resultValues=selector.parseFeature(featureToParse);
-      boolean rowsFlag= resultValues.getRows().equals(expVal.getRows());
-      boolean colsFlag= resultValues.getColumns().equals(expVal.getColumns());
-      assertSame(true, rowsFlag&&colsFlag);
+      System.out.println("Selector: parseFeature");
+      FeatureSelector selector = FeatureSelector.getInstance(4);
+      for (String featParameter : parametersListValues)
+      {
+         selector.parseFeature(featParameter);
+      }
+      TreeMultimap<Integer, Integer> result=selector.getGlobalValuesSchema();
+      assertEquals(this.expected, result);
    }
-   
+
 }
