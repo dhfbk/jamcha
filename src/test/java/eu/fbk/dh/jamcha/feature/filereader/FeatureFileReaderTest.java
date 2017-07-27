@@ -1,5 +1,7 @@
 package eu.fbk.dh.jamcha.feature.filereader;
 
+import com.google.common.collect.ArrayListMultimap;
+import com.google.common.collect.ListMultimap;
 import com.google.common.collect.SortedSetMultimap;
 import com.google.common.collect.TreeMultimap;
 import eu.fbk.dh.jamcha.feature.FeatureInfo;
@@ -28,7 +30,7 @@ public class FeatureFileReaderTest
    public void testParseFile()
    {
       System.out.println("parseFile");
-      SortedSetMultimap result = TreeMultimap.create();
+      ListMultimap<Integer, FeatureInfo> result = ArrayListMultimap.create();
 
       // token1 a1 b1 c1
       result.put(0, new FeatureInfo(0, (short)0, "token1".toCharArray()));
@@ -55,6 +57,7 @@ public class FeatureFileReaderTest
       {
          System.out.println(e.getLocalizedMessage());
       }
+      // TODO: rivedere perchè test fallisce
       assertEquals(result, fileReader.getTokensFeatures());
 
    }

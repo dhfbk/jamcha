@@ -46,13 +46,18 @@ public final class FeatureInfo implements Comparable<FeatureInfo>
    {
       this.column = col;
    }
+   
+   public String getFeatureValue()
+   {
+      return Arrays.toString(this.value);
+   }
 
    @Override
    public String toString()
    {
-      StringBuilder build=new StringBuilder(value.length);
+      StringBuilder build = new StringBuilder(value.length);
       build.append(value);
-      return row + "_" + column + "_" + build.toString();
+      return row + column + build.toString();
    }
 
    @Override
@@ -83,32 +88,39 @@ public final class FeatureInfo implements Comparable<FeatureInfo>
                }
                else
                {
-                  retval = Arrays.toString(value).compareTo(o.toString());
+                  retval = Arrays.toString(this.value).compareTo(Arrays.toString(o.value));
+                  System.out.println("Equals");
                }
             }
          }
       }
       return retval;
    }
-//   @Override
-//   public boolean equals(Object obj)
-//   {
-//      if(obj==null) return false;
-//      if(!(obj instanceof FeatureInfo))
-//      {
-//         return false;
-//      }
-//      FeatureInfo o=(FeatureInfo) obj;
-//      return o.getRow()==this.getRow() && o.getRow()==this.getColumn() && Arrays.toString(this.value).equals(Arrays.toString(o.value));
-//   }
-//
-//   @Override
-//   public int hashCode()
-//   {
-//      int hash = 5;
-//      hash = 31 * hash + this.row;
-//      hash = 31 * hash + this.column;
-//      hash = 31 * hash + Arrays.hashCode(this.value);
-//      return hash;
-//   }
+
+   @Override
+   public boolean equals(Object obj)
+   {
+      if (obj == null)
+      {
+         return false;
+      }
+      if (!(obj instanceof FeatureInfo))
+      {
+         return false;
+      }
+      boolean rowsFlag=((FeatureInfo) obj).getRow() == this.getRow();
+      boolean colsFlag=((FeatureInfo) obj).getColumn() == this.getColumn();     
+      boolean valuesFlag=Arrays.equals(((FeatureInfo) obj).value, this.value);
+      return  rowsFlag && colsFlag && valuesFlag;
+   }
+
+   @Override
+   public int hashCode()
+   {
+      int hash = 5;
+      hash = 31 * hash + this.row;
+      hash = 31 * hash + this.column;
+      hash = 31 * hash + Arrays.hashCode(this.value);
+      return hash;
+   }
 }
