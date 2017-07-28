@@ -45,6 +45,9 @@ public class FeatureIntegrator
       // PARAMETER: col->values     featuresParameters
       // FILE: row->0_2_avverbio    tokensFeatures
 
+      // TODO: gestire duplicati (riga 0)
+      // TODO: gestire colonna TAG
+      // TODO: gestire fine righ?
       ListMultimap<Integer, Integer> rowColumns = fromColRowsToRowCols();
       // for each file row
       for (int key : tokensFeatures.keySet())
@@ -106,7 +109,7 @@ public class FeatureIntegrator
 
    public List<FeatureInfo> getLineFeatures(int requestedline, final int baseLine, @Nonnull final List<Integer> featsNumbers)
    {
-      if (requestedline < 0)
+      if (requestedline < 0 || requestedline>=tokensFeatures.keySet().size())
       {
          return null;
       }
@@ -132,5 +135,10 @@ public class FeatureIntegrator
       }
 
       return retval;
+   }
+   
+   protected ListMultimap<Integer, FeatureInfo> getTokensFeaturesMap()
+   {
+      return this.tokensFeatures;
    }
 }

@@ -35,6 +35,7 @@ public class FeatureFileReader
 
    /**
     * Parse train file and all tokens features. Call getTokensFeatures() to retrieve the result of this method.
+    * Each file line must have same number of words.
     * @throws java.io.IOException cannot open/read file or file does not have same words number for every line
     */
    protected final void parseFile() throws IOException

@@ -11,7 +11,7 @@ import javax.annotation.Nonnull;
  *
  * @author dan92
  */
-public class DynamicFeatureParser extends FeatureParser
+public final class DynamicFeatureParser extends FeatureParser
 {
 
    private static DynamicFeatureParser parser = null;

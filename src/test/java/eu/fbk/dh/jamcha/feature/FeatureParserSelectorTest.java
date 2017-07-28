@@ -1,5 +1,6 @@
 package eu.fbk.dh.jamcha.feature;
 
+import com.google.common.collect.SortedSetMultimap;
 import com.google.common.collect.TreeMultimap;
 import java.util.ArrayList;
 import static org.junit.Assert.*;
@@ -9,13 +10,13 @@ import org.junit.Test;
  *
  * @author dan92d
  */
-public class FeatureSelectorTest
+public class FeatureParserSelectorTest
 {
 
    private final ArrayList<String> parametersListValues = new ArrayList<>();
    private final TreeMultimap<Integer, Integer> expected = TreeMultimap.create();
 
-   public FeatureSelectorTest()
+   public FeatureParserSelectorTest()
    {
       // ***********************************************************
       //                         PARAMETRI FEATURES
@@ -57,19 +58,24 @@ public class FeatureSelectorTest
    }
 
    /**
-    * Test of parseFeature method, of class FeatureSelector.
+    * Test of parseFeature method, of class FeatureParserSelector.
     */
    @Test
    public void testParseFeature()
    {
       System.out.println("Selector: parseFeature");
-      FeatureSelector selector = FeatureSelector.getInstance(4);
+      FeatureParserSelector selector = FeatureParserSelector.getInstance(4);
       for (String featParameter : parametersListValues)
       {
          selector.parseFeature(featParameter);
       }
       TreeMultimap<Integer, Integer> result=selector.getGlobalValuesSchema();
       assertEquals(this.expected, result);
+   }
+   
+   public SortedSetMultimap getFeaturesParameters()
+   {
+      return this.expected;
    }
 
 }

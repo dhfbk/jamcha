@@ -11,7 +11,7 @@ import com.google.common.collect.TreeMultimap;
  *
  * @author dan92
  */
-public final class FeatureSelector
+public final class FeatureParserSelector
 {
 
    /**
@@ -45,18 +45,18 @@ public final class FeatureSelector
     */
    private TreeMultimap<Integer, Integer> treeMultimap = null;
 
-   private static FeatureSelector selector;
+   private static FeatureParserSelector selector;
 
    /**
     *
     * @param numberOfColumns number of columns in the training file, tag column included
     * @return
     */
-   public static FeatureSelector getInstance(int numberOfColumns)
+   public static FeatureParserSelector getInstance(int numberOfColumns)
    {
       if (selector == null)
       {
-         selector = new FeatureSelector(numberOfColumns);
+         selector = new FeatureParserSelector(numberOfColumns);
       }
       return selector;
    }
@@ -149,7 +149,7 @@ public final class FeatureSelector
     *
     * @param numberOfColumns number of columns in the training file, tag column included
     */
-   private FeatureSelector(int numberOfColumns)
+   private FeatureParserSelector(int numberOfColumns)
    {
       if (numberOfColumns < 3)
       {
