@@ -15,11 +15,12 @@ import javax.annotation.Nonnull;
  *
  * @author dan92d
  */
-public class FeatureIntegrator
+public final class FeatureIntegrator
 {
-
-   private final SortedSetMultimap<Integer, Integer> featuresParameters;
-   private ListMultimap<Integer, FeatureInfo> tokensFeatures;
+   // List of all default features for each row. (from parsed train file)
+   private final ListMultimap<Integer, FeatureInfo> lineDefaultFeatures;
+   private ListMultimap<Integer, Integer> rowColumns;
+   private ListMultimap<Integer, FeatureInfo> lineFeatures;
 
    /**
     * Constructor
@@ -27,10 +28,19 @@ public class FeatureIntegrator
     * @param featuresParameters list of all features parameters values (T:-8..-2)
     * @param tokensFeatures list of all features for each token read from test file
     */
-   public FeatureIntegrator(@Nonnull final SortedSetMultimap<Integer, Integer> featuresParameters, @Nonnull ListMultimap<Integer, FeatureInfo> tokensFeatures)
+
+   /**
+    * Constructor
+    * @param featuresParameters list of all features parameters values (T:-8..-2)
+    * @param lineDefaultFeatures list of all features for each token read from test file
+    */
+   public FeatureIntegrator(@Nonnull final SortedSetMultimap<Integer, Integer> featuresParameters, @Nonnull final ListMultimap<Integer, FeatureInfo> lineDefaultFeatures)
    {
-      this.featuresParameters = featuresParameters;
-      this.tokensFeatures = tokensFeatures;
+      this.lineDefaultFeatures = lineDefaultFeatures;
+      this.lineFeatures= ArrayListMultimap.create();
+      
+      // Trasforma le features da colonne->righe a righe->colonne
+      rowColumns = fromColRowsToRowCols(featuresParameters);
    }
 
    /**
@@ -41,58 +51,65 @@ public class FeatureIntegrator
     */
    public void integrateTokensFeatures()
    {
-      // STRING: row_col_value -> -5_2_avverbio
-      // PARAMETER: col->values     featuresParameters
-      // FILE: row->0_2_avverbio    tokensFeatures
 
-      // TODO: gestire duplicati (riga 0)
       // TODO: gestire colonna TAG
       // TODO: gestire fine righ?
-      ListMultimap<Integer, Integer> rowColumns = fromColRowsToRowCols();
-      // for each file row
-      for (int key : tokensFeatures.keySet())
+      // per ogni riga del file di train
+      for (int actualRow : lineDefaultFeatures.keySet())
       {
-         // for each row parameter add row features
-         for (int rowFeatures : rowColumns.keySet())
+         // for each actualRow parameter add all columns
+         for (int desideredRow : rowColumns.keySet())
          {
-            List<FeatureInfo> lineRenamedFeatures = getLineFeatures(key + rowFeatures, key, rowColumns.get(rowFeatures));
+            // 
+            List<FeatureInfo> lineRenamedFeatures = getLineFeatures(actualRow + desideredRow, actualRow, rowColumns.get(desideredRow));
             
             //Aggiungi 
             if(lineRenamedFeatures!=null)
             {
-               tokensFeatures.get(key).addAll(lineRenamedFeatures);
+               lineFeatures.get(actualRow).addAll(lineRenamedFeatures);
             }
          }
       }
 
    }
 
-   /**
-    * Extract features of passed row token, read from train file. N.B. Training file must be read before calling this method
-    *
-    * @param row line number, starting from zero, which we want to get the default features
-    * @return
-    */
-   public List<FeatureInfo> extractDefaultFeatures(int row)
+   private List<FeatureInfo> getLineFeatures(int requestedline, final int baseLine, @Nonnull final List<Integer> featsNumbers)
    {
-      List<FeatureInfo> rowFeatures = tokensFeatures.get(row);
-      List<FeatureInfo> retval = new ArrayList<>(rowFeatures.size());
-      for (FeatureInfo feature : rowFeatures)
+      // Se la riga richiesta è inferiore a zero oppure superiore al numero massimo di righe
+      if (requestedline < 0 || requestedline>=lineDefaultFeatures.keySet().size())
       {
-         if (feature.getRow() == 0)
+         return null;
+      }
+      
+      // all default features
+      ArrayList<FeatureInfo> retval = new ArrayList<>(lineFeatures.size());
+
+      /**
+       * Take all line features that have a valid column number (a number passed in featsNumbers) Then rename all features
+       * row as a
+       */
+      for (FeatureInfo info : lineDefaultFeatures.get(requestedline))
+      {
+         for (int col : featsNumbers)
          {
-            retval.add(feature);
+            if (info.getColumn() == col)
+            {
+               info.setRow(requestedline-baseLine);
+               retval.add(info);
+            }
          }
       }
+
       return retval;
    }
-
-   /**
-    * Switch from col->rows to row->cols
+   
+    /**
+    * Switch from col->rows to actualRow->cols
     *
-    * @return
+    * @param featuresParameters features multimap with this structure: column->rows
+    * @return argument parameter inverted, for each actualRow list all columns to consider
     */
-   public ListMultimap<Integer, Integer> fromColRowsToRowCols()
+   public ListMultimap<Integer, Integer> fromColRowsToRowCols(SortedSetMultimap<Integer, Integer> featuresParameters)
    {
       Set<Integer> keySet = featuresParameters.keySet();
       ArrayListMultimap<Integer, Integer> rowCols = ArrayListMultimap.create(keySet.size(), featuresParameters.size() / keySet.size());
@@ -106,39 +123,9 @@ public class FeatureIntegrator
       });
       return rowCols;
    }
-
-   public List<FeatureInfo> getLineFeatures(int requestedline, final int baseLine, @Nonnull final List<Integer> featsNumbers)
-   {
-      if (requestedline < 0 || requestedline>=tokensFeatures.keySet().size())
-      {
-         return null;
-      }
-      // all default features
-      List<FeatureInfo> lineFeatures = extractDefaultFeatures(requestedline);
-      ArrayList<FeatureInfo> retval = new ArrayList<>(lineFeatures.size());
-      requestedline = requestedline - baseLine;
-
-      /**
-       * Take all line features that have a valid column number (a number passed in featsNumbers) Then rename all features
-       * row as a
-       */
-      for (FeatureInfo info : lineFeatures)
-      {
-         for (int col : featsNumbers)
-         {
-            if (info.getColumn() == col)
-            {
-               info.setRow(requestedline);
-               retval.add(info);
-            }
-         }
-      }
-
-      return retval;
-   }
    
    protected ListMultimap<Integer, FeatureInfo> getTokensFeaturesMap()
    {
-      return this.tokensFeatures;
+      return this.lineDefaultFeatures;
    }
 }

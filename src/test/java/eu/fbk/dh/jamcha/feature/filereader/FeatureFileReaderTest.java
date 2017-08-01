@@ -19,7 +19,9 @@ public class FeatureFileReaderTest
    private FeatureFileReader fileReader;
    private final ArrayListMultimap<Integer, FeatureInfo> result = ArrayListMultimap.create();
    private int colsNum;
-   public static final Path fileTestPath= Paths.get("/home/mazzetti/Documents/test");
+   
+   // Test file path
+   public static final Path fileTestPath= Paths.get("/home/mazzetti/Documents/DefaultLineFeatures");
    
    public FeatureFileReaderTest()
    {

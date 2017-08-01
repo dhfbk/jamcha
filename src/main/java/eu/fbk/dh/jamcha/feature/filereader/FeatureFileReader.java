@@ -40,6 +40,8 @@ public class FeatureFileReader
     */
    protected final void parseFile() throws IOException
    {
+         // ADD: gestire le righe bianche alla fine del file
+      
          // Open file to read
          BufferedReader reader = Files.newBufferedReader(filePath);
          getColumnsNumber();

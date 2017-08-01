@@ -15,7 +15,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
-import java.util.List;
 import javax.annotation.Nonnull;
 import org.junit.Test;
 import static org.junit.Assert.*;
@@ -29,26 +28,14 @@ public class FeatureIntegratorTest
 
    private FeatureIntegrator integrator;
    private FeatureParserSelectorTest selectorTest;
-   private FeatureFileReaderTest readerTest;
+   private FeatureFileReader reader;
 
-   public FeatureIntegratorTest()
+   public FeatureIntegratorTest() throws IOException
    {
-      readerTest = new FeatureFileReaderTest();
+      reader = new FeatureFileReader(FeatureFileReaderTest.fileTestPath);
+      reader.parseFile();
       selectorTest = new FeatureParserSelectorTest();
-      integrator = new FeatureIntegrator(selectorTest.getFeaturesParameters(), readerTest.getTokenFeatures());
-      // F:-2..2:1..1
-      // F:-3..-2:0..1
-      // T:-4..-1
-      // T:-5..-3
-
-      // -5:-1
-      // -4:-1
-      // -3:0,1,-1
-      // -2:0,1,-1
-      // -1:1,-1
-      //  1:1
-      //  2:1
-      // CAMBIARE IN BASE A FEATURES PARAMETRS
+      integrator = new FeatureIntegrator(selectorTest.getFeaturesParameters(), reader.getTokensFeatures());
    }
 
    /**
@@ -58,9 +45,10 @@ public class FeatureIntegratorTest
    public void testIntegrateTokensFeatures() throws IOException
    {
       System.out.println("integrateTokensFeatures");
-      ListMultimap<Integer, FeatureInfo> expectedFileIntegrated = readIntegratedTestFile(Paths.get("/home/mazzetti/Documents/integratorTest"));
+      // Lettura file con le features già integrate
+      ListMultimap<Integer, FeatureInfo> expectedFileIntegrated = readIntegratedTestFile(Paths.get("/home/mazzetti/Documents/IntegratedLineFeatures"));
       integrator.integrateTokensFeatures();
-      assertEquals(readerIntegratedFile.getTokensFeatures(), integrator.getTokensFeaturesMap());
+      assertEquals(expectedFileIntegrated, integrator.getTokensFeaturesMap());
    }
 
    /**

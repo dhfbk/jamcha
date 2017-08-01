@@ -21,10 +21,10 @@ public class FeatureParserSelectorTest
       // ***********************************************************
       //                         PARAMETRI FEATURES
       // ***********************************************************
-      String parameter = "F:-2..2:1..1";
+      String parameter = "F:-2..1:0..1";
       parametersListValues.add(parameter);
 
-      parameter = "F:-3..-2:0..1";
+      parameter = "F:-3..-2:1..2";
       parametersListValues.add(parameter);
 
       parameter = "T:-4..-1";
@@ -37,8 +37,10 @@ public class FeatureParserSelectorTest
       //                         VALORI CORRETTI PARAMETRI FEATURES
       // ***********************************************************
       // column 0
-      expected.put(0, -3);
       expected.put(0, -2);
+      expected.put(0, -1);
+      expected.put(0, 0);
+      expected.put(0, 1);
 
       // column 1
       expected.put(1, -3);
@@ -46,14 +48,17 @@ public class FeatureParserSelectorTest
       expected.put(1, -1);
       expected.put(1, 0);
       expected.put(1, 1);
-      expected.put(1, 2);
 
-      // column -1
-      expected.put(-1, -5);
-      expected.put(-1, -4);
-      expected.put(-1, -3);
-      expected.put(-1, -2);
-      expected.put(-1, -1);
+      // column 2
+      expected.put(2, -3);
+      expected.put(2, -2);
+      
+      // column 3 (tag)
+      expected.put(3, -5);
+      expected.put(3, -4);
+      expected.put(3, -3);
+      expected.put(3, -2);
+      expected.put(3, -1);
 
    }
 

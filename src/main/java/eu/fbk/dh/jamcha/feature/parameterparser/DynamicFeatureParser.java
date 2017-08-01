@@ -21,18 +21,24 @@ public final class DynamicFeatureParser extends FeatureParser
     * In dynamic feature we consider only one column, tag column. This is an arbitrary value. Do not choose a value >-1
     * because those values are reserved to features columns.
     */
-   private final static int COLUMN_VALUE = -1;
+   private final int COLUMN_VALUE;
 
-   private DynamicFeatureParser()
+   private DynamicFeatureParser(int totalColumns)
    {
-      super("T", 0, new FeatureSectionValuesConstraints(ROWS_MIN_VALUE, COLUMN_VALUE));
+      super("T", 0, new FeatureSectionValuesConstraints(ROWS_MIN_VALUE, totalColumns-1));
+      COLUMN_VALUE=totalColumns-1;
    }
 
-   public static DynamicFeatureParser getInstance()
+   /**
+    *
+    * @param numberOfAllColumns number(count) of columns, tag column included
+    * @return
+    */
+   public static DynamicFeatureParser getInstance(int numberOfAllColumns)
    {
       if (parser == null)
       {
-         parser = new DynamicFeatureParser();
+         parser = new DynamicFeatureParser(numberOfAllColumns);
       }
       return parser;
    }
