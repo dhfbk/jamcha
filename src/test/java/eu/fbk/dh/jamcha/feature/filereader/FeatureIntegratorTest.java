@@ -10,6 +10,7 @@ import com.google.common.collect.ListMultimap;
 import eu.fbk.dh.jamcha.feature.FeatureInfo;
 import eu.fbk.dh.jamcha.feature.FeatureParserSelectorTest;
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -45,48 +46,33 @@ public class FeatureIntegratorTest
    public void testIntegrateTokensFeatures() throws IOException
    {
       System.out.println("integrateTokensFeatures");
-      // Lettura file con le features già integrate
-      ListMultimap<Integer, FeatureInfo> expectedFileIntegrated = readIntegratedTestFile(Paths.get("/home/mazzetti/Documents/IntegratedLineFeatures"));
       integrator.integrateTokensFeatures();
-      assertEquals(expectedFileIntegrated, integrator.getTokensFeaturesMap());
-   }
 
-   /**
-    * Legge un file di testo con la lista di features già integrata per ogni riga (token)
-    *
-    * @param filePath
-    * @return riga->features integrate
-    * @throws IOException
-    */
-   private ListMultimap<Integer, FeatureInfo> readIntegratedTestFile(@Nonnull Path filePath) throws IOException
-   {
-      ListMultimap<Integer, FeatureInfo> expectedResult = ArrayListMultimap.create();
-      // Open file to read
-      BufferedReader reader = Files.newBufferedReader(filePath);
+      // Lettura file con le features già integrate
+      File fileIntegratedTest = new FeatureFileReaderTest().loadFileFromResources("IntegratedFeatures.txt");
+      ListMultimap<Integer, FeatureInfo> expectedFileIntegrated = FeatureFileReaderTest.parseTestFile(fileIntegratedTest);
 
-      String line;
-      int rowCounter = 0;
-
-      // Read file lines and get features of each line
-      while ((line = reader.readLine()) != null)
+      boolean retval = true;
+      for (int key : expectedFileIntegrated.keySet())
       {
-         // Split read line and check possible incorrect number of words(columns)
-         String[] lineWords = line.split(" ");
-
-         ArrayList<FeatureInfo> lineFeatures = new ArrayList<>();
-
-         // For each line word create an object containing row, column and feature value
-         // WordNumber is order number of word in line, starting from zero
-         for (short wordNumber = 0; wordNumber < lineWords.length; wordNumber++)
+         if (!retval)
          {
-            lineFeatures.add(new FeatureInfo(0, wordNumber, lineWords[wordNumber].toCharArray()));
+            break;
          }
-
-         // Put all line features in all features schema
-         expectedResult.putAll(rowCounter, lineFeatures);
-         rowCounter++;
+         for (FeatureInfo featInfo : expectedFileIntegrated.get(key))
+         {
+            if (integrator.getIntegratedtFeaturesMap().get(key).contains(featInfo))
+            {
+               retval = true;
+            }
+            else
+            {
+               retval = false;
+               break;
+            }
+         }
       }
-      return expectedResult;
+      assertEquals(true, retval);
    }
 
 }

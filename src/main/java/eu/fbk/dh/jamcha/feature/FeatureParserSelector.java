@@ -102,7 +102,7 @@ public final class FeatureParserSelector
             System.out.println("FeatureSelector.parseFeature(): Feature F");
             break;
          case FeatureNames.FEATURE_DYNAMIC:
-            featureParser = DynamicFeatureParser.getInstance();
+            featureParser = DynamicFeatureParser.getInstance(columsNumber);
             System.out.println("FeatureSelector.parseFeature(): Feature T");
             break;
       }

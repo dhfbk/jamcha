@@ -51,10 +51,6 @@ public final class FeatureIntegrator
     */
    public void integrateTokensFeatures()
    {
-
-      // TODO: gestire colonna TAG
-      // TODO: gestire fine righ?
-      // per ogni riga del file di train
       for (int actualRow : lineDefaultFeatures.keySet())
       {
          // for each actualRow parameter add all columns
@@ -124,8 +120,13 @@ public final class FeatureIntegrator
       return rowCols;
    }
    
-   protected ListMultimap<Integer, FeatureInfo> getTokensFeaturesMap()
+   protected ListMultimap<Integer, FeatureInfo> getDefaultFeaturesMap()
    {
       return this.lineDefaultFeatures;
+   }
+   
+    protected ListMultimap<Integer, FeatureInfo> getIntegratedtFeaturesMap()
+   {
+      return this.lineFeatures;
    }
 }

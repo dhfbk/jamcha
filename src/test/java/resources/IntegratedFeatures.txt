@@ -1,0 +1,7 @@
+token0 a0 token1 a1
+token0 a0 c0 token1 a1 token2 a2
+token0 a0 b0 c0 token1 a1 c1 token2 a2 token3 a3
+a0 b0 c0 token1 a1 b1 c1 token2 a2 c2 token3 a3 token4 a4
+c0 a1 b1 c1 token2 a2 b2 c2 token3 a3 c3 token4 a4 token5 a5
+c0 c1 a2 b2 c2 token3 a3 b3 c3 token4 a4 c4 token5 a5 token6 a6
+c1 c2 a3 b3 c3 token4 a4 b4 c4 token5 a5 c5 token6 a6
