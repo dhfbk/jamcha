@@ -15,7 +15,7 @@ public final class FeatureInfo implements Comparable<FeatureInfo>
    private short column;
 
    @Nonnull
-   private final char[] value;
+   private char[] value;
 
    public FeatureInfo(int row, short column, @Nonnull final char[] featureValue)
    {
@@ -23,7 +23,7 @@ public final class FeatureInfo implements Comparable<FeatureInfo>
       this.column = column;
       this.value = featureValue;
    }
-   
+
    public FeatureInfo(int row, short column, @Nonnull String featureValue)
    {
       this(row, column, featureValue.toCharArray());
@@ -41,28 +41,42 @@ public final class FeatureInfo implements Comparable<FeatureInfo>
 
    public void setRow(int row)
    {
-      if (row >= 0)
-      {
-         this.row = row;
-      }
+      this.row = row;
    }
 
    public void setColumn(short col)
    {
-      this.column = col;
+      if (col > -1)
+      {
+         this.column = col;
+      }
+   }
+   
+   public void setValue(String value)
+   {
+      if(value!=null)
+      {
+         this.value=value.toCharArray();
+      }
    }
 
    public String getFeatureValue()
    {
-      return Arrays.toString(this.value);
+      return new String(this.value);
+   }
+   
+   public char[] getFeatureValueLight()
+   {
+      return this.value;
    }
 
    @Override
    public String toString()
    {
-      StringBuilder build = new StringBuilder(value.length);
-      build.append(value);
-      return build.toString();
+//      StringBuilder build = new StringBuilder(value.length);
+//      build.append(value);
+//      return build.toString();
+      return row + "_" + column + "_" + String.valueOf(value);
    }
 
    @Override

@@ -4,19 +4,12 @@
  * and open the template in the editor.
  */
 package eu.fbk.dh.jamcha.feature.filereader;
-
-import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.ListMultimap;
 import eu.fbk.dh.jamcha.feature.FeatureInfo;
 import eu.fbk.dh.jamcha.feature.FeatureParserSelectorTest;
-import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.ArrayList;
-import javax.annotation.Nonnull;
+import java.util.List;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
@@ -50,18 +43,22 @@ public class FeatureIntegratorTest
 
       // Lettura file con le features già integrate
       File fileIntegratedTest = new FeatureFileReaderTest().loadFileFromResources("IntegratedFeatures.txt");
-      ListMultimap<Integer, FeatureInfo> expectedFileIntegrated = FeatureFileReaderTest.parseTestFile(fileIntegratedTest);
+      ListMultimap<Integer, FeatureInfo> correctIntegratedFeatures = FeatureFileReaderTest.parseTestFile(fileIntegratedTest);
+      transformParsedIntegratedFileIntoValidMap(correctIntegratedFeatures);
+      ListMultimap<Integer, FeatureInfo> attemptIntegratedFeatures = integrator.getIntegratedtFeaturesMap();
 
       boolean retval = true;
-      for (int key : expectedFileIntegrated.keySet())
+      for (int key : correctIntegratedFeatures.keySet())
       {
-         if (!retval)
+         if(retval==false)
          {
             break;
          }
-         for (FeatureInfo featInfo : expectedFileIntegrated.get(key))
+         for (FeatureInfo featInfo : correctIntegratedFeatures.get(key))
          {
-            if (integrator.getIntegratedtFeaturesMap().get(key).contains(featInfo))
+            List<FeatureInfo> keyCorrectFeatures=correctIntegratedFeatures.get(key);
+            List<FeatureInfo> keyAttemptFeatures=attemptIntegratedFeatures.get(key);
+            if (keyCorrectFeatures.size()== keyAttemptFeatures.size() && keyAttemptFeatures.contains(featInfo))
             {
                retval = true;
             }
@@ -71,8 +68,32 @@ public class FeatureIntegratorTest
                break;
             }
          }
+         if (retval == false)
+         {
+            break;
+         }
       }
       assertEquals(true, retval);
+   }
+
+   /**
+    * Trasforma la map del file di prova con le fatures integrate in una map confrontabile con la map generata dal metodo
+    * FeatureIntegrator.integrateTokensFeatures()
+    *
+    * @param parsedFileListFeatures
+    */
+   private void transformParsedIntegratedFileIntoValidMap(ListMultimap<Integer, FeatureInfo> parsedFileListFeatures)
+   {
+      for (int row : parsedFileListFeatures.keySet())
+      {
+         for (FeatureInfo info : parsedFileListFeatures.get(row))
+         {
+            String[] values = info.getFeatureValue().split("_");
+            info.setRow(Integer.valueOf(values[0]));
+            info.setColumn(Short.valueOf(values[1]));
+            info.setValue(values[2]);
+         }
+      }
    }
 
 }

@@ -57,7 +57,7 @@ public final class FeatureIntegrator
          for (int desideredRow : rowColumns.keySet())
          {
             // 
-            List<FeatureInfo> lineRenamedFeatures = getLineFeatures(actualRow + desideredRow, actualRow, rowColumns.get(desideredRow));
+            List<FeatureInfo> lineRenamedFeatures = getLineFeatures(actualRow+desideredRow, actualRow);
             
             //Aggiungi 
             if(lineRenamedFeatures!=null)
@@ -69,13 +69,15 @@ public final class FeatureIntegrator
 
    }
 
-   private List<FeatureInfo> getLineFeatures(int requestedline, final int baseLine, @Nonnull final List<Integer> featsNumbers)
+   private List<FeatureInfo> getLineFeatures(int requestedline, final int baseLine)
    {
       // Se la riga richiesta è inferiore a zero oppure superiore al numero massimo di righe
       if (requestedline < 0 || requestedline>=lineDefaultFeatures.keySet().size())
       {
          return null;
       }
+      
+      List<Integer> featsNumbers= rowColumns.get(requestedline-baseLine);
       
       // all default features
       ArrayList<FeatureInfo> retval = new ArrayList<>(lineFeatures.size());
@@ -90,8 +92,8 @@ public final class FeatureIntegrator
          {
             if (info.getColumn() == col)
             {
-               info.setRow(requestedline-baseLine);
-               retval.add(info);
+               FeatureInfo newInfo = new FeatureInfo(requestedline-baseLine, info.getColumn(), info.getFeatureValueLight());
+               retval.add(newInfo);
             }
          }
       }
