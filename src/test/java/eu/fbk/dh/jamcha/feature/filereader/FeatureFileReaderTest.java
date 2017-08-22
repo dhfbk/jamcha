@@ -2,18 +2,15 @@ package eu.fbk.dh.jamcha.feature.filereader;
 
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.ListMultimap;
-import com.google.common.io.Resources;
 import eu.fbk.dh.jamcha.feature.FeatureInfo;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import javax.annotation.Nonnull;
-import org.apache.commons.io.FileUtils;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
@@ -29,7 +26,7 @@ public class FeatureFileReaderTest
    private int colsNum;
 
    // Test file path
-   public static final Path fileTestPath = Paths.get("/home/mazzetti/Documents/DefaultLineFeatures");
+   public static final Path fileTestPath = Paths.get("DefaultLineFeatures.txt");
 
    public FeatureFileReaderTest()
    {
@@ -166,7 +163,7 @@ public class FeatureFileReaderTest
     * @param filePath path del file che si trova nelle risorse. Inserire il path relativo a resources
     * @return File associato al path passato come parametro
     */
-   protected File loadFileFromResources(String filePath)
+   protected static File loadFileFromResources(String filePath)
    {
       
       Path path = Paths.get("src/test/java/resources/", filePath);

@@ -26,10 +26,12 @@ public class FeatureIntegratorTest
 
    public FeatureIntegratorTest() throws IOException
    {
-      reader = new FeatureFileReader(FeatureFileReaderTest.fileTestPath);
-      reader.parseFile();
+//      reader = new FeatureFileReader(FeatureFileReaderTest.fileTestPath);
+//      reader.parseFile();
+      File defaultFeaturesFile=FeatureFileReaderTest.loadFileFromResources(FeatureFileReaderTest.fileTestPath.toString());
+      
       selectorTest = new FeatureParserSelectorTest();
-      integrator = new FeatureIntegrator(selectorTest.getFeaturesParameters(), reader.getTokensFeatures());
+      integrator = new FeatureIntegrator(selectorTest.getFeaturesParameters(), FeatureFileReaderTest.parseTestFile(defaultFeaturesFile));
    }
 
    /**

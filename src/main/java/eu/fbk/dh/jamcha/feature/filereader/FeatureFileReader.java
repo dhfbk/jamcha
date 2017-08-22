@@ -108,4 +108,26 @@ public class FeatureFileReader
       return tokenFeatures;
    }
    
+   /**
+    * 
+    * @return list of all possible tags
+    */
+   public Iterable<String> getAllTags()
+   {
+      ArrayList<String> listOfTags= new ArrayList<>();
+      for(FeatureInfo info : tokenFeatures.values())
+      {
+         if(isTag(info.getColumn()))
+         {
+            listOfTags.add(info.getFeatureValue());
+         }
+      }
+      return listOfTags;
+   }
+   
+   private boolean isTag(int featureIndex)
+   {
+      return featureIndex==(colsNumber-1);
+   }
+   
 }
