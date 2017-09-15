@@ -31,7 +31,7 @@ public class FeatureFileReader
    private List<Row> rowFeatures = new ArrayList<>();
    
    /**
-    * List of all lines that are first occurrence of a sentence (inclusive). File can contains multiple sentences. These are separated by a line represented by SENTENCE_BOUNDARY_MARKER.
+    * List of all lines indexes that are first occurrence of a sentence (inclusive). File can contains multiple sentences. These are separated by a line represented by SENTENCE_BOUNDARY_MARKER.
     * 
     */
    private List<Integer> sentencesStartLines=new ArrayList<>();
@@ -145,6 +145,11 @@ public class FeatureFileReader
    public boolean isTrainFile()
    {
       return this.isTrainFile;
+   }
+   
+   public List<Integer> getSentencesIndexesList()
+   {
+     return this.sentencesStartLines;
    }
 
 }

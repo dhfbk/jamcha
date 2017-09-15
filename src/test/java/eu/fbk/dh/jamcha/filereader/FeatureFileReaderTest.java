@@ -18,120 +18,165 @@ import static org.junit.Assert.*;
 public class FeatureFileReaderTest
 {
 
-   private FeatureFileReader fileReader;
-   private final ArrayList<Row> expectedResult = new ArrayList<>();
-   private int colsNum;
+  private FeatureFileReader fileReader;
+  private final ArrayList<Row> expectedResult = new ArrayList<>();
+  private final ArrayList<Integer> sentencesStartLines = new ArrayList<>();
+  private int colsNum;
 
-   // Test file path
-   public static final Path fileTestPath = Paths.get("DefaultLineFeatures.txt");
+  // Test file path
+  public static final Path fileTestPath = Paths.get("DefaultLineFeatures.txt");
 
-   public FeatureFileReaderTest()
-   {
-      Path filepath=loadFileFromResources(fileTestPath.toString()).toPath();
-      fileReader = new FeatureFileReader(filepath, true);
-      colsNum = 4;
+  public FeatureFileReaderTest(boolean isTrainFile)
+  {
+    Path filepath = loadFileFromResources(fileTestPath.toString()).toPath();
+    fileReader = new FeatureFileReader(filepath, isTrainFile);
+    colsNum = 4;
 
-      // ******************************************************************
-      //                      TOKENS FEATURES
-      // ******************************************************************
-      // token0 a0 b0 c0
-      String[] tmp =
-      {
-         "token0", "a0", "b0"
-      };
-      expectedResult.add(new Row(0, "c0", Arrays.asList(tmp)));
+    // ******************************************************************
+    //                      TOKENS FEATURES
+    // ******************************************************************
+    // -------------------- FIRST SENTENCE --------------------
+    sentencesStartLines.add(0);
+    // token0 a0 b0 c0
+    String[] tmp =
+    {
+      "token0", "a0", "b0"
+    };
+    expectedResult.add(new Row(0, "c0", Arrays.asList(tmp)));
 
-      // token1 a1 b1 c1
-      tmp = new String[]
-      {
-         "token1", "a1", "b1"
-      };
-      expectedResult.add(new Row(1, "c1", Arrays.asList(tmp)));
+    // token1 a1 b1 c1
+    tmp = new String[]
+    {
+      "token1", "a1", "b1"
+    };
+    expectedResult.add(new Row(1, "c1", Arrays.asList(tmp)));
 
-      //token2 a2 b2 c2
-      tmp = new String[]
-      {
-         "token2", "a2", "b2"
-      };
-      expectedResult.add(new Row(2, "c2", Arrays.asList(tmp)));
+    //token2 a2 b2 c2
+    tmp = new String[]
+    {
+      "token2", "a2", "b2"
+    };
+    expectedResult.add(new Row(2, "c2", Arrays.asList(tmp)));
 
-      //token3 a3 b3 c3
-      tmp = new String[]
-      {
-         "token3", "a3", "b3"
-      };
-      expectedResult.add(new Row(3, "c3", Arrays.asList(tmp)));
+    //token3 a3 b3 c3
+    tmp = new String[]
+    {
+      "token3", "a3", "b3"
+    };
+    expectedResult.add(new Row(3, "c3", Arrays.asList(tmp)));
 
-      //token4 a4 b4 c4
-      tmp = new String[]
-      {
-         "token4", "a4", "b4"
-      };
-      expectedResult.add(new Row(4, "c4", Arrays.asList(tmp)));
+    //token4 a4 b4 c4
+    tmp = new String[]
+    {
+      "token4", "a4", "b4"
+    };
+    expectedResult.add(new Row(4, "c4", Arrays.asList(tmp)));
 
-      //token5 a5 b5 c5
-      tmp = new String[]
-      {
-         "token5", "a5", "b5"
-      };
-      expectedResult.add(new Row(5, "c5", Arrays.asList(tmp)));
+    //token5 a5 b5 c5
+    tmp = new String[]
+    {
+      "token5", "a5", "b5"
+    };
+    expectedResult.add(new Row(5, "c5", Arrays.asList(tmp)));
 
-      //token6 a6 b6 c6
-      tmp = new String[]
-      {
-         "token6", "a6", "b6"
-      };
-      expectedResult.add(new Row(6, "c6", Arrays.asList(tmp)));
-   }
+    //token6 a6 b6 c6
+    tmp = new String[]
+    {
+      "token6", "a6", "b6"
+    };
+    expectedResult.add(new Row(6, "c6", Arrays.asList(tmp)));
 
-   /**
-    * Test of parseFile method, of class FeatureFileReader.
-    */
-   @Test
-   public void testParseFile()
-   {
-      System.out.println("parseFile");
-      try
-      {
-         fileReader.parseFile();
-      }
-      catch (IOException e)
-      {
-         System.out.println(e.getMessage());
-      }
-      
-      assertEquals(expectedResult, fileReader.getRowsFeatures());
+    // ------------------------------ SECOND SENTENCE -------------------------
+    sentencesStartLines.add(7);
+    //token7 a7 b7 c7
+    tmp = new String[]
+    {
+      "token7", "a7", "b7"
+    };
+    expectedResult.add(new Row(7, "c7", Arrays.asList(tmp)));
 
-   }
+    //token8 a8 b8 c8
+    tmp = new String[]
+    {
+      "token8", "a8", "b8"
+    };
+    expectedResult.add(new Row(8, "c8", Arrays.asList(tmp)));
 
-   /**
-    * Test of getColumnsCount method, of class FeatureFileReader.
-    */
-   @Test
-   public void testGetColumnsCount()
-   {
-      int retval = -1;
-      System.out.println("getColumnsCount");
-      try
-      {
-         retval = fileReader.getColumnsCount();
-      }
-      catch (IOException e)
-      {
-         System.out.println(e.getMessage());
-      }
-      assertEquals(colsNum, retval);
-   }
+    //token9 a9 b9 c9
+    tmp = new String[]
+    {
+      "token9", "a9", "b9"
+    };
+    expectedResult.add(new Row(9, "c9", Arrays.asList(tmp)));
 
-   public int getColumnsNumber()
-   {
-      return colsNum;
-   }
+    // ------------------------------ THIRD SENTENCE -------------------------
+    sentencesStartLines.add(10);
 
-   public List<Row> getDefaultFeatures()
-   {
-      return this.expectedResult;
-   }
+    //token10 a10 b10 c10
+    tmp = new String[]
+    {
+      "token10", "a10", "b10"
+    };
+    expectedResult.add(new Row(10, "c10", Arrays.asList(tmp)));
+
+    //token11 a11 b11 c11
+    tmp = new String[]
+    {
+      "token11", "a11", "b11"
+    };
+    expectedResult.add(new Row(11, "c11", Arrays.asList(tmp)));
+  }
+
+  /**
+   * Test of parseFile method, of class FeatureFileReader.
+   */
+  @Test
+  public void testParseFile()
+  {
+    System.out.println("parseFile");
+    try
+    {
+      fileReader.parseFile();
+    }
+    catch (IOException e)
+    {
+      System.out.println(e.getMessage());
+    }
+
+    boolean indexexFlag = sentencesStartLines.equals(fileReader.getSentencesIndexesList());
+    boolean featuresFlag = expectedResult.equals(fileReader.getRowsFeatures());
+    assertEquals(true, indexexFlag && featuresFlag);
+
+  }
+
+  /**
+   * Test of getColumnsCount method, of class FeatureFileReader.
+   */
+  @Test
+  public void testGetColumnsCount()
+  {
+    int retval = -1;
+    System.out.println("getColumnsCount");
+    try
+    {
+      retval = fileReader.getColumnsCount();
+    }
+    catch (IOException e)
+    {
+      System.out.println(e.getMessage());
+    }
+    assertEquals(colsNum, retval);
+  }
+
+  public int getColumnsNumber()
+  {
+    return colsNum;
+  }
+
+  public List<Row> getDefaultFeatures()
+  {
+    return this.expectedResult;
+  }
 
 //   /**
 //    * Legge un file di testo con la lista di features per ogni riga
@@ -170,19 +215,23 @@ public class FeatureFileReaderTest
 //      }
 //      return expectedResult;
 //   }
+  /**
+   * Load resource file from resources.
+   *
+   * @param filePath path del file che si trova nelle risorse. Inserire il path relativo a resources
+   * @return File associato al path passato come parametro
+   */
+  protected static File loadFileFromResources(String filePath)
+  {
 
-   /**
-    * Load resource file from resources.
-    *
-    * @param filePath path del file che si trova nelle risorse. Inserire il path relativo a resources
-    * @return File associato al path passato come parametro
-    */
-   protected static File loadFileFromResources(String filePath)
-   {
-
-      Path path = Paths.get("src/test/java/resources/", filePath);
-      File retvalFile = path.toFile();
-      return retvalFile;
-   }
+    Path path = Paths.get("src/test/java/resources/", filePath);
+    File retvalFile = path.toFile();
+    return retvalFile;
+  }
+  
+  protected List<Integer> getDefaultSentencesIndexesList()
+  {
+    return this.sentencesStartLines;
+  }
 
 }

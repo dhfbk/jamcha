@@ -1,11 +1,5 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package eu.fbk.dh.jamcha.filereader;
 
-import com.google.common.collect.ListMultimap;
 import eu.fbk.dh.jamcha.Row;
 import eu.fbk.dh.jamcha.parameterparser.feature.FeatureParserSelectorTest;
 import java.io.File;
@@ -31,7 +25,8 @@ public class FeatureIntegratorTest
       // Caricare file feature integrate
       // Calcolare feature integrate
       selectorTest = new FeatureParserSelectorTest();
-      integrator = new FeatureIntegrator(selectorTest.getFeaturesParameters(), new FeatureFileReaderTest().getDefaultFeatures());
+      FeatureFileReaderTest readTest= new FeatureFileReaderTest(true);
+      integrator = new FeatureIntegrator(selectorTest.getFeaturesParameters(), readTest.getDefaultFeatures(), readTest.getDefaultSentencesIndexesList());
    }
 
    /**
@@ -42,10 +37,11 @@ public class FeatureIntegratorTest
    public void testIntegrateFeatures() throws IOException
    {
       System.out.println("integrateTokensFeatures");
+      
       integrator.integrateFeatures();
 
       // Lettura file con le features già integrate
-      File fileIntegratedTest = new FeatureFileReaderTest().loadFileFromResources("IntegratedFeatures.txt");
+      File fileIntegratedTest = new FeatureFileReaderTest(true).loadFileFromResources("IntegratedFeatures.txt");
       reader= new FeatureFileReader(fileIntegratedTest.toPath(), true);
       List<Row> correctIntegratedFeatures = reader.parseFile();
       List<Row> attemptIntegratedFeatures = integrator.getIntegratedFeatures();
