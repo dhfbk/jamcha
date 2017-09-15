@@ -1,7 +1,5 @@
-package eu.fbk.dh.jamcha.feature.parameterparser;
+package eu.fbk.dh.jamcha.parameterparser.feature;
 
-import eu.fbk.dh.jamcha.feature.FeatureValues;
-import eu.fbk.dh.jamcha.feature.FeatureSectionValuesConstraints;
 import java.util.List;
 import javax.annotation.Nonnull;
 
@@ -14,7 +12,6 @@ public final class StaticFeatureParser extends FeatureParser
 {
 
    private static StaticFeatureParser parser = null;
-   private final static int ROWS_MIN_VALUE = -500;
    private final static int ROWS_MAX_VALUE = 500;
 
    private StaticFeatureParser(int totalColumns)
@@ -41,9 +38,9 @@ public final class StaticFeatureParser extends FeatureParser
    }
 
    @Override
-   protected FeatureValues createValuesSchema(@Nonnull String[] listOfSections)
+   protected FeatureParameters createValuesSchema(@Nonnull String[] listOfSections)
    {
-      FeatureValues schema = new FeatureValues();
+      FeatureParameters schema = new FeatureParameters();
 
       // Parse each section: first is rows section, second columns section
       // ROWS

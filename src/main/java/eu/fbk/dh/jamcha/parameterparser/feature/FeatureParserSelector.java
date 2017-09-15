@@ -1,8 +1,5 @@
-package eu.fbk.dh.jamcha.feature;
+package eu.fbk.dh.jamcha.parameterparser.feature;
 
-import eu.fbk.dh.jamcha.feature.parameterparser.FeatureParser;
-import eu.fbk.dh.jamcha.feature.parameterparser.DynamicFeatureParser;
-import eu.fbk.dh.jamcha.feature.parameterparser.StaticFeatureParser;
 import javax.annotation.Nonnull;
 import com.google.common.collect.TreeMultimap;
 
@@ -102,7 +99,7 @@ public final class FeatureParserSelector
             System.out.println("FeatureSelector.parseFeature(): Feature F");
             break;
          case FeatureNames.FEATURE_DYNAMIC:
-            featureParser = DynamicFeatureParser.getInstance(columsNumber);
+            featureParser = DynamicFeatureParser.getInstance();
             System.out.println("FeatureSelector.parseFeature(): Feature T");
             break;
       }
@@ -111,8 +108,8 @@ public final class FeatureParserSelector
       {
          try
          {
-            FeatureValues schema = featureParser.parseFeature(splittedString[1]);
-            insertFeatureValuesToGlobalSchema(schema);
+            FeatureParameters schema = featureParser.parseFeature(splittedString[1]);
+            insertFeatureParametersToGlobalSchema(schema);
          }
          catch (Exception e)
          {
@@ -133,9 +130,9 @@ public final class FeatureParserSelector
    }
 
    /**
-    * Inserts all feature schema values together with the others (to get all these values call getGlobalValuesSchema()
+    * Inserts all feature schema parameters together with the others (to get all these values call getGlobalValuesSchema()
     */
-   private void insertFeatureValuesToGlobalSchema(FeatureValues schema)
+   private void insertFeatureParametersToGlobalSchema(FeatureParameters schema)
    {
       for (int col : schema.getColumns())
       {
@@ -143,7 +140,6 @@ public final class FeatureParserSelector
       }
    }
 
-   //TODO: implementare aggiunta di tutte le feature schema ottenute nella treemultimap
    /**
     * Constructor
     *

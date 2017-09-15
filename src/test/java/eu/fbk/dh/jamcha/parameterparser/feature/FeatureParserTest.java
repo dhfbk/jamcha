@@ -1,10 +1,13 @@
-package eu.fbk.dh.jamcha.feature.parameterparser;
+package eu.fbk.dh.jamcha.parameterparser.feature;
 
+import eu.fbk.dh.jamcha.parameterparser.feature.FeatureParameters;
+import eu.fbk.dh.jamcha.parameterparser.feature.FeatureSectionValuesConstraints;
+import eu.fbk.dh.jamcha.parameterparser.feature.FeatureParser;
+import eu.fbk.dh.jamcha.parameterparser.feature.StaticFeatureParser;
 import java.util.Arrays;
 import java.util.List;
 import static org.junit.Assert.assertEquals;
 import org.junit.Test;
-import eu.fbk.dh.jamcha.feature.*;
 import java.util.ArrayList;
 
 /**
@@ -16,7 +19,7 @@ public class FeatureParserTest
 
    private final String featureParameter;
    private final int numCols;
-   private final FeatureValues featureValues = new FeatureValues();
+   private final FeatureParameters featureValues = new FeatureParameters();
    private final FeatureParser parser;
    private final List<FeatureSectionValuesConstraints> constraints=new ArrayList<>(2);
 

@@ -1,4 +1,4 @@
-package eu.fbk.dh.jamcha.feature;
+package eu.fbk.dh.jamcha.parameterparser.feature;
 
 import com.google.common.collect.SortedSetMultimap;
 import com.google.common.collect.TreeMultimap;
@@ -54,11 +54,11 @@ public class FeatureParserSelectorTest
       expected.put(2, -2);
       
       // column 3 (tag)
-      expected.put(3, -5);
-      expected.put(3, -4);
-      expected.put(3, -3);
-      expected.put(3, -2);
-      expected.put(3, -1);
+      expected.put(-1, -5);
+      expected.put(-1, -4);
+      expected.put(-1, -3);
+      expected.put(-1, -2);
+      expected.put(-1, -1);
 
    }
 
@@ -74,8 +74,8 @@ public class FeatureParserSelectorTest
       {
          selector.parseFeature(featParameter);
       }
-      TreeMultimap<Integer, Integer> result=selector.getGlobalValuesSchema();
-      assertEquals(this.expected, result);
+      TreeMultimap<Integer, Integer> actualResult=selector.getGlobalValuesSchema();
+      assertEquals(this.expected, actualResult);
    }
    
    public SortedSetMultimap getFeaturesParameters()

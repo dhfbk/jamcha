@@ -1,7 +1,5 @@
-package eu.fbk.dh.jamcha.feature.parameterparser;
+package eu.fbk.dh.jamcha.parameterparser.feature;
 
-import eu.fbk.dh.jamcha.feature.FeatureValues;
-import eu.fbk.dh.jamcha.feature.FeatureSectionValuesConstraints;
 import java.util.ArrayList;
 import java.util.List;
 import javax.annotation.Nonnull;
@@ -15,18 +13,16 @@ public final class DynamicFeatureParser extends FeatureParser
 {
 
    private static DynamicFeatureParser parser = null;
-   private final static int ROWS_MIN_VALUE = -500;
 
    /**
     * In dynamic feature we consider only one column, tag column. This is an arbitrary value. Do not choose a value >-1
     * because those values are reserved to features columns.
     */
-   private final int COLUMN_VALUE;
+   public final static int COLUMN_VALUE = -1;
 
-   private DynamicFeatureParser(int totalColumns)
+   private DynamicFeatureParser()
    {
-      super("T", 0, new FeatureSectionValuesConstraints(ROWS_MIN_VALUE, totalColumns-1));
-      COLUMN_VALUE=totalColumns-1;
+      super("T", 0, new FeatureSectionValuesConstraints(ROWS_MIN_VALUE, -1));
    }
 
    /**
@@ -34,11 +30,11 @@ public final class DynamicFeatureParser extends FeatureParser
     * @param numberOfAllColumns number(count) of columns, tag column included
     * @return
     */
-   public static DynamicFeatureParser getInstance(int numberOfAllColumns)
+   public static DynamicFeatureParser getInstance()
    {
       if (parser == null)
       {
-         parser = new DynamicFeatureParser(numberOfAllColumns);
+         parser = new DynamicFeatureParser();
       }
       return parser;
    }
@@ -52,9 +48,9 @@ public final class DynamicFeatureParser extends FeatureParser
     */
    @Override
    @Nonnull
-   protected FeatureValues createValuesSchema(@Nonnull String[] listOfSections)
+   protected FeatureParameters createValuesSchema(@Nonnull String[] listOfSections)
    {
-      FeatureValues schema = new FeatureValues();
+      FeatureParameters schema = new FeatureParameters();
 
       // ROWS
       List<Integer> listToAdd = parseSection(listOfSections[0], sectionValueConstraintsList.get(0));

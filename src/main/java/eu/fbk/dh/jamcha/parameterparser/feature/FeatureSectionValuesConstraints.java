@@ -1,4 +1,4 @@
-package eu.fbk.dh.jamcha.feature;
+package eu.fbk.dh.jamcha.parameterparser.feature;
 
 import javax.annotation.Nonnull;
 

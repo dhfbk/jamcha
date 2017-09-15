@@ -1,4 +1,4 @@
-package eu.fbk.dh.jamcha.feature;
+package eu.fbk.dh.jamcha.parameterparser.feature;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -9,7 +9,7 @@ import javax.annotation.Nonnull;
  *
  * @author dan92
  */
-public final class FeatureValues
+public final class FeatureParameters
 {
 
    private ArrayList<Integer> rows;
@@ -85,12 +85,12 @@ public final class FeatureValues
    @Override
    public boolean equals(Object obj)
    {
-      if(!(obj instanceof FeatureValues))
+      if(!(obj instanceof FeatureParameters))
       {
          return false;
       }
       
-      return ((FeatureValues)obj).rows.equals(this.rows) && ((FeatureValues)obj).columns.equals(this.columns);
+      return ((FeatureParameters)obj).rows.equals(this.rows) && ((FeatureParameters)obj).columns.equals(this.columns);
       
    }
 }

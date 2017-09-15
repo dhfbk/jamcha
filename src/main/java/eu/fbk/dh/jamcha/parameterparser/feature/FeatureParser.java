@@ -1,7 +1,5 @@
-package eu.fbk.dh.jamcha.feature.parameterparser;
+package eu.fbk.dh.jamcha.parameterparser.feature;
 
-import eu.fbk.dh.jamcha.feature.FeatureValues;
-import eu.fbk.dh.jamcha.feature.FeatureSectionValuesConstraints;
 import java.util.*;
 import javax.annotation.Nonnull;
 
@@ -40,6 +38,8 @@ public abstract class FeatureParser
     */
    protected int SECTION_SEPARATORS_COUNT;
 
+   protected final static int ROWS_MIN_VALUE = -500;
+
    /**
     * List of constraints for every section of feature. First element of this list represents the first sections constraints
     * and so on
@@ -49,17 +49,18 @@ public abstract class FeatureParser
    /**
     * Constructor
     *
-    * @param name feature name(command)
-    * @param sectionSeparatorCount Number of sections of this feature. A section is a part of string divided by "section
-    * separator"
+    * @param name                   feature name(command)
+    * @param sectionSeparatorCount  Number of sections of this feature. A section is a part of string divided by "section
+    *                               separator"
     * @param listSectionConstraints Costraints for every section of this feature. First element of this list represents the
-    * first sections constraints and so on. Can be NULL if none of the sections have any restriction
+    *                               first sections constraints and so on. Can be NULL if none of the sections have any
+    *                               restriction
     *
     * @exception IllegalArgumentException If number of constraints is not sectionSeparatorCount + 1
     */
    protected FeatureParser(@Nonnull final String name,
-         final int sectionSeparatorCount,
-         final FeatureSectionValuesConstraints... listSectionConstraints)
+                           final int sectionSeparatorCount,
+                           final FeatureSectionValuesConstraints... listSectionConstraints)
    {
       if (sectionSeparatorCount < 0)
       {
@@ -67,7 +68,7 @@ public abstract class FeatureParser
       }
       this.NAME = name;
       this.SECTION_SEPARATORS_COUNT = sectionSeparatorCount;
-      sectionValueConstraintsList = new ArrayList<FeatureSectionValuesConstraints>();
+      sectionValueConstraintsList = new ArrayList<>();
 
       // 
       // If there are no constraints, will be generated default constraints
@@ -98,15 +99,15 @@ public abstract class FeatureParser
     * Parse and obtains feature values
     *
     * @param stringToParse list of values, written using feature pattern without feature name. E.g. Considering
-    * F:-5..3:-3..-1 , substring passed as parameter is -5..3:-3..-1
+    *                      F:-5..3:-3..-1 , substring passed as parameter is -5..3:-3..-1
     *
     * @return
     *
     * @exception IllegalArgumentException stringToParse is empty or invalid feature pattern
-    * @exception Exception invalid feature pattern
+    * @exception Exception                invalid feature pattern
     */
    @Nonnull
-   public FeatureValues parseFeature(@Nonnull String stringToParse) throws Exception, IllegalArgumentException
+   public FeatureParameters parseFeature(@Nonnull String stringToParse) throws Exception, IllegalArgumentException
    {
       if (stringToParse.isEmpty())
       {
@@ -128,12 +129,12 @@ public abstract class FeatureParser
 
    /**
     *
-    * @param section feature section to parse
+    * @param section     feature section to parse
     * @param constraints section constraints
     *
     * @return section values list
     *
-    * @throws NumberFormatException this section does not respects right pattern
+    * @throws NumberFormatException    this section does not respects right pattern
     * @throws IllegalArgumentException this section is empty or uses invalid value
     */
    @Nonnull
@@ -247,12 +248,12 @@ public abstract class FeatureParser
     * Please call this method from parseFeature().
     *
     * @param listOfSections list of sections, each written using feature pattern. ATTENTION: Size is not controlled.(there is
-    * no control if number of passed sections respects feature pattern)
+    *                       no control if number of passed sections respects feature pattern)
     * @return all values for rows and columns (in other words, a matrix)
     */
    @Nonnull
-   protected abstract FeatureValues createValuesSchema(String[] listOfSections);
-   
+   protected abstract FeatureParameters createValuesSchema(String[] listOfSections);
+
    protected List<FeatureSectionValuesConstraints> getConstraintsList()
    {
       return sectionValueConstraintsList;
