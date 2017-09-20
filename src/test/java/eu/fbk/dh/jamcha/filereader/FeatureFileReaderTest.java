@@ -2,7 +2,6 @@ package eu.fbk.dh.jamcha.filereader;
 
 import eu.fbk.dh.jamcha.Row;
 import java.io.BufferedReader;
-import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -30,7 +29,7 @@ public class FeatureFileReaderTest
 
    public FeatureFileReaderTest()
    {
-      Path filepath = loadFileFromResources(TESTFILE_PATH.toString()).toPath();
+      Path filepath = getResourceFilePath(TESTFILE_PATH.toString());
       fileReader = new FeatureFileReader(filepath, true);
       colsNum = 4;
 
@@ -221,12 +220,10 @@ public class FeatureFileReaderTest
     *
     * @return File associato al path passato come parametro
     */
-   protected static File loadFileFromResources(String filePath)
+   protected static Path getResourceFilePath(String filePath)
    {
-
       Path path = Paths.get("src/test/java/resources/", filePath);
-      File retvalFile = path.toFile();
-      return retvalFile;
+      return path;
    }
 
 }

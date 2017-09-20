@@ -61,7 +61,7 @@ public final class FeatureIntegrator
       // For each line to integrate
       for (int actualLine = 0; actualLine < defaultFeatures.size(); actualLine ++)
       {
-         integratedFeatures.add(new Row(actualLine, defaultFeatures.get(actualLine).getSequenceIndex(), defaultFeatures.get(actualLine).getTag()));
+         integratedFeatures.add(new Row(actualLine, 0, defaultFeatures.get(actualLine).getTag()));
 
          // Add to this line previous or later lines features according to features parameters (static and dynamic)
          for (int desideredRowOffset : rowColumns.keySet())
@@ -69,9 +69,9 @@ public final class FeatureIntegrator
             int requestedLine = actualLine + desideredRowOffset;
 
             // requestedLine and actualLine must belong to same sentence
-            if (requestedLine >= 0 && defaultFeatures.get(actualLine).getSequenceIndex() == defaultFeatures.get(desideredRowOffset).getSequenceIndex())
+            if (requestedLine >= 0 && requestedLine < defaultFeatures.size() && defaultFeatures.get(actualLine).getSequenceIndex() == defaultFeatures.get(requestedLine).getSequenceIndex())
             {
-               List<String> requestedLineFeaturesToAdd = this.extractLineFeaturesValue(actualLine + desideredRowOffset);
+               List<String> requestedLineFeaturesToAdd = this.extractLineFeaturesValue(actualLine + desideredRowOffset, desideredRowOffset);
                integratedFeatures.get(actualLine).getFeatures().addAll(requestedLineFeaturesToAdd);
             }
          }
@@ -86,7 +86,7 @@ public final class FeatureIntegrator
     * @return features values of considered line that we must consider
     */
    @Nonnull
-   private List<String> extractLineFeaturesValue(int requestedline)
+   private List<String> extractLineFeaturesValue(int requestedline, int offset)
    {
       if (requestedline < 0 || requestedline >= defaultFeatures.size())
       {
@@ -94,13 +94,13 @@ public final class FeatureIntegrator
       }
 
       // List of columns numbers to consider of the requested line
-      Set<Integer> lineFeaturesNumbers = rowColumns.get(requestedline);
+      Set<Integer> columnsToAdd = rowColumns.get(offset);
 
       // Contains all columns values for this line
       ArrayList<String> retval = new ArrayList<>(defaultFeatures.get(0).getFeatures().size());
 
-      // Take all line features that have a valid column number (a number passed by lineFeaturesNumbers)
-      for (int column : lineFeaturesNumbers)
+      // Take all line features that have a valid column number (a number passed by columnsToAdd)
+      for (int column : columnsToAdd)
       {
          String columnFeature;
          if (column != DynamicFeatureParser.COLUMN_VALUE)

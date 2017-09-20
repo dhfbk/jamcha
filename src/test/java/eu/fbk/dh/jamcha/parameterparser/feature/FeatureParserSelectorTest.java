@@ -52,7 +52,7 @@ public class FeatureParserSelectorTest
       // column 2
       expected.put(2, -3);
       expected.put(2, -2);
-      
+
       // column 3 (tag)
       expected.put(-1, -5);
       expected.put(-1, -4);
@@ -74,11 +74,11 @@ public class FeatureParserSelectorTest
       {
          selector.parseFeature(featParameter);
       }
-      TreeMultimap<Integer, Integer> actualResult=selector.getGlobalValuesSchema();
+      TreeMultimap<Integer, Integer> actualResult = selector.getGlobalValuesSchema();
       assertEquals(this.expected, actualResult);
    }
-   
-   public SortedSetMultimap getFeaturesParameters()
+
+   public SortedSetMultimap<Integer, Integer> getFeaturesParameters()
    {
       return this.expected;
    }

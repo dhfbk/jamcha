@@ -1,7 +1,12 @@
-0_0_token0 0_1_a0 1_0_token1 1_1_a1
--1_0_token0 -1_1_a0 -1_3_c0 0_0_token1 0_1_a1 1_0_token2 1_1_a2
--2_0_token0 -2_1_a0 -2_2_b0 -2_3_c0 -1_0_token1 -1_1_a1 -1_3_c1 0_0_token2 0_1_a2 1_0_token3 1_1_a3
--3_1_a0 -3_2_b0 -3_3_c0 -2_0_token1 -2_1_a1 -2_2_b1 -2_3_c1 -1_0_token2 -1_1_a2 -1_3_c2 0_0_token3 0_1_a3 1_0_token4 1_1_a4
--4_3_c0 -3_1_a1 -3_2_b1 -3_3_c1 -2_0_token2 -2_1_a2 -2_2_b2 -2_3_c2 -1_0_token3 -1_1_a3 -1_3_c3 0_0_token4 0_1_a4 1_0_token5 1_1_a5
--5_3_c0 -4_3_c1 -3_1_a2 -3_2_b2 -3_3_c2 -2_0_token3 -2_1_a3 -2_2_b3 -2_3_c3 -1_0_token4 -1_1_a4 -1_3_c4 0_0_token5 0_1_a5 1_0_token6 1_1_a6
--5_3_c1 -4_3_c2 -3_1_a3 -3_2_b3 -3_3_c3 -2_0_token4 -2_1_a4 -2_2_b4 -2_3_c4 -1_0_token5 -1_1_a5 -1_3_c5 0_0_token6 0_1_a6
+token0 a0 token1 a1 c0
+token0 a0 c0 token1 a1 token2 a2 c1
+token0 a0 b0 c0 token1 a1 c1 token2 a2 token3 a3 c2
+a0 b0 c0 token1 a1 b1 c1 token2 a2 c2 token3 a3 token4 a4 c3
+c0 a1 b1 c1 token2 a2 b2 c2 token3 a3 c3 token4 a4 token5 a5 c4
+c0 c1 a2 b2 c2 token3 a3 b3 c3 token4 a4 c4 token5 a5 token6 a6 c5
+c1 c2 a3 b3 c3 token4 a4 b4 c4 token5 a5 c5 token6 a6 c6
+token7 a7 token8 a8 c7
+token7 a7 c7 token8 a8 token9 a9 c8
+token7 a7 b7 c7 token8 a8 c8 token9 a9 c9
+token10 a10 token11 a11 c10
+token10 a10 c10 token11 a11 c11
