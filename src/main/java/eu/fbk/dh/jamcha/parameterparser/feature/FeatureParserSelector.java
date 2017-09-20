@@ -4,9 +4,7 @@ import javax.annotation.Nonnull;
 import com.google.common.collect.TreeMultimap;
 
 /**
- * Singleton class that manage feature parsing and transformation
- *
- * @author dan92
+ * Class that manage feature parsing and transformation
  */
 public final class FeatureParserSelector
 {
@@ -40,23 +38,8 @@ public final class FeatureParserSelector
     /**
      * Contains all features values
      */
-    private TreeMultimap<Integer, Integer> treeMultimap = null;
+    private TreeMultimap<Integer, Integer> treeMultimap;
 
-    //private static FeatureParserSelector selector;
-//    /**
-//     *
-//     * @param numberOfColumns number of columns in the training file, tag column included
-//     *
-//     * @return instance of FeatureParserSelector
-//     */
-//    public static FeatureParserSelector getInstance(int numberOfColumns)
-//    {
-//        if (selector == null)
-//        {
-//            selector = new FeatureParserSelector(numberOfColumns);
-//        }
-//        return selector;
-//    }
     /**
      * Reads a string and selects the right class that can parse this specific feature. If there is a unsupported or invalid feature the method ends without any error.
      *
