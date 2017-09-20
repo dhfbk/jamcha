@@ -12,19 +12,21 @@ public class Row
 {
 
    private final int rowNumber;
+   private final int sequenceIndex;
    private final String tag;
    private List<String> features;
 
-   public Row(int rowNumber, String tag, List<String> rowFeatures)
+   public Row(int rowNumber, int sequenceIndex, String tag, List<String> rowFeatures)
    {
       this.rowNumber = rowNumber;
+      this.sequenceIndex = sequenceIndex;
       this.tag = tag;
       this.features = rowFeatures;
    }
 
-   public Row(int rowNumber, @Nonnull String tag)
+   public Row(int rowNumber, int sequenceIndex, @Nonnull String tag)
    {
-      this(rowNumber, tag, new ArrayList<String>());
+      this(rowNumber, sequenceIndex, tag, new ArrayList<String>());
    }
 
    public int getRowNumber()
@@ -53,12 +55,29 @@ public class Row
       if (o instanceof Row)
       {
          Row row = (Row) o;
-         if (this.rowNumber == row.getRowNumber() && this.tag.equals(row.getTag()) && this.features.equals(row.getFeatures()))
+         if (this.rowNumber == row.getRowNumber() && this.sequenceIndex == row.getSequenceIndex() && this.tag.equals(row.getTag()) && this.features.equals(
+            row.getFeatures()))
          {
             retval = true;
          }
       }
       return retval;
+   }
+
+   public int getSequenceIndex()
+   {
+      return sequenceIndex;
+   }
+
+   @Override
+   public int hashCode()
+   {
+      int hash = 7;
+      hash = 19 * hash + this.rowNumber;
+      hash = 19 * hash + this.sequenceIndex;
+      hash = 19 * hash + Objects.hashCode(this.tag);
+      hash = 19 * hash + Objects.hashCode(this.features);
+      return hash;
    }
 
 }
