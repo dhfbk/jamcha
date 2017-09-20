@@ -47,6 +47,7 @@ public final class FeatureParserSelector
    /**
     *
     * @param numberOfColumns number of columns in the training file, tag column included
+    *
     * @return
     */
    public static FeatureParserSelector getInstance(int numberOfColumns)
@@ -59,12 +60,10 @@ public final class FeatureParserSelector
    }
 
    /**
-    * Reads a string and selects the right class that can parse this specific feature. If there is a unsupported or invalid
-    * feature the method ends without any error.
+    * Reads a string and selects the right class that can parse this specific feature. If there is a unsupported or invalid feature the method ends without any error.
     *
-    * @param featureToParse feature string written with this pattern: featureName:featurePattern. (e.g. T:-5..-2). This
-    * method reads only featureName, that must consist of only one char. If last condition (one char) is not respected no
-    * exception is thrown.
+    * @param featureToParse feature string written with this pattern: featureName:featurePattern. (e.g. T:-5..-2). This method reads only featureName, that must consist of only one char. If
+    *                       last condition (one char) is not respected no exception is thrown.
     */
    public void parseFeature(@Nonnull String featureToParse)
    {
@@ -86,7 +85,6 @@ public final class FeatureParserSelector
       }
       // ***********************************************************************************
 
-      
       // ------------------------------------------------------------------------------------
       //                         CHOOSE AND CALL FEATURE PARSER
       // ************************************************************************************
@@ -96,14 +94,12 @@ public final class FeatureParserSelector
       {
          case FeatureNames.FEATURE_STATIC:
             featureParser = StaticFeatureParser.getInstance(columsNumber);
-            System.out.println("FeatureSelector.parseFeature(): Feature F");
             break;
          case FeatureNames.FEATURE_DYNAMIC:
             featureParser = DynamicFeatureParser.getInstance();
-            System.out.println("FeatureSelector.parseFeature(): Feature T");
             break;
       }
-      
+
       if (featureParser != null)
       {
          try

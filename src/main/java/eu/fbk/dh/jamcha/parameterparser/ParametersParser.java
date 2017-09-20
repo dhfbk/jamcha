@@ -6,7 +6,7 @@ import java.nio.file.Paths;
 import javax.annotation.Nonnull;
 
 /**
- *
+ * Class that parse command line parameters and return a their values
  */
 public final class ParametersParser
 {
@@ -18,7 +18,7 @@ public final class ParametersParser
       protected final static String MODEL = "MODEL";
       protected final static String FEATURE = "FEATURE";
    }
-   
+
    /**
     * CORPUS, MODEL and FEATURE parameters values
     */
@@ -27,27 +27,27 @@ public final class ParametersParser
       public final Path CORPUS_PATH;
       public final Path MODEL_PATH;
       public final String FEATURES_PARAMETERS;
-      
+
       private Parameters(@Nonnull Path corpus, @Nonnull Path model, @Nonnull String features)
       {
-         CORPUS_PATH=corpus;
-         MODEL_PATH=model;
-         FEATURES_PARAMETERS=features;
+         CORPUS_PATH = corpus;
+         MODEL_PATH = model;
+         FEATURES_PARAMETERS = features;
       }
    }
 
    /**
-    * Read all supported parameters and store values. Feature value parameters must be elaborate using
-    * {@link FeatureParserSelector }
+    * Read all supported parameters and store values. Feature value parameters must be elaborate using {@link FeatureParserSelector }
     *
     * @param parameters command line parameters
-    * @return 
+    *
+    * @return
     */
    public static Parameters readParameters(@Nonnull String[] parameters)
    {
-      Path corpus=null;
-      Path model=null;
-      String features=null;
+      Path corpus = null;
+      Path model = null;
+      String features = null;
 
       // Parse all supported parameters
       for (String parameter : parameters)
@@ -64,7 +64,7 @@ public final class ParametersParser
          {
             case ParametersOptions.CORPUS:
             {
-               if (corpus!=null)
+               if (corpus != null)
                {
                   throw new IllegalArgumentException(ParametersOptions.CORPUS + " is duplicated");
                }
@@ -74,7 +74,7 @@ public final class ParametersParser
 
             case ParametersOptions.MODEL:
             {
-               if (model!=null)
+               if (model != null)
                {
                   throw new IllegalArgumentException(ParametersOptions.MODEL + " is duplicated");
                }
@@ -84,7 +84,7 @@ public final class ParametersParser
 
             case ParametersOptions.FEATURE:
             {
-               if (features!=null)
+               if (features != null)
                {
                   throw new IllegalArgumentException(ParametersOptions.FEATURE + "is duplicated");
                }
@@ -95,7 +95,7 @@ public final class ParametersParser
       }
 
       // All parameters must be present
-      if (corpus==null ||model==null ||features==null)
+      if (corpus == null || model == null || features == null)
       {
          throw new IllegalArgumentException("Please spcify all parameters: CORPUS, MODEL, FEATURE");
       }
