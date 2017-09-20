@@ -9,60 +9,60 @@ import javax.annotation.Nonnull;
  */
 public class FeatureSectionValuesConstraints
 {
-    public final int VALUE_MIN;
-    public final int VALUE_MAX;
+   public final int VALUE_MIN;
+   public final int VALUE_MAX;
 
-    /**
-     * Constructor
-     *
-     * @param valueMin
-     * @param valueMax
-     */
-    public FeatureSectionValuesConstraints(int valueMin, int valueMax)
-    {
-        VALUE_MIN = valueMin;
-        VALUE_MAX = valueMax;
-    }
+   /**
+    * Constructor
+    *
+    * @param valueMin min value to consider
+    * @param valueMax max value to consider
+    */
+   public FeatureSectionValuesConstraints(int valueMin, int valueMax)
+   {
+      VALUE_MIN = valueMin;
+      VALUE_MAX = valueMax;
+   }
 
-    /**
-     * Constructor with default values: min=Integer.minValue, max=Integer.maxValue
-     */
-    public FeatureSectionValuesConstraints()
-    {
-        this(Integer.MIN_VALUE, Integer.MAX_VALUE);
-    }
+   /**
+    * Constructor with default values: min=Integer.minValue, max=Integer.maxValue
+    */
+   public FeatureSectionValuesConstraints()
+   {
+      this(Integer.MIN_VALUE, Integer.MAX_VALUE);
+   }
 
-    /**
-     * Parameter value satisfies restrictions?
-     *
-     * @param value value that must satisfies restrictions
-     *
-     * @return
-     */
-    public boolean isValid(int value)
-    {
-        return value >= VALUE_MIN && value <= VALUE_MAX;
-    }
+   /**
+    * Parameter value satisfies restrictions?
+    *
+    * @param value value that must satisfies restrictions
+    *
+    * @return value respects constraints of this object?
+    */
+   public boolean isValid(int value)
+   {
+      return value >= VALUE_MIN && value <= VALUE_MAX;
+   }
 
-    /**
-     * Creates an error message using value parameter
-     *
-     * @param value value that may be not valid
-     *
-     * @return error message if value is not valid, empty string otherwise
-     */
-    public @Nonnull
-    String errorMessage(int value)
-    {
-        String error;
-        if ( ! isValid(value))
-        {
-            error = "Value must be >= " + VALUE_MIN + " and <= " + VALUE_MAX;
-        }
-        else
-        {
-            error = "";
-        }
-        return error;
-    }
+   /**
+    * Creates an error message using value parameter
+    *
+    * @param value value that may be not valid
+    *
+    * @return error message if value is not valid, empty string otherwise
+    */
+   public @Nonnull
+   String errorMessage(int value)
+   {
+      String error;
+      if ( ! isValid(value))
+      {
+         error = "Value must be >= " + VALUE_MIN + " and <= " + VALUE_MAX;
+      }
+      else
+      {
+         error = "";
+      }
+      return error;
+   }
 }

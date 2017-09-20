@@ -41,7 +41,7 @@ public final class ParametersParser
     *
     * @param parameters command line parameters
     *
-    * @return
+    * @return command line parameters parsed and wrapped in an appropriate object
     */
    public static Parameters readParameters(@Nonnull String[] parameters)
    {

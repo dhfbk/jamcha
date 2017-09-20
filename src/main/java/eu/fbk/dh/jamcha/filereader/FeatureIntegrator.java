@@ -4,6 +4,7 @@ import com.google.common.collect.SortedSetMultimap;
 import com.google.common.collect.TreeMultimap;
 import eu.fbk.dh.jamcha.Row;
 import eu.fbk.dh.jamcha.parameterparser.feature.DynamicFeatureParser;
+import eu.fbk.dh.jamcha.parameterparser.feature.FeatureParser;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -36,9 +37,8 @@ public final class FeatureIntegrator
    /**
     * Constructor
     *
-    * @param featuresParameters  list of all features parameters values (T:-8..-2)
-    * @param defaultFeatures     list of all features for each token read from test file
-    * @param sentencesStartLines list of lines index that are first sentence line. (i.e.
+    * @param featuresParameters list of all features parameters values (T:-8..-2)
+    * @param defaultFeatures    list of all features for each token read from test file
     */
    public FeatureIntegrator(@Nonnull final SortedSetMultimap<Integer, Integer> featuresParameters, @Nonnull final List<Row> defaultFeatures)
 

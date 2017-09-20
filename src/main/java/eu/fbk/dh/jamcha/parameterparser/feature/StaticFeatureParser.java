@@ -16,13 +16,14 @@ public final class StaticFeatureParser extends FeatureParser
 
    private StaticFeatureParser(int totalColumns)
    {
-      super("F", 1, new FeatureSectionValuesConstraints(ROWS_MIN_VALUE, ROWS_MAX_VALUE), new FeatureSectionValuesConstraints(ROWS_MIN_VALUE, totalColumns-2));
+      super("F", 1, new FeatureSectionValuesConstraints(ROWS_MIN_VALUE, ROWS_MAX_VALUE), new FeatureSectionValuesConstraints(ROWS_MIN_VALUE, totalColumns - 2));
    }
 
    /**
-    * 
+    *
     * @param numberOfAllColumns number(count) of columns, tag column included
-    * @return 
+    *
+    * @return instance of StaticFeatureparser
     */
    public static StaticFeatureParser getInstance(int numberOfAllColumns)
    {

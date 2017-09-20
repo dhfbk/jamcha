@@ -34,7 +34,7 @@ public final class ModelCreator
     *
     * @param path path to write model file
     *
-    * @throws IOException
+    * @throws IOException default description
     */
    public void writeModelTo(Path path) throws IOException
    {

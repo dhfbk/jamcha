@@ -4,8 +4,7 @@ import java.util.*;
 import javax.annotation.Nonnull;
 
 /**
- * Abstract class that represents a feature: NAME, pattern, values constraints. It reads feature string and extracts rows and
- * columns
+ * Abstract class that represents a feature: NAME, pattern, values constraints. It reads feature string and extracts rows and columns
  *
  * @author dan92
  */
@@ -28,8 +27,8 @@ public abstract class FeatureParser
    protected static final char VALUE_SEPARATOR = ',';
 
    /**
-    * Is similar to "Value separator", but this is used when user indicates a range and not every single value (e.g. every
-    * single value -2,-1,0,1 range: -2..1) Delete \\ if not used with String.split() function
+    * Is similar to "Value separator", but this is used when user indicates a range and not every single value (e.g. every single value -2,-1,0,1 range: -2..1) Delete \\ if not used with
+    * String.split() function
     */
    protected static final String RANGE_VALUE_SEPARATOR = "\\.\\.";
 
@@ -41,8 +40,7 @@ public abstract class FeatureParser
    protected final static int ROWS_MIN_VALUE = -500;
 
    /**
-    * List of constraints for every section of feature. First element of this list represents the first sections constraints
-    * and so on
+    * List of constraints for every section of feature. First element of this list represents the first sections constraints and so on
     */
    protected ArrayList<FeatureSectionValuesConstraints> sectionValueConstraintsList;
 
@@ -50,11 +48,9 @@ public abstract class FeatureParser
     * Constructor
     *
     * @param name                   feature name(command)
-    * @param sectionSeparatorCount  Number of sections of this feature. A section is a part of string divided by "section
-    *                               separator"
-    * @param listSectionConstraints Costraints for every section of this feature. First element of this list represents the
-    *                               first sections constraints and so on. Can be NULL if none of the sections have any
-    *                               restriction
+    * @param sectionSeparatorCount  Number of sections of this feature. A section is a part of string divided by "section separator"
+    * @param listSectionConstraints Costraints for every section of this feature. First element of this list represents the first sections constraints and so on. Can be NULL if none of the
+    *                               sections have any restriction
     *
     * @exception IllegalArgumentException If number of constraints is not sectionSeparatorCount + 1
     */
@@ -74,7 +70,7 @@ public abstract class FeatureParser
       // If there are no constraints, will be generated default constraints
       if (listSectionConstraints == null)
       {
-         for (int i = 0; i < SECTION_SEPARATORS_COUNT; i++)
+         for (int i = 0; i < SECTION_SEPARATORS_COUNT; i ++)
          {
             sectionValueConstraintsList.add(new FeatureSectionValuesConstraints());
          }
@@ -98,10 +94,9 @@ public abstract class FeatureParser
    /**
     * Parse and obtains feature values
     *
-    * @param stringToParse list of values, written using feature pattern without feature name. E.g. Considering
-    *                      F:-5..3:-3..-1 , substring passed as parameter is -5..3:-3..-1
+    * @param stringToParse list of values, written using feature pattern without feature name. E.g. Considering F:-5..3:-3..-1 , substring passed as parameter is -5..3:-3..-1
     *
-    * @return
+    * @return All lines and columns values for this feature
     *
     * @exception IllegalArgumentException stringToParse is empty or invalid feature pattern
     * @exception Exception                invalid feature pattern
@@ -201,7 +196,7 @@ public abstract class FeatureParser
             // If minValue and maxValue are valid, will be created and added to list all numbers from minValue to maxValue (a sequence from                    minValue to maxValue)
             if (constraints.isValid(minValue) && constraints.isValid(maxValue))
             {
-               for (int i = minValue; i <= maxValue; i++)
+               for (int i = minValue; i <= maxValue; i ++)
                {
                   list.add(i);
                }
@@ -224,14 +219,14 @@ public abstract class FeatureParser
    /**
     * Creates feature pattern as string (featureName:values:values:values)
     *
-    * @return
+    * @return how to write correct feature string
     */
    protected String createStringSchema()
    {
       StringBuilder builder = new StringBuilder();
       builder.append(NAME);
       builder.append(':');
-      for (int i = 0; i < SECTION_SEPARATORS_COUNT; i++)
+      for (int i = 0; i < SECTION_SEPARATORS_COUNT; i ++)
       {
          builder.append("values").append(SECTION_SEPARATOR);
       }
@@ -243,12 +238,12 @@ public abstract class FeatureParser
    }
 
    /**
-    * Creates list of rows and columns for a specific feature. Therefore, every feature must implement this method and create
-    * a valid list of rows and columns values according to own constraints (Dynamic feature T cannot have multiple columns).
-    * Please call this method from parseFeature().
+    * Creates list of rows and columns for a specific feature. Therefore, every feature must implement this method and create a valid list of rows and columns values according to own
+    * constraints (Dynamic feature T cannot have multiple columns). Please call this method from parseFeature().
     *
-    * @param listOfSections list of sections, each written using feature pattern. ATTENTION: Size is not controlled.(there is
-    *                       no control if number of passed sections respects feature pattern)
+    * @param listOfSections list of sections, each written using feature pattern. ATTENTION: Size is not controlled.(there is no control if number of passed sections respects feature
+    *                       pattern)
+    *
     * @return all values for rows and columns (in other words, a matrix)
     */
    @Nonnull

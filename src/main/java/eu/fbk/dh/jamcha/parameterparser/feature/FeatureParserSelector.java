@@ -48,7 +48,7 @@ public final class FeatureParserSelector
     *
     * @param numberOfColumns number of columns in the training file, tag column included
     *
-    * @return
+    * @return instance of FeatureParserSelector
     */
    public static FeatureParserSelector getInstance(int numberOfColumns)
    {
@@ -118,7 +118,7 @@ public final class FeatureParserSelector
    /**
     * Return all features values.
     *
-    * @return
+    * @return list of all lines to condider for each column
     */
    public TreeMultimap<Integer, Integer> getGlobalValuesSchema()
    {

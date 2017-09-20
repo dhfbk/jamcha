@@ -99,7 +99,7 @@ public class FeatureFileReader
     *
     * @return number of columns in this file
     *
-    * @throws java.io.IOException
+    * @throws java.io.IOException impossible to open file
     */
    public int getColumnsCount() throws IOException
    {
