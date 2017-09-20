@@ -19,29 +19,22 @@ public class FeatureFileReader
    private int colsNumber = 0;
    private Path filePath;
    private boolean isTrainFile;
-   
+
    /**
     * Separator for two different sentences
     */
-   private final String SENTENCE_BOUNDARY_MARKER="";
+   private final String SENTENCE_BOUNDARY_MARKER = "";
 
    /**
     * List of all features of each row
     */
-   private List<Row> rowFeatures = new ArrayList<>();
-   
-   /**
-    * List of all lines indexes that are first occurrence of a sentence (inclusive). File can contains multiple sentences. These are separated by a line represented by SENTENCE_BOUNDARY_MARKER.
-    * 
-    */
-   private List<Integer> sentencesStartLines=new ArrayList<>();
+   private List<Row> rowsList = new ArrayList<>();
 
    /**
     * Constructor
     *
     * @param filePath    path of file to parse
-    * @param isTrainFile this file is a train file? In other words, contains solutions(tag)? (line solution tag must be in
-    *                    the last column)
+    * @param isTrainFile this file is a train file? In other words, contains solutions(tag)? (line solution tag must be in the last column)
     */
    public FeatureFileReader(@Nonnull Path filePath, boolean isTrainFile)
    {
@@ -53,59 +46,59 @@ public class FeatureFileReader
     * Parse a file and all row features. Each file line must have same number of words.
     *
     * @return list of read features for every file line
+    *
     * @throws IOException cannot open/read file or file does not have same words number for every line
     */
-   protected final List<Row> parseFile() throws IOException
+   public final List<Row> parseFile() throws IOException
    {
       // ADD: gestire le righe bianche alla fine del file
-      // ADD: gestire più paragrafi (EOS)
 
-      // Open file to read
-      BufferedReader reader = Files.newBufferedReader(filePath);
-      colsNumber = getColumnsCount();
-      sentencesStartLines.add(0);
-
-      String line;
-      int columnsMaxIndex = colsNumber - (isTrainFile ? 1 : 0);
-      int rowCounter = 0;
-
-      // Read file lines and get features of each line
-      while ((line = reader.readLine()) != null)
+      try (BufferedReader reader = Files.newBufferedReader(filePath);)
       {
-         if(!line.equals(SENTENCE_BOUNDARY_MARKER))
-         {
-            // Split read line and check possible incorrect number of words(columns)
-         String[] lineWords = line.split(" ");
-         if (lineWords.length != colsNumber)
-         {
-            throw new IOException("All file lines must have same number of words");
-         }
+         colsNumber = getColumnsCount();
+         String line;
+         int columnsMaxIndex = colsNumber - (isTrainFile ? 1 : 0);
+         int rowCounter = 0;
+         int sequenceIndex = 0;
 
-         // Integrate row features and put them to global structure
-         ArrayList<String> lineFeatures = new ArrayList<>(columnsMaxIndex);
-         for (int column = 0; column < columnsMaxIndex; column++)
+         // Read file lines and get features of each line
+         while ((line = reader.readLine()) != null)
          {
-            lineFeatures.add(lineWords[column]);
-         }
-         Row row = new Row(rowCounter, lineWords[lineWords.length - 1], lineFeatures);
-         rowFeatures.add(row);
+            if ( ! line.equals(SENTENCE_BOUNDARY_MARKER))
+            {
+               // Split read line and check possible incorrect number of words(columns)
+               String[] lineWords = line.split(" ");
+               if (lineWords.length != colsNumber)
+               {
+                  throw new IOException("All file lines must have same number of words");
+               }
 
-         rowCounter++;
+               // Integrate row features and put them to global structure
+               ArrayList<String> lineFeatures = new ArrayList<>(columnsMaxIndex);
+               for (int column = 0; column < columnsMaxIndex; column ++)
+               {
+                  lineFeatures.add(lineWords[column]);
+               }
+               Row row = new Row(rowCounter, sequenceIndex, lineWords[lineWords.length - 1], lineFeatures);
+               rowsList.add(row);
+
+               rowCounter ++;
+            }
+            else
+            {
+               sequenceIndex ++;
+            }
          }
-         else
-         {
-            sentencesStartLines.add(rowCounter);
-         }
-         
       }
-      return rowFeatures;
+      return rowsList;
    }
 
    /**
-    * Obtains number of columns in train file. Columns are separated by " " (space). Assumption: all lines of file have same
-    * number of columns(words). This method checks first line of train file.
+    * Obtains number of columns in train file. Columns are separated by " " (space). Assumption: all lines of file have same number of columns(words). This method checks first line of train
+    * file.
     *
     * @return number of columns in this file
+    *
     * @throws java.io.IOException
     */
    public int getColumnsCount() throws IOException
@@ -127,7 +120,7 @@ public class FeatureFileReader
     */
    public List<Row> getRowsFeatures()
    {
-      return rowFeatures;
+      return rowsList;
    }
 
    public void setFilePath(@Nonnull Path newFilePath, boolean isTrainFile)
@@ -145,11 +138,6 @@ public class FeatureFileReader
    public boolean isTrainFile()
    {
       return this.isTrainFile;
-   }
-   
-   public List<Integer> getSentencesIndexesList()
-   {
-     return this.sentencesStartLines;
    }
 
 }
