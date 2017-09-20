@@ -20,8 +20,12 @@ public class Main
         FeatureFileReader fileReader = new FeatureFileReader(parameters.CORPUS_PATH, true);
 
         fileReader.parseFile();
-        FeatureParserSelector selector = FeatureParserSelector.getInstance(fileReader.getColumnsCount());
-        selector.parseFeature(parameters.FEATURES_PARAMETERS);
+        FeatureParserSelector selector = new FeatureParserSelector(fileReader.getColumnsCount());
+
+        for (String feature : parameters.FEATURES_PARAMETERS)
+        {
+            selector.parseFeature(feature);
+        }
         FeatureIntegrator integrator = new FeatureIntegrator(selector.getGlobalValuesSchema(), fileReader.getRowsFeatures());
         integrator.integrateFeatures();
         ModelCreator modelCreator = new ModelCreator(integrator.getIntegratedFeatures());
