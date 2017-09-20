@@ -25,24 +25,25 @@ public class FeatureIntegratorTest
       // Caricare file feature integrate
       // Calcolare feature integrate
       selectorTest = new FeatureParserSelectorTest();
-      FeatureFileReaderTest readTest= new FeatureFileReaderTest(true);
+      FeatureFileReaderTest readTest = new FeatureFileReaderTest(true);
       integrator = new FeatureIntegrator(selectorTest.getFeaturesParameters(), readTest.getDefaultFeatures(), readTest.getDefaultSentencesIndexesList());
    }
 
    /**
     * Test of integrateFeatures method, of class FeatureIntegrator.
+    *
     * @throws java.io.IOException
     */
    @Test
    public void testIntegrateFeatures() throws IOException
    {
       System.out.println("integrateTokensFeatures");
-      
+
       integrator.integrateFeatures();
 
       // Lettura file con le features già integrate
       File fileIntegratedTest = new FeatureFileReaderTest(true).loadFileFromResources("IntegratedFeatures.txt");
-      reader= new FeatureFileReader(fileIntegratedTest.toPath(), true);
+      reader = new FeatureFileReader(fileIntegratedTest.toPath(), true);
       List<Row> correctIntegratedFeatures = reader.parseFile();
       List<Row> attemptIntegratedFeatures = integrator.getIntegratedFeatures();
 
@@ -74,24 +75,4 @@ public class FeatureIntegratorTest
 //      }
       assertEquals(correctIntegratedFeatures, attemptIntegratedFeatures);
    }
-
-//   /**
-//    * Trasforma la map del file di prova con le fatures integrate in una map confrontabile con la map generata dal metodo
-// FeatureIntegrator.integrateFeatures()
-//    *
-//    * @param parsedFileListFeatures
-//    */
-//   private void transformParsedIntegratedFileIntoValidMap(ListMultimap<Integer, FeatureInfo> parsedFileListFeatures)
-//   {
-//      for (int row : parsedFileListFeatures.keySet())
-//      {
-//         for (FeatureInfo info : parsedFileListFeatures.get(row))
-//         {
-//            String[] values = info.getFeatureValue().split("_");
-//            info.setRow(Integer.valueOf(values[0]));
-//            info.setColumn(Short.valueOf(values[1]));
-//            info.setValue(values[2]);
-//         }
-//      }
-//   }
 }
