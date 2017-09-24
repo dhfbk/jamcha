@@ -28,7 +28,7 @@ public final class ParametersParser
    /**
     * CORPUS, MODEL and FEATURE parameters values
     */
-   public class Parameters
+   public static class Parameters
    {
       public final Path CORPUS_PATH;
       public final Path MODEL_PATH;
@@ -151,7 +151,8 @@ public final class ParametersParser
 
    private static Parameters parsePredictModeParameters(@Nonnull String[] parameters)
    {
-
+      // TODO: implementare
+      return new Parameters(null, null, null);
    }
 
    private ParametersParser()
