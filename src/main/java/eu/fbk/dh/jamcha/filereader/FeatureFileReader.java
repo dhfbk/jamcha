@@ -79,7 +79,9 @@ public class FeatureFileReader
                {
                   lineFeatures.add(lineWords[column]);
                }
-               Row row = new Row(rowCounter, sequenceIndex, lineWords[lineWords.length - 1], lineFeatures);
+               // If this is a file without tags, row tag will be set to an empty string
+               String tag= isTrainFile ? lineWords[lineWords.length - 1]: "";
+               Row row = new Row(rowCounter, sequenceIndex, tag, lineFeatures);
                rowsList.add(row);
 
                rowCounter ++;

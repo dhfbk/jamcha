@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 /**
  * A row with all of its features and its tag
@@ -38,6 +39,7 @@ public class Row
     *
     * @return tag (true value, the response) of this line
     */
+   @Nullable
    public String getTag()
    {
       return tag;

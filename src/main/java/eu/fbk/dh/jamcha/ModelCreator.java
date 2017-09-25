@@ -17,12 +17,11 @@ import javax.annotation.Nonnull;
  */
 public final class ModelCreator
 {
-
    private HashMap<Integer, String> tagsMap;
    private List<Row> features;
    private List<LabelledVector> trainingSet;
 
-   public ModelCreator(@Nonnull List<Row> features)
+   public ModelCreator(@Nonnull List<Row> features, )
    {
       this.features = features;
       tagsMap = new HashMap<>(features.size());
