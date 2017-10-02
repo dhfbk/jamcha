@@ -30,5 +30,12 @@ public class Main
         integrator.integrateFeatures();
         ModelCreator modelCreator = new ModelCreator(integrator.getIntegratedFeatures());
         modelCreator.writeModelTo(parameters.MODEL_PATH);
+        
+        
+        //TODO: implementare prediction con file senza tag
+        //per ogni riga del file da predirre devo chiamare la Classifier.predict con il vector della linea stessa integrata. Ottengo lo stesso vector ma con il tag (predetto dal classifier).
+        
+        //TODO:implementare prediction con file con tag giusti
+        //fare poi la prediction facendo finta di non avere i tag ma poi confrontare i valoridie tag dati dalla prediction con i tag dati nel file di input (cioè quelli giusti)
     }
 }
