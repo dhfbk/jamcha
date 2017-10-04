@@ -21,7 +21,7 @@ public final class ModelCreator
    private List<Row> features;
    private List<LabelledVector> trainingSet;
 
-   public ModelCreator(@Nonnull List<Row> features, )
+   public ModelCreator(@Nonnull List<Row> features)
    {
       this.features = features;
       tagsMap = new HashMap<>(features.size());
