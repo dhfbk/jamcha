@@ -3,6 +3,8 @@ package eu.fbk.dh.jamcha.feature;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
 import com.google.common.collect.TreeMultimap;
+import eu.fbk.dh.jamcha.feature.IO.FeatureFileReader;
+import java.io.IOException;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -10,6 +12,9 @@ import java.util.List;
 import java.util.Set;
 import javax.annotation.Nonnull;
 
+/**
+ * Class that represent feature parameters that influence feature integration (eg. static and dynamic features)
+ */
 public class FeatureParameters
 {
    /**
@@ -18,27 +23,42 @@ public class FeatureParameters
    public static final String FILE_NAME = "featuresParameters.txt";
    private String features;
    private TreeMultimap<Integer, Integer> featuresParametersMap;
+   private final int columnsCount;
 
-   private FeatureParameters(@Nonnull String feature, @Nonnull Multimap<Integer, Integer> featuresMap)
+   private FeatureParameters(@Nonnull String feature, @Nonnull Multimap<Integer, Integer> featuresMap, int columnsCount)
    {
       this.features = feature;
+      if (columnsCount < FeatureFileReader.COLUMNS_COUNT_MIN)
+      {
+         throw new IllegalArgumentException("Number of columns is less tha " + FeatureFileReader.COLUMNS_COUNT_MIN);
+      }
+      this.columnsCount = columnsCount;
       featuresMap = fromColRowsToRowCols(featuresMap);
       featuresParametersMap = TreeMultimap.create(featuresMap);
    }
 
-   public static FeatureParameters create(@Nonnull String allFeatures, int columnsCount)
+   /**
+    * Builder of FeatureParameters
+    *
+    * @param allFeatures             single feature or a list of features separated by one whitespace char
+    * @param trainFileLineWordsCount number of words of a line of train file (every line of train file has same number of words). Check
+    *                                {@value FeatureFileReader.COLUMNS_COUNT_MIN}
+    *
+    * @return
+    */
+   public static FeatureParameters create(@Nonnull String allFeatures, int trainFileLineWordsCount)
    {
-      FeatureParser parser = new FeatureParser(columnsCount);
+      FeatureParser parser = new FeatureParser(trainFileLineWordsCount);
       String[] features = allFeatures.split(" ");
 
       Multimap<Integer, Integer> featuresMap = TreeMultimap.create();
       // Getting values map of each feature
       for (String feature : features)
       {
-         Multimap<Integer, Integer> featureMap = parser.parseFeature(feature);
-         featuresMap.putAll(featureMap);
+         Multimap<Integer, Integer> singleFeatureMap = parser.parseFeature(feature);
+         featuresMap.putAll(singleFeatureMap);
       }
-      FeatureParameters retval = new FeatureParameters(allFeatures, featuresMap);
+      FeatureParameters retval = new FeatureParameters(allFeatures, featuresMap, trainFileLineWordsCount);
       return retval;
    }
 
@@ -66,13 +86,15 @@ public class FeatureParameters
       return rowCols;
    }
 
-   public void saveTo(Path filePath)
+   public void saveTo(Path filePath) throws IOException
    {
+      //TODO: FeatureParameters.saveTo implementare
       throw new UnsupportedOperationException("Not supported yet.");
    }
 
-   public static FeatureParameters loadFrom(Path filePath)
+   public static FeatureParameters loadFrom(Path filePath) throws IOException
    {
+      //TODO: FeatureParameters.saveTo implementare
       throw new UnsupportedOperationException("Not supported yet.");
    }
 

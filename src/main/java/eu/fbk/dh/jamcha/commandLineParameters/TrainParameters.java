@@ -1,15 +1,14 @@
-package eu.fbk.dh.jamcha.parameters;
+package eu.fbk.dh.jamcha.commandLineParameters;
 
-import eu.fbk.dh.jamcha.feature.FeatureParameters;
-import java.nio.file.Path;
 import java.nio.file.Paths;
+import javax.annotation.Nonnull;
 
-public class PredictParameters extends ParametersReader
+public class TrainParameters extends ParametersReader
 {
-   private int columnsCount;
+   private String features;
 
    @Override
-   public void doReadParameters(String[] parameters)
+   protected void doReadParameters(@Nonnull String[] parameters)
    {
       // Parse all supported parameters
       for (String option : parameters)
@@ -44,41 +43,27 @@ public class PredictParameters extends ParametersReader
                break;
             }
 
+            case ParameterOption.FEATURES_OPTION:
+            {
+               if (this.features != null)
+               {
+                  throw new IllegalArgumentException(ParameterOption.FEATURES_OPTION + "is duplicated");
+               }
+               this.features = splittedParameter[1];
+               break;
+            }
          }
       }
-      FeatureParameters loadedParams = this.loadSavedParameters(MODEL_PATH);
-      String errorMessage = null;
 
       // All parameters must be present
       if (this.CORPUS_PATH == null || this.MODEL_PATH == null)
       {
-         errorMessage = "Please specify all parameters: CORPUS, MODEL";
+         throw new IllegalArgumentException("Please spcify all parameters: CORPUS, MODEL, FEATURE");
       }
-      else
-      {
-         if (loadedParams == null)
-         {
-            errorMessage = "Impossible to load saved parameters. MODEL path does not contain features parameters file.";
-         }
-      }
-      if (errorMessage != null)
-      {
-         throw new IllegalArgumentException(errorMessage);
-      }
-
-      this.features = loadedParams.getFeature();
-      this.columnsCount = loadedParams.getColumnsCount();
    }
 
-   private FeatureParameters loadSavedParameters(Path modelPath)
+   public String getRawFeaturesParameters()
    {
-      Path parametersPath = Paths.get(modelPath.toString(), FeatureParameters.FILE_NAME);
-
-      return FeatureParameters.loadFrom(parametersPath);
-   }
-
-   public int getColumnsCount()
-   {
-      return this.columnsCount;
+      return this.features;
    }
 }

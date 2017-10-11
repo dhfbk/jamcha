@@ -1,4 +1,4 @@
-package eu.fbk.dh.jamcha.parameters;
+package eu.fbk.dh.jamcha.commandLineParameters;
 
 import java.nio.file.Path;
 import java.security.InvalidParameterException;
@@ -9,7 +9,6 @@ public abstract class ParametersReader
 
    protected Path CORPUS_PATH;
    protected Path MODEL_PATH;
-   protected String features;
 
    private static final String TRAIN_COMMAND = "train";
    private static final String PREDICT_COMMAND = "predict";
@@ -29,11 +28,6 @@ public abstract class ParametersReader
    public Path getModelPath()
    {
       return MODEL_PATH;
-   }
-
-   public String getFeatures()
-   {
-      return this.features;
    }
 
    public final void readParameters(String[] parameters)
