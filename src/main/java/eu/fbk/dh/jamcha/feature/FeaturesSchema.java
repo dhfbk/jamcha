@@ -1,6 +1,6 @@
 package eu.fbk.dh.jamcha.feature;
 
-import eu.fbk.dh.jamcha.feature.IO.FeatureFileReader;
+import eu.fbk.dh.jamcha.feature.fileReader.FeatureFileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -125,6 +125,84 @@ public class FeaturesSchema
       public void setTag(@Nullable String tag)
       {
          this.tag = tag;
+      }
+   }
+
+   /**
+    * This class adds features of other lines to the current line using parsed features parameters.
+    *
+    * @see FeatureFileReader
+    * @see FeatureParser
+    */
+   private final static class FeatureIntegrator
+   {
+      /**
+       * For each line, add the features of the previous or later lines according to features parameters values (featuresParameters in constructor).
+       *
+       * @see FeatureIntegrator
+       * @see FeatureParser
+       */
+      private static void integrateFeatures(@Nonnull FeaturesSchema schema, @Nonnull FeatureParameters parameters)
+      {
+         // For each line to integrate
+         for (int actualLine = 0; actualLine < schema.defaultFeatures.size(); actualLine ++)
+         {
+            Row rowToAdd = new Row(actualLine, 0);
+            rowToAdd.setTag(schema.defaultFeatures.get(actualLine).getTag());
+            schema.integratedFeatures.add(rowToAdd);
+
+            // Add to this line previous or later lines features according to features parameters (static and dynamic)
+            for (int desideredRowOffset : parameters.getParameters().keySet())
+            {
+               int requestedLine = actualLine + desideredRowOffset;
+
+               // requestedLine and actualLine must belong to same sentence
+               if (requestedLine >= 0 && requestedLine < schema.defaultFeatures.size() && schema.defaultFeatures.get(actualLine).getSequence() == schema.defaultFeatures.get(
+                     requestedLine).getSequence())
+               {
+                  List<String> requestedLineFeaturesToAdd = extractLineFeaturesValue(schema, parameters, actualLine + desideredRowOffset, desideredRowOffset);
+                  schema.integratedFeatures.get(actualLine).features.addAll(requestedLineFeaturesToAdd);
+               }
+            }
+         }
+      }
+
+      /**
+       * Take all features values of line passed as parameter. (all features that must be considered according to features parameters)
+       *
+       * @param requestedline line of which we want the features. Must be between 0(inclusive) and lines count (exclusive)
+       *
+       * @return features values of considered line that we must consider
+       */
+      @Nonnull
+      private static List<String> extractLineFeaturesValue(@Nonnull FeaturesSchema schema, @Nonnull FeatureParameters parameters, int requestedline, int offset)
+      {
+         if (requestedline < 0 || requestedline >= schema.defaultFeatures.size())
+         {
+            String error = "Requested line must be between zero and " + (schema.defaultFeatures.size() - 1) + "(inclusive)";
+            throw new IllegalArgumentException(error);
+         }
+         // List of columns numbers to consider of the requested line
+         Collection<Integer> columnsToAdd = parameters.getParameters().get(offset);
+
+         // Contains all columns values for this line
+         ArrayList<String> retval = new ArrayList<>(schema.defaultFeatures.get(0).features.size());
+
+         // Take all line features that have a valid column number (a number passed by columnsToAdd)
+         for (int column : columnsToAdd)
+         {
+            String columnFeature;
+            if (column != FeatureParameters.FeatureParser.TAG_COLUMN_INDEX)
+            {
+               columnFeature = schema.defaultFeatures.get(requestedline).features.get(column);
+            }
+            else
+            {
+               columnFeature = schema.defaultFeatures.get(requestedline).getTag();
+            }
+            retval.add(columnFeature);
+         }
+         return retval;
       }
    }
 }

@@ -1,4 +1,4 @@
-package eu.fbk.dh.jamcha.feature.IO;
+package eu.fbk.dh.jamcha.feature.fileReader;
 
 import eu.fbk.dh.jamcha.feature.FeaturesSchema.Row;
 import eu.fbk.dh.jamcha.feature.FeaturesSchema;

@@ -3,7 +3,7 @@ package eu.fbk.dh.jamcha.feature;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
 import com.google.common.collect.TreeMultimap;
-import eu.fbk.dh.jamcha.feature.IO.FeatureFileReader;
+import eu.fbk.dh.jamcha.feature.fileReader.FeatureFileReader;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.ArrayList;
@@ -107,7 +107,15 @@ public class FeatureParameters
       return this.features;
    }
 
-   public static class FeatureParser
+   protected Multimap<Integer, Integer> getParameters()
+   {
+      return this.featuresParametersMap;
+   }
+
+   /**
+    * Class that parse a feature "command". In other words read a string written in an appropriate way(i.e. F:x,y,z:t.. ) and convert it to a data structure
+    */
+   protected static class FeatureParser
    {
       /**
        * Number of previous lines(belonging to same sentence), starting from the current one, of which it can get the features
@@ -122,7 +130,7 @@ public class FeatureParameters
       /**
        * Index that represents tag column in a
        */
-      private final static int TAG_COLUMN_INDEX = -1;
+      public final static int TAG_COLUMN_INDEX = -1;
 
       /**
        * All features syntax options(e.g. which char divides two sections)

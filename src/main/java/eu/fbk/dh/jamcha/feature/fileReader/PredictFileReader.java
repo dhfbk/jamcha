@@ -1,4 +1,4 @@
-package eu.fbk.dh.jamcha.feature.IO;
+package eu.fbk.dh.jamcha.feature.fileReader;
 
 import java.io.IOException;
 import java.nio.file.Path;
