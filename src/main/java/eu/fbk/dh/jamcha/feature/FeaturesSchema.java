@@ -10,12 +10,17 @@ import javax.annotation.Nullable;
 
 public class FeaturesSchema
 {
+   /**
+    * All train file read features, without any change
+    */
+   private final ArrayList<Row> defaultFeatures;
 
-   private ArrayList<Row> defaultFeatures;
-
+   /**
+    * All the features of the training file with additions resulting from the integration process, performed with tuning parameters passed to the integrated method
+    */
    private ArrayList<Row> integratedFeatures;
 
-   private List<String> tagsIndexes;
+   private ArrayList<String> tagsIndexes;
 
    private FeatureParameters parameters;
 
@@ -42,8 +47,20 @@ public class FeaturesSchema
    {
    }
 
-   public void integrate(FeatureParameters parameters)
+   /**
+    * For each line, add the features of the previous or later lines according to features tuning parameters values.
+    *
+    * @param parameters tuning features parameters that will be used to influence integration
+    */
+   public void integrate(@Nonnull FeatureParameters parameters)
    {
+      if (this.integratedFeatures != null)
+      {
+         this.integratedFeatures = null;
+         System.gc();
+      }
+      this.integratedFeatures = new ArrayList<>(this.defaultFeatures.size());
+      FeatureIntegrator.integrateFeatures(this, parameters);
    }
 
    public int getTagByIndex(int tagIndex)
@@ -137,7 +154,9 @@ public class FeaturesSchema
    private final static class FeatureIntegrator
    {
       /**
-       * For each line, add the features of the previous or later lines according to features parameters values (featuresParameters in constructor).
+       * For each line, add the features of the previous or later lines according to features tuning parameters values.
+       *
+       * @param schema
        *
        * @see FeatureIntegrator
        * @see FeatureParser
