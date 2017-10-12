@@ -1,15 +1,14 @@
-package eu.fbk.dh.jamcha.commandLineParameters;
+package eu.fbk.dh.jamcha.parametersReader;
 
-import eu.fbk.dh.jamcha.feature.FeatureParameters;
-import java.io.IOException;
 import java.nio.file.Paths;
+import javax.annotation.Nonnull;
 
-public class PredictParameters extends ParametersReader
+public class TrainParameters extends ParametersReader
 {
-   FeatureParameters featureParameters;
+   private String features;
 
    @Override
-   public void doReadParameters(String[] parameters)
+   protected void doReadParameters(@Nonnull String[] parameters)
    {
       // Parse all supported parameters
       for (String option : parameters)
@@ -44,44 +43,27 @@ public class PredictParameters extends ParametersReader
                break;
             }
 
+            case ParameterOption.FEATURES_OPTION:
+            {
+               if (this.features != null)
+               {
+                  throw new IllegalArgumentException(ParameterOption.FEATURES_OPTION + "is duplicated");
+               }
+               this.features = splittedParameter[1];
+               break;
+            }
          }
       }
 
-      // All command line parameters must be present
+      // All parameters must be present
       if (this.CORPUS_PATH == null || this.MODEL_PATH == null)
       {
-         throw new IllegalArgumentException("Please specify all parameters: CORPUS, MODEL");
-      }
-
-      try
-      {
-         this.loadSavedParameters();
-      }
-      catch (IOException e)
-      {
-         throw new IllegalArgumentException(e.getMessage());
+         throw new IllegalArgumentException("Please spcify all parameters: CORPUS, MODEL, FEATURE");
       }
    }
 
-   /**
-    * Load all saved parameters that are not passed via command line and are needed
-    *
-    * @return
-    *
-    * @throws IOException default
-    */
-   private void loadSavedParameters() throws IOException
+   public String getRawFeaturesParameters()
    {
-      featureParameters = FeatureParameters.loadFrom(MODEL_PATH);
-   }
-
-   /**
-    * Get tuning features parameters map(static and dynamic features parameters)
-    *
-    * @return map of static and dynamic features parameters
-    */
-   public FeatureParameters getFeatureParameters()
-   {
-      return this.featureParameters;
+      return this.features;
    }
 }

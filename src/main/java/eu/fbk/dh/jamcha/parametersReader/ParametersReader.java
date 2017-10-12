@@ -1,4 +1,4 @@
-package eu.fbk.dh.jamcha.commandLineParameters;
+package eu.fbk.dh.jamcha.parametersReader;
 
 import java.nio.file.Path;
 import java.security.InvalidParameterException;

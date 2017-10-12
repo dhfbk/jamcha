@@ -46,16 +46,15 @@ public class FeatureParameters
     *
     * @return
     */
-   public static FeatureParameters create(@Nonnull String allFeatures, int trainFileLineWordsCount)
+   public static FeatureParameters build(@Nonnull String allFeatures, final int trainFileLineWordsCount)
    {
-      FeatureParser parser = new FeatureParser(trainFileLineWordsCount);
       String[] features = allFeatures.split(" ");
 
       Multimap<Integer, Integer> featuresMap = TreeMultimap.create();
       // Getting values map of each feature
       for (String feature : features)
       {
-         Multimap<Integer, Integer> singleFeatureMap = parser.parseFeature(feature);
+         Multimap<Integer, Integer> singleFeatureMap = FeatureParser.parseFeature(feature, trainFileLineWordsCount);
          featuresMap.putAll(singleFeatureMap);
       }
       FeatureParameters retval = new FeatureParameters(allFeatures, featuresMap, trainFileLineWordsCount);
@@ -63,7 +62,7 @@ public class FeatureParameters
    }
 
    /**
-    * Switch from column->rows to row->cols. In other words, input is a list of lines to consider for each column. Output is a list of all columns to consider for each
+    * Switch from column->rows to row->cols. In other words, input is a list of line to consider for each column. Output is a list of all columns to consider for each
     * line
     *
     * @param featuresParameters features multimap with this structure: column->rows
@@ -94,7 +93,7 @@ public class FeatureParameters
 
    public static FeatureParameters loadFrom(Path filePath) throws IOException
    {
-      //TODO: FeatureParameters.saveTo implementare
+      //TODO: FeatureParameters.loadFrom implementare
       throw new UnsupportedOperationException("Not supported yet.");
    }
 
@@ -108,20 +107,27 @@ public class FeatureParameters
       return this.features;
    }
 
-   private static class FeatureParser
+   public static class FeatureParser
    {
+      /**
+       * Number of previous lines(belonging to same sentence), starting from the current one, of which it can get the features
+       */
       private static final int ROWS_MIN_OFFSET = - 30;
 
+      /**
+       * Number of lines(belonging to same sentence), starting from the current one, of which it can get the features
+       */
       private static final int ROWS_MAX_OFFSET = 30;
 
-      private int columnsCount;
-
-      public final static int COLUMN_VALUE = -1;
+      /**
+       * Index that represents tag column in a
+       */
+      private final static int TAG_COLUMN_INDEX = -1;
 
       /**
        * All features syntax options(e.g. which char divides two sections)
        */
-      private class SyntaxOptions
+      private static class SyntaxOptions
       {
          /**
           * Feature section separator (example ":")
@@ -129,7 +135,7 @@ public class FeatureParameters
          private static final char SECTION_SEPARATOR = ':';
 
          /**
-          * Feature values separator within same section (value may not be in order and may not be consecutive)
+          * Feature values separator isWithin same section (value may not be in order and may not be consecutive)
           */
          private static final char VALUE_SEPARATOR = ',';
 
@@ -143,7 +149,7 @@ public class FeatureParameters
       /**
        * List of all feature names. Use only chars.
        */
-      private final class Types
+      private final static class Types
       {
          /**
           * Static feature name constant
@@ -155,19 +161,14 @@ public class FeatureParameters
          private static final String FEATURE_DYNAMIC = "T";
       }
 
-      private FeatureParser(int columnsCount)
-      {
-         this.columnsCount = columnsCount;
-      }
-
       /**
        * Parse and obtains feature values
        *
        * @param featureToParse list of values, written using feature pattern. E.g. F:-5..3:-3..-1
        *
-       * @return All lines and columns values for this feature/** Parse and obtains feature values
+       * @return All line and columns values for this feature/** Parse and obtains feature values
        */
-      private Multimap<Integer, Integer> parseFeature(@Nonnull String featureToParse)
+      private static Multimap<Integer, Integer> parseFeature(@Nonnull String featureToParse, int columnsCount)
       {
          if (featureToParse.isEmpty())
          {
@@ -181,7 +182,7 @@ public class FeatureParameters
          {
             case Types.FEATURE_STATIC:
             {
-               featureValues = parseStaticFeature(typeList[1]);
+               featureValues = parseStaticFeature(typeList[1], columnsCount);
                break;
             }
             case Types.FEATURE_DYNAMIC:
@@ -205,10 +206,10 @@ public class FeatureParameters
        *
        * @param staticFeature string that represents static feature without first letter (e.g. F:x..y:k.. is passed as x..y:k..)
        *
-       * @return list of all lines considered by each column
+       * @return list of all line considered by each column
        */
       @Nonnull
-      private Multimap<Integer, Integer> parseStaticFeature(@Nonnull String staticFeature)
+      private static Multimap<Integer, Integer> parseStaticFeature(@Nonnull String staticFeature, int columnsCount)
       {
          String[] sections = staticFeature.split(SyntaxOptions.SECTION_SEPARATOR + "");
          if (sections.length != 2)
@@ -231,20 +232,20 @@ public class FeatureParameters
        *
        * @param dynamicFeature string that represents dynamic feature without first letter (e.g. T:x..y is passed as x..y)
        *
-       * @return list of all lines that must consider tag column
+       * @return list of all line that must consider tag column
        */
       @Nonnull
-      private Multimap<Integer, Integer> parseDynamicFeature(@Nonnull String dynamicFeature)
+      private static Multimap<Integer, Integer> parseDynamicFeature(@Nonnull String dynamicFeature)
       {
          String[] sections = dynamicFeature.split(SyntaxOptions.SECTION_SEPARATOR + "");
          if (sections.length != 1)
          {
             throw new IllegalArgumentException("Wrong number of sections: only 1 permitted");
          }
-         List<Integer> lines = parseSection(sections[0], ROWS_MAX_OFFSET);
+         List<Integer> line = parseSection(sections[0], -1);
 
          Multimap<Integer, Integer> retval = HashMultimap.create();
-         retval.putAll(COLUMN_VALUE, lines);
+         retval.putAll(TAG_COLUMN_INDEX, line);
          return retval;
       }
 
@@ -259,7 +260,7 @@ public class FeatureParameters
        * @throws IllegalArgumentException this section is empty or uses invalid value
        */
       @Nonnull
-      private List<Integer> parseSection(@Nonnull String sectionToParse, int maxValue)
+      private static List<Integer> parseSection(@Nonnull String sectionToParse, int maxValue)
       {
          if (sectionToParse.isEmpty())
          {
@@ -320,7 +321,7 @@ public class FeatureParameters
                }
 
                // If firstValue and maxValue are valid, will be created and added to list all numbers from firstValue to maxValue (a sequence from firstValue to secondValue)
-               if (within(ROWS_MIN_OFFSET, maxValue, firstValue) && within(ROWS_MIN_OFFSET, maxValue, secondValue))
+               if (isWithin(ROWS_MIN_OFFSET, maxValue, firstValue) && isWithin(ROWS_MIN_OFFSET, maxValue, secondValue))
                {
                   for (int i = firstValue; i <= maxValue; i ++)
                   {
@@ -350,7 +351,7 @@ public class FeatureParameters
        *
        * @return true if value is in range
        */
-      private boolean within(int min, int max, int value)
+      private static boolean isWithin(int min, int max, int value)
       {
          return min <= value && value <= max;
       }
