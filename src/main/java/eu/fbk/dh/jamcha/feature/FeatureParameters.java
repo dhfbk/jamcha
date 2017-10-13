@@ -70,7 +70,7 @@ public class FeatureParameters
     * @return list of all columns to consider for each line (e.g. for line 4 consider feature-column number 0,3,4)
     */
    @Nonnull
-   private static Multimap<Integer, Integer> fromColRowsToRowCols(@Nonnull final Multimap<Integer, Integer> featuresParameters)
+   protected static Multimap<Integer, Integer> fromColRowsToRowCols(@Nonnull final Multimap<Integer, Integer> featuresParameters)
    {
       Set<Integer> keySet = featuresParameters.keySet();
       TreeMultimap<Integer, Integer> rowCols = TreeMultimap.create();
@@ -183,19 +183,19 @@ public class FeatureParameters
             throw new IllegalArgumentException("String must be not empty");
          }
          // Split string on character separator (e.g. : ) creating a list of sections
-         String[] typeList = featureToParse.split(String.valueOf(SyntaxOptions.SECTION_SEPARATOR), 2);
+         String[] sectionsList = featureToParse.split(String.valueOf(SyntaxOptions.SECTION_SEPARATOR), 2);
 
          Multimap<Integer, Integer> featureValues;
-         switch (typeList[0])
+         switch (sectionsList[0])
          {
             case Types.FEATURE_STATIC:
             {
-               featureValues = parseStaticFeature(typeList[1], columnsCount);
+               featureValues = parseStaticFeature(sectionsList[1], columnsCount);
                break;
             }
             case Types.FEATURE_DYNAMIC:
             {
-               featureValues = parseDynamicFeature(typeList[1]);
+               featureValues = parseDynamicFeature(sectionsList[1]);
                break;
             }
             default:
@@ -224,8 +224,8 @@ public class FeatureParameters
          {
             throw new IllegalArgumentException("Wrong number of sections: only 2 permitted");
          }
-         List<Integer> lines = parseSection(sections[0], ROWS_MAX_OFFSET);
-         List<Integer> columns = parseSection(sections[1], columnsCount - 2);
+         List<Integer> lines = parseSection(sections[0], ROWS_MAX_OFFSET, false);
+         List<Integer> columns = parseSection(sections[1], columnsCount - 2, true);
 
          Multimap<Integer, Integer> retval = HashMultimap.create();
          for (int col : columns)
@@ -250,7 +250,7 @@ public class FeatureParameters
          {
             throw new IllegalArgumentException("Wrong number of sections: only 1 permitted");
          }
-         List<Integer> line = parseSection(sections[0], -1);
+         List<Integer> line = parseSection(sections[0], -1, true);
 
          Multimap<Integer, Integer> retval = HashMultimap.create();
          retval.putAll(TAG_COLUMN_INDEX, line);
@@ -268,7 +268,7 @@ public class FeatureParameters
        * @throws IllegalArgumentException this section is empty or uses invalid value
        */
       @Nonnull
-      private static List<Integer> parseSection(@Nonnull String sectionToParse, int maxValue)
+      private static List<Integer> parseSection(@Nonnull String sectionToParse, int upperLineMaxValue, boolean possibleIndefinite)
       {
          if (sectionToParse.isEmpty())
          {
@@ -291,7 +291,7 @@ public class FeatureParameters
             for (String str : valuesList)
             {
                int number = Integer.parseInt(str);
-               if (number >= ROWS_MIN_OFFSET && number <= maxValue)
+               if (number >= ROWS_MIN_OFFSET && number <= upperLineMaxValue)
                {
                   list.add(number);
                }
@@ -318,20 +318,33 @@ public class FeatureParameters
 
                int secondValue;
                // Getting range max value
-               // If empty wil be used default max value otherwise will be used parsed value
+               // If empty will be used default max value otherwise will be used parsed value
+               // If value is present will be used parsed value
+               /**
+                * If value is absent there are two scenarios: 1) format x.. is permitted upperLineMaxValue becomes second value 2) format x.. is not permitted, and there
+                * is an exception Example: take static feature F:-2..5:-6.. : in the first section after -2.. a value must be present (otherwise there will be raised an
+                * exception). In the second section after -6.. you can or not put a value. If there is no value, upperLineMaxValue is taken
+                */
                if (valuesList[1].isEmpty())
                {
-                  secondValue = maxValue;
+                  if (possibleIndefinite)
+                  {
+                     secondValue = upperLineMaxValue;
+                  }
+                  else
+                  {
+                     throw new IllegalArgumentException("Malformed feature section: " + sectionToParse);
+                  }
                }
                else
                {
                   secondValue = Integer.parseInt(valuesList[1]);
                }
 
-               // If firstValue and maxValue are valid, will be created and added to list all numbers from firstValue to maxValue (a sequence from firstValue to secondValue)
-               if (isWithin(ROWS_MIN_OFFSET, maxValue, firstValue) && isWithin(ROWS_MIN_OFFSET, maxValue, secondValue))
+               // If firstValue and upperLineMaxValue are valid, will be created and added to list all numbers from firstValue to upperLineMaxValue (a sequence from firstValue to secondValue)
+               if (isWithin(ROWS_MIN_OFFSET, upperLineMaxValue, firstValue) && isWithin(ROWS_MIN_OFFSET, upperLineMaxValue, secondValue))
                {
-                  for (int i = firstValue; i <= maxValue; i ++)
+                  for (int i = firstValue; i <= secondValue; i ++)
                   {
                      list.add(i);
                   }

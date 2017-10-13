@@ -10,7 +10,7 @@ public class ParametersReaderTest
 {
    private final Path MODEL;
    private final Path CORPUS;
-   private final String FEATURES = "FeaturesList";
+   private final String FEATURES = "F:-2..1:0..1 F:-3..-2:1..2 T:-4..-1 T:-5..-3";
    private String[] paramsTrain;
    private String[] paramsPredict;
 
@@ -19,12 +19,6 @@ public class ParametersReaderTest
       this.MODEL = Paths.get("MODELPath");
       this.CORPUS = Paths.get("CORPUSPath");
       createTrainParameters();
-   }
-
-   @Test
-   public void testBuild()
-   {
-
    }
 
    @Test
@@ -53,6 +47,7 @@ public class ParametersReaderTest
       }
       Assert.assertEquals(true, errorOccurred);
 
+      //TODO: aggiungere test predict parameters
    }
 
    private void testReadParametersWithException() throws IllegalArgumentException
