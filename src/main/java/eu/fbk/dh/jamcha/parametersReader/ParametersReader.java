@@ -1,9 +1,6 @@
 package eu.fbk.dh.jamcha.parametersReader;
 
-import eu.fbk.dh.jamcha.feature.FeatureParameters;
-import java.io.IOException;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.security.InvalidParameterException;
 import java.util.Arrays;
 import javax.annotation.Nonnull;
@@ -13,12 +10,15 @@ public abstract class ParametersReader
    protected Path CORPUS_PATH;
    protected Path MODEL_PATH;
 
-   private static final String TRAIN_COMMAND = "train";
-   private static final String PREDICT_COMMAND = "predict";
+   protected static final String TRAIN_COMMAND = "train";
+   protected static final String PREDICT_COMMAND = "predict";
 
    private final COMMAND_TYPE COMMAND;
 
-   protected static final class ParameterOption
+   /**
+    * List of all parameters that can be inserted in command line
+    */
+   protected static final class PARAMETER_OPTION
    {
       protected static final String CORPUS_OPTION = "CORPUS";
       protected static final String MODEL_OPTION = "MODEL";
@@ -33,7 +33,7 @@ public abstract class ParametersReader
       COMMAND_TRAIN, COMMAND_PREDICT;
    }
 
-   private ParametersReader(COMMAND_TYPE commandType)
+   protected ParametersReader(COMMAND_TYPE commandType)
    {
       COMMAND = commandType;
    }
@@ -60,12 +60,12 @@ public abstract class ParametersReader
       {
          case TRAIN_COMMAND:
          {
-            reader = new TrainParameters(COMMAND_TYPE.COMMAND_TRAIN);
+            reader = new TrainParametersReader(COMMAND_TYPE.COMMAND_TRAIN);
             break;
          }
          case PREDICT_COMMAND:
          {
-            reader = new PredictParameters(COMMAND_TYPE.COMMAND_PREDICT);
+            reader = new PredictParametersReader(COMMAND_TYPE.COMMAND_PREDICT);
             break;
          }
 
@@ -104,161 +104,4 @@ public abstract class ParametersReader
    }
 
    protected abstract void doReadParameters(String[] parameters);
-
-   private static class TrainParameters extends ParametersReader
-   {
-      private String features;
-
-      private TrainParameters(COMMAND_TYPE command_type)
-      {
-         super(command_type);
-      }
-
-      @Override
-      protected void doReadParameters(@Nonnull String[] parameters)
-      {
-         // Parse all supported parameters
-         for (String option : parameters)
-         {
-            String[] splittedParameter = option.split("=");
-            if (splittedParameter.length != 2)
-            {
-               throw new IllegalArgumentException(option + " is not valid");
-            }
-
-            option = splittedParameter[0];
-
-            switch (option)
-            {
-               case ParameterOption.CORPUS_OPTION:
-               {
-                  if (this.CORPUS_PATH != null)
-                  {
-                     throw new IllegalArgumentException(ParameterOption.CORPUS_OPTION + " is duplicated");
-                  }
-                  this.CORPUS_PATH = Paths.get(splittedParameter[1]);
-                  break;
-               }
-
-               case ParameterOption.MODEL_OPTION:
-               {
-                  if (this.MODEL_PATH != null)
-                  {
-                     throw new IllegalArgumentException(ParameterOption.MODEL_OPTION + " is duplicated");
-                  }
-                  this.MODEL_PATH = Paths.get(splittedParameter[1]);
-                  break;
-               }
-
-               case ParameterOption.FEATURES_OPTION:
-               {
-                  if (this.features != null)
-                  {
-                     throw new IllegalArgumentException(ParameterOption.FEATURES_OPTION + "is duplicated");
-                  }
-                  this.features = splittedParameter[1];
-                  break;
-               }
-            }
-         }
-
-         // All parameters must be present
-         if (this.CORPUS_PATH == null || this.MODEL_PATH == null)
-         {
-            throw new IllegalArgumentException("Please spcify all parameters: CORPUS, MODEL, FEATURE");
-         }
-      }
-
-      public String getRawFeaturesParameters()
-      {
-         return this.features;
-      }
-   }
-
-   private static class PredictParameters extends ParametersReader
-   {
-      FeatureParameters featureParameters;
-
-      private PredictParameters(COMMAND_TYPE command_type)
-      {
-         super(command_type);
-      }
-
-      @Override
-      public void doReadParameters(String[] parameters)
-      {
-         // Parse all supported parameters
-         for (String option : parameters)
-         {
-            String[] splittedParameter = option.split("=");
-            if (splittedParameter.length != 2)
-            {
-               throw new IllegalArgumentException(option + " is not valid");
-            }
-
-            option = splittedParameter[0];
-
-            switch (option)
-            {
-               case ParameterOption.CORPUS_OPTION:
-               {
-                  if (this.CORPUS_PATH != null)
-                  {
-                     throw new IllegalArgumentException(ParameterOption.CORPUS_OPTION + " is duplicated");
-                  }
-                  this.CORPUS_PATH = Paths.get(splittedParameter[1]);
-                  break;
-               }
-
-               case ParameterOption.MODEL_OPTION:
-               {
-                  if (this.MODEL_PATH != null)
-                  {
-                     throw new IllegalArgumentException(ParameterOption.MODEL_OPTION + " is duplicated");
-                  }
-                  this.MODEL_PATH = Paths.get(splittedParameter[1]);
-                  break;
-               }
-
-            }
-         }
-
-         // All command line parameters must be present
-         if (this.CORPUS_PATH == null || this.MODEL_PATH == null)
-         {
-            throw new IllegalArgumentException("Please specify all parameters: CORPUS, MODEL");
-         }
-
-         try
-         {
-            this.loadSavedParameters();
-         }
-         catch (IOException e)
-         {
-            throw new IllegalArgumentException(e.getMessage());
-         }
-      }
-
-      /**
-       * Load all saved parameters that are not passed via command line and are needed
-       *
-       * @return
-       *
-       * @throws IOException default
-       */
-      private void loadSavedParameters() throws IOException
-      {
-         featureParameters = FeatureParameters.loadFrom(MODEL_PATH);
-      }
-
-      /**
-       * Get tuning features parameters map(static and dynamic features parameters)
-       *
-       * @return map of static and dynamic features parameters
-       */
-      public FeatureParameters getFeatureParameters()
-      {
-         return this.featureParameters;
-      }
-   }
 }
