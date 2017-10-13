@@ -1,6 +1,6 @@
 package eu.fbk.dh.jamcha.feature.fileReader;
 
-import eu.fbk.dh.jamcha.feature.FeaturesSchema.Row;
+import eu.fbk.dh.jamcha.feature.FeaturesSchema.Line;
 import eu.fbk.dh.jamcha.feature.FeaturesSchema;
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -30,7 +30,7 @@ public abstract class FeatureFileReader
 
    @Nonnull
    protected final Path filePath;
-   protected ArrayList<Row> features = new ArrayList<>(500);
+   protected ArrayList<Line> features = new ArrayList<>(500);
 
    /**
     * Constructor
@@ -108,7 +108,7 @@ public abstract class FeatureFileReader
                   tag = lineWords[columnsTagIndex];
                }
 
-               Row row = new Row(rowCounter, sequenceIndex);
+               Line row = new Line(rowCounter, sequenceIndex);
                row.setTag(tag);
 
                //Put row features to global structure
@@ -133,7 +133,7 @@ public abstract class FeatureFileReader
    }
 
    @Nullable
-   public List<Row> getFeatures()
+   public List<Line> getFeatures()
    {
       return this.features;
    }
