@@ -45,12 +45,8 @@ public class FeaturesSchema
         return schema;
     }
 
-    private void createTagsIndexes()
-    {
-    }
-
     /**
-     * For each co, add the features of the previous or later lines according to features tuning parameters values.
+     * For each line, add the features of the previous or later lines according to features tuning parameters values.
      *
      * @param parameters tuning features parameters that will be used to influence integration
      */
@@ -63,6 +59,10 @@ public class FeaturesSchema
         }
         this.integratedFeatures = new ArrayList<>(this.defaultFeatures.size());
         FeatureIntegrator.integrateFeatures(this, parameters);
+    }
+
+    private void createTagsIndexes()
+    {
     }
 
     public int getTagByIndex(int tagIndex)
@@ -163,6 +163,11 @@ public class FeaturesSchema
             throw new UnsupportedOperationException("Not supported yet.");
         }
 
+        public List<String> getWords()
+        {
+            return this.features;
+        }
+
         public void setTag(@Nullable String tag)
         {
             this.tag = tag;
@@ -175,7 +180,8 @@ public class FeaturesSchema
             if (o != null && o instanceof Line)
             {
                 Line co = (Line) o;
-                retval = co.features.equals(this.features) && co.line == this.line && co.sequenceIndex == this.sequenceIndex && co.tag.equals(this.tag);
+                boolean tagsFlag = co.tag == null ? this.tag == null : co.tag.equals(this.tag);
+                retval = tagsFlag && co.features.equals(this.features) && co.line == this.line && co.sequenceIndex == this.sequenceIndex;
             }
             return retval;
         }
