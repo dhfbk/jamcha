@@ -75,6 +75,17 @@ public class FeaturesSchema
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
+    /**
+     * Return list of all lines integrated features.
+     *
+     * @return list of all integrated features or null if "integrate" method has never been called
+     */
+    @Nullable
+    protected List<Line> getIntegratedFeatures()
+    {
+        return this.integratedFeatures;
+    }
+
     private Iterable<String> getLineFeaturesByParameters(int lineNumber)
     {
         throw new UnsupportedOperationException("Not supported yet.");
@@ -136,11 +147,7 @@ public class FeaturesSchema
 
         public String getTag()
         {
-            throw new UnsupportedOperationException("Not supported yet.");
-        }
-
-        public void addFeature(String featureToAdd)
-        {
+            return this.tag;
         }
 
         public void addFeatures(Iterable<String> featuresToAdd)
@@ -160,7 +167,7 @@ public class FeaturesSchema
 
         public int getSequence()
         {
-            throw new UnsupportedOperationException("Not supported yet.");
+            return this.sequenceIndex;
         }
 
         public List<String> getWords()
@@ -216,10 +223,10 @@ public class FeaturesSchema
          */
         private static void integrateFeatures(@Nonnull FeaturesSchema schema, @Nonnull FeatureParameters parameters)
         {
-            // For each co to integrate
+            // For each line to integrate
             for (int actualLine = 0; actualLine < schema.defaultFeatures.size(); actualLine ++)
             {
-                Line rowToAdd = new Line(actualLine, 0);
+                Line rowToAdd = new Line(actualLine, schema.defaultFeatures.get(actualLine).getSequence());
                 rowToAdd.setTag(schema.defaultFeatures.get(actualLine).getTag());
                 schema.integratedFeatures.add(rowToAdd);
 
