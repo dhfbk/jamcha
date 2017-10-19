@@ -6,19 +6,20 @@ import java.nio.file.Path;
 
 public abstract class ModelManager
 {
+    private FeaturesSchema schema;
 
-   public static void createModel(FeaturesSchema featuresSchema)
-   {
-      throw new UnsupportedOperationException("Not supported yet.");
-   }
+    public static void createModel(FeaturesSchema featuresSchema)
+    {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
 
-   public static void saveModel(FeaturesSchema featuresSchema, Path filePath)
-   {
-      throw new UnsupportedOperationException("Not supported yet.");
-   }
+    public static void saveModel(FeaturesSchema featuresSchema, Path filePath)
+    {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
 
-   public static Classifier loadModel(Path filePath)
-   {
-      throw new UnsupportedOperationException("Not supported yet.");
-   }
+    public static Classifier loadModel(Path filePath)
+    {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
 }

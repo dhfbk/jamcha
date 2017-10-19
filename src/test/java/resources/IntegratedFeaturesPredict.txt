@@ -1,0 +1,12 @@
+token0 a0 token1 a1 c0 0
+token0 a0 c0 token1 a1 token2 a2 null 0
+token0 a0 b0 c0 token1 a1 token2 a2 token3 a3 c2 0
+a0 b0 c0 token1 a1 b1 token2 a2 c2 token3 a3 token4 a4 null 0
+c0 a1 b1 token2 a2 b2 c2 token3 a3 token4 a4 token5 a5 c4 0
+c0 a2 b2 c2 token3 a3 b3 token4 a4 c4 token5 a5 token6 a6 c5 0
+c2 a3 b3 token4 a4 b4 c4 token5 a5 c5 token6 a6 c6 0
+token7 a7 token8 a8 null 1
+token7 a7 token8 a8 token9 a9 c8 1
+token7 a7 b7 token8 a8 c8 token9 a9 c9 1
+token10 a10 token11 a11 null 2
+token10 a10 token11 a11 null 2

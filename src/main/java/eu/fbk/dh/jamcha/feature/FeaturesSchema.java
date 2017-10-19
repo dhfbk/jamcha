@@ -4,6 +4,7 @@ import eu.fbk.dh.jamcha.feature.fileReader.FeatureFileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Objects;
 import javax.annotation.Nonnegative;
@@ -22,13 +23,42 @@ public class FeaturesSchema
      */
     private ArrayList<Line> integratedFeatures;
 
-    private ArrayList<String> tagsIndexes;
-
-    private FeatureParameters parameters;
+    /**
+     * Each tag i mapped to an unique integer value
+     */
+    private HashMap<Integer, String> tagsIndexes;
 
     private FeaturesSchema(@Nonnull Collection<Line> defaultFeatures)
     {
         this.defaultFeatures = new ArrayList<>(defaultFeatures);
+        createTagsIndexes();
+    }
+
+    /**
+     * Create a map of all tags. A unique integer value will be assigned to each tag
+     */
+    private void createTagsIndexes()
+    {
+        tagsIndexes = new HashMap<>(defaultFeatures.size());
+        for (Line line : defaultFeatures)
+        {
+            String tag = line.tag;
+            if (tag != null)
+            {
+                tagsIndexes.put(tag.hashCode(), line.tag);
+            }
+        }
+    }
+
+    /**
+     * Return list of all lines integrated features.
+     *
+     * @return list of all integrated features or null if "integrate" method has never been called
+     */
+    @Nullable
+    protected List<Line> getIntegratedFeatures()
+    {
+        return this.integratedFeatures;
     }
 
     public static FeaturesSchema build(@Nonnull FeatureFileReader reader) throws IOException
@@ -61,10 +91,6 @@ public class FeaturesSchema
         FeatureIntegrator.integrateFeatures(this, parameters);
     }
 
-    private void createTagsIndexes()
-    {
-    }
-
     public int getTagByIndex(int tagIndex)
     {
         throw new UnsupportedOperationException("Not supported yet.");
@@ -75,20 +101,9 @@ public class FeaturesSchema
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
-    /**
-     * Return list of all lines integrated features.
-     *
-     * @return list of all integrated features or null if "integrate" method has never been called
-     */
-    @Nullable
-    protected List<Line> getIntegratedFeatures()
+    public HashMap<Integer, String> getTagsIndexesMap()
     {
-        return this.integratedFeatures;
-    }
-
-    private Iterable<String> getLineFeaturesByParameters(int lineNumber)
-    {
-        throw new UnsupportedOperationException("Not supported yet.");
+        return this.tagsIndexes;
     }
 
     public static class Line
@@ -261,13 +276,13 @@ public class FeaturesSchema
                 String error = "Requested line must be between zero and " + (schema.defaultFeatures.size() - 1) + "(inclusive)";
                 throw new IllegalArgumentException(error);
             }
-            // List of columns numbers to consider of the requested co
+            // List of columns numbers to consider of the requested line
             Collection<Integer> columnsToAdd = parameters.getParameters().get(offset);
 
-            // Contains all columns values for this co
+            // Contains all columns values for this line
             ArrayList<String> retval = new ArrayList<>(schema.defaultFeatures.get(0).features.size());
 
-            // Take all co features that have a valid column number (a number passed by columnsToAdd)
+            // Take all line columns that have a valid column number (a number passed by columnsToAdd)
             for (int column : columnsToAdd)
             {
                 String columnFeature;
@@ -279,7 +294,11 @@ public class FeaturesSchema
                 {
                     columnFeature = schema.defaultFeatures.get(requestedline).getTag();
                 }
-                retval.add(columnFeature);
+
+                if (columnFeature != null)
+                {
+                    retval.add(columnFeature);
+                }
             }
             return retval;
         }

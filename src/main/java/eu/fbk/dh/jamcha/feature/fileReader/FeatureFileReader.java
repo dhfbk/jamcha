@@ -30,7 +30,7 @@ public abstract class FeatureFileReader
 
     @Nonnull
     protected final Path filePath;
-    protected ArrayList<Line> features = new ArrayList<>(500);
+    protected ArrayList<Line> features;
 
     /**
      * Constructor
@@ -78,13 +78,14 @@ public abstract class FeatureFileReader
      *
      * @return all lines features
      *
-     * @throws IOException
+     * @throws IOException default
      */
     @Nonnull
     public final FeaturesSchema read() throws IOException
     {
         try (BufferedReader reader = Files.newBufferedReader(filePath))
         {
+            features = new ArrayList<>(500);
             String line;
             final int columnsTagIndex = COLUMNS_COUNT_BASE - 1;
             final int columnsNoTagMaxIndex = columnsTagIndex - 1;
