@@ -2,6 +2,7 @@ package eu.fbk.dh.jamcha.feature;
 
 import eu.fbk.dh.jamcha.feature.FeaturesSchema.Line;
 import eu.fbk.dh.jamcha.feature.fileReader.FeatureFileReaderTest;
+import eu.fbk.dh.jamcha.feature.fileReader.PredictFileReader;
 import eu.fbk.dh.jamcha.feature.fileReader.TrainFileReader;
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -9,6 +10,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
+import javax.annotation.Nonnull;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -26,27 +28,50 @@ public class FeaturesSchemaTest
     @Test
     public void testIntegrate() throws IOException
     {
+        // TEST INTEGRATE TRAIN FILE
         // Load correct integrated features
-        List<Line> correctIntegrated = loadTestIntegratedFeatures();
-        {
-            FeatureParametersTest testParams = new FeatureParametersTest();
-            FeatureParameters params = FeatureParameters.build(testParams.featuresList, testParams.columnsCount);
-            schema.integrate(params);
-            for (int i = 0; i < correctIntegrated.size(); i ++)
-            {
+        List<Line> correctIntegrated = loadTestIntegratedFeatures("IntegratedFeatures.txt");
 
-                schema.getIntegratedFeatures().get(i).getWords().sort(null);
-                correctIntegrated.get(i).getWords().sort(null);
-            }
+        FeatureParametersTest testParams = new FeatureParametersTest();
+        FeatureParameters params = FeatureParameters.build(testParams.featuresList, testParams.columnsCount);
+        schema.integrate(params);
+        for (int i = 0; i < correctIntegrated.size(); i ++)
+        {
+
+            schema.getIntegratedFeatures().get(i).getWords().sort(null);
+            correctIntegrated.get(i).getWords().sort(null);
         }
         Assert.assertEquals(correctIntegrated, schema.getIntegratedFeatures());
 
+        // TEST INTEGRATE PREDICT FILE
+        correctIntegrated = loadTestIntegratedFeatures("IntegratedFeaturesPredict.txt");
+
+        Path filePath = FeatureFileReaderTest.getResourceFilePath(FeatureFileReaderTest.DEFAULT_PREDICT_FILE_PATH.toString());
+        PredictFileReader predictReader = new PredictFileReader(filePath, testParams.columnsCount);
+        schema = FeaturesSchema.build(predictReader);
+        schema.integrate(params);
+        for (int i = 0; i < correctIntegrated.size(); i ++)
+        {
+            List<String> testfeatures = schema.getIntegratedFeatures().get(i).getWords();
+            testfeatures.sort(null);
+            correctIntegrated.get(i).getWords().sort(null);
+        }
+        for (int i = 0; i < correctIntegrated.size(); i ++)
+        {
+            Line correctLine = correctIntegrated.get(i);
+            Line testLine = schema.getIntegratedFeatures().get(i);
+            if ( ! correctLine.equals(testLine))
+            {
+                break;
+            }
+        }
+        Assert.assertEquals(correctIntegrated, schema.getIntegratedFeatures());
     }
 
-    private List<Line> loadTestIntegratedFeatures() throws IOException
+    private List<Line> loadTestIntegratedFeatures(@Nonnull String fileName) throws IOException
     {
         ArrayList<Line> retval = new ArrayList<>();
-        Path tmp = FeatureFileReaderTest.getResourceFilePath("IntegratedFeatures.txt");
+        Path tmp = FeatureFileReaderTest.getResourceFilePath(fileName);
         try (BufferedReader reader = Files.newBufferedReader(tmp))
         {
             String line;
@@ -61,7 +86,11 @@ public class FeaturesSchemaTest
                 int sequence = Integer.parseInt(lineWords[lineWords.length - 1]);
 
                 // Tag is second-last word of line
-                String tag = lineWords[lineWords.length - 2];
+                String tag = null;
+                if ( ! (lineWords[lineWords.length - 2]).equals("null"))
+                {
+                    tag = lineWords[lineWords.length - 2];
+                }
 
                 // Add all feature to line except last word (that is sequence index)
                 ArrayList<String> features = new ArrayList<>(lineWords.length);
