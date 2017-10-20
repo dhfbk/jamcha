@@ -3,7 +3,6 @@ package eu.fbk.dh.jamcha.feature;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
 import com.google.common.collect.TreeMultimap;
-import eu.fbk.dh.jamcha.feature.fileReader.FeatureFileReader;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.IOException;
@@ -90,18 +89,17 @@ public class FeatureParameters
     /**
      * Save feature parameters to a file. Do not indicate file name.
      *
-     * @param modelFolderPath model folder path i.e. ......./model/
+     * @param folderPath a folder path i.e. ......./folder/
      *
-     * @throws IOException invalid modelFolderPath
+     * @throws IOException invalid folderPath
      */
-    public void saveTo(Path modelFolderPath) throws IOException
+    public void saveTo(@Nonnull Path folderPath) throws IOException
     {
-        //TODO: FeatureParameters.saveTo implementare
-        if ( ! Files.isDirectory(modelFolderPath))
+        if ( ! Files.isDirectory(folderPath))
         {
-            throw new IllegalArgumentException("Invalid path: please insert model folder path");
+            folderPath = folderPath.getParent();
         }
-        Path filePath = Paths.get(modelFolderPath.toString(), FILE_NAME);
+        Path filePath = Paths.get(folderPath.toString(), FILE_NAME);
         try (BufferedWriter writer = Files.newBufferedWriter(filePath))
         {
             String line = SaveOptions.WORDS_COUNT + SaveOptions.SEPARATOR + columnsCount;
@@ -113,22 +111,22 @@ public class FeatureParameters
     }
 
     /**
-     * Load feature parameters from a file. Do not indicate file name.
+     * Load feature parameters from a file. Do not indicate file name, only folder that contains that file
      *
-     * @param modelFolderPath model folder path i.e. ......./model/
+     * @param folderPath a folder path i.e. ......./folder/ where feature parameters file is located
      *
      * @return build a valid FeatureParameters instance
      *
      * @throws IOException invalid modelFolderPath or file does not contain valid data
      */
-    public static FeatureParameters loadFrom(Path modelFolderPath) throws IOException
+    public static FeatureParameters loadFrom(Path folderPath) throws IOException
     {
-        if ( ! Files.isDirectory(modelFolderPath))
+        if ( ! Files.isDirectory(folderPath))
         {
-            throw new IllegalArgumentException("Invalid path: please insert model folder path");
+            folderPath = folderPath.getParent();
         }
 
-        Path filePath = Paths.get(modelFolderPath.toString(), FILE_NAME);
+        Path filePath = Paths.get(folderPath.toString(), FILE_NAME);
         try (BufferedReader reader = Files.newBufferedReader(filePath))
         {
             String line;
@@ -445,6 +443,9 @@ public class FeatureParameters
         }
     }
 
+    /**
+     * All features values that will be saved in a file.
+     */
     private static class SaveOptions
     {
         private final static String WORDS_COUNT = "LINE_WORDS_COUNT";

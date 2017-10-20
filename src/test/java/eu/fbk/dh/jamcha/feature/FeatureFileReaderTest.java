@@ -1,4 +1,4 @@
-package eu.fbk.dh.jamcha.feature.fileReader;
+package eu.fbk.dh.jamcha.feature;
 
 import eu.fbk.dh.jamcha.feature.FeaturesSchema.Line;
 import java.nio.file.Path;
@@ -29,13 +29,13 @@ public class FeatureFileReaderTest
         Path filePath = getResourceFilePath(DEFAULT_TRAIN_FILE_PATH.toString());
         TrainFileReader trainReader = new TrainFileReader(filePath);
         trainReader.read();
-        Assert.assertEquals(expectedResultTrain, trainReader.features);
+        Assert.assertEquals(expectedResultTrain, trainReader.getFeatures());
 
         // PREDICT READER TEST
         filePath = getResourceFilePath(DEFAULT_PREDICT_FILE_PATH.toString());
         PredictFileReader predictReader = new PredictFileReader(filePath, trainReader.COLUMNS_COUNT_BASE);
         predictReader.read();
-        Assert.assertEquals(expectedResultPredict, predictReader.features);
+        Assert.assertEquals(expectedResultPredict, predictReader.getFeatures());
     }
 
     /**

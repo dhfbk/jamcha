@@ -1,13 +1,14 @@
-package eu.fbk.dh.jamcha.feature.fileReader;
+package eu.fbk.dh.jamcha.feature;
 
-import eu.fbk.dh.jamcha.feature.FeaturesSchema.Line;
 import eu.fbk.dh.jamcha.feature.FeaturesSchema;
+import eu.fbk.dh.jamcha.feature.FeaturesSchema.Line;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
+import javax.annotation.Nonnegative;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
@@ -29,8 +30,8 @@ public abstract class FeatureFileReader
     private final String SENTENCE_BOUNDARY_MARKER;
 
     @Nonnull
-    protected final Path filePath;
-    protected ArrayList<Line> features;
+    private final Path filePath;
+    private ArrayList<Line> features;
 
     /**
      * Constructor
@@ -81,7 +82,7 @@ public abstract class FeatureFileReader
      * @throws IOException default
      */
     @Nonnull
-    public final FeaturesSchema read() throws IOException
+    public final List<Line> read() throws IOException
     {
         try (BufferedReader reader = Files.newBufferedReader(filePath))
         {
@@ -128,8 +129,7 @@ public abstract class FeatureFileReader
                     sequenceIndex ++;
                 }
             }
-            FeaturesSchema schema = FeaturesSchema.build(this);
-            return schema;
+            return this.features;
         }
     }
 

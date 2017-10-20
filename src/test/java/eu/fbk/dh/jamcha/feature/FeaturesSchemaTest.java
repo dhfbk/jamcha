@@ -1,9 +1,6 @@
 package eu.fbk.dh.jamcha.feature;
 
 import eu.fbk.dh.jamcha.feature.FeaturesSchema.Line;
-import eu.fbk.dh.jamcha.feature.fileReader.FeatureFileReaderTest;
-import eu.fbk.dh.jamcha.feature.fileReader.PredictFileReader;
-import eu.fbk.dh.jamcha.feature.fileReader.TrainFileReader;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -17,12 +14,16 @@ import org.junit.Test;
 public class FeaturesSchemaTest
 {
     private FeaturesSchema schema;
+    private final FeatureParameters params;
+    private FeatureParametersTest paramsTest;
 
     public FeaturesSchemaTest() throws IOException
     {
         Path filePath = FeatureFileReaderTest.getResourceFilePath(FeatureFileReaderTest.DEFAULT_TRAIN_FILE_PATH.toString());
         TrainFileReader reader = new TrainFileReader(filePath);
-        schema = reader.read();
+        paramsTest = new FeatureParametersTest();
+        params = FeatureParameters.build(paramsTest.featuresList, paramsTest.columnsCount);
+        schema = FeaturesSchema.build(reader, params);
     }
 
     @Test
@@ -32,12 +33,9 @@ public class FeaturesSchemaTest
         // Load correct integrated features
         List<Line> correctIntegrated = loadTestIntegratedFeatures("IntegratedFeatures.txt");
 
-        FeatureParametersTest testParams = new FeatureParametersTest();
-        FeatureParameters params = FeatureParameters.build(testParams.featuresList, testParams.columnsCount);
-        schema.integrate(params);
+        schema.integrate(null);
         for (int i = 0; i < correctIntegrated.size(); i ++)
         {
-
             schema.getIntegratedFeatures().get(i).getWords().sort(null);
             correctIntegrated.get(i).getWords().sort(null);
         }
@@ -47,9 +45,9 @@ public class FeaturesSchemaTest
         correctIntegrated = loadTestIntegratedFeatures("IntegratedFeaturesPredict.txt");
 
         Path filePath = FeatureFileReaderTest.getResourceFilePath(FeatureFileReaderTest.DEFAULT_PREDICT_FILE_PATH.toString());
-        PredictFileReader predictReader = new PredictFileReader(filePath, testParams.columnsCount);
-        schema = FeaturesSchema.build(predictReader);
-        schema.integrate(params);
+        PredictFileReader predictReader = new PredictFileReader(filePath, paramsTest.columnsCount);
+        schema = FeaturesSchema.build(predictReader, params);
+        schema.integrate(null);
         for (int i = 0; i < correctIntegrated.size(); i ++)
         {
             List<String> testfeatures = schema.getIntegratedFeatures().get(i).getWords();
@@ -106,16 +104,4 @@ public class FeaturesSchemaTest
         }
         return retval;
     }
-
-//    @Test
-//    public void testGetTagByIndex()
-//    {
-//        //TODO: implementare
-//    }
-//
-//    @Test
-//    public void testGetTagIndex()
-//    {
-//        //TODO: implementare
-//    }
 }
