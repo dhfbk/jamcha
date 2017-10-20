@@ -1,7 +1,5 @@
-package eu.fbk.dh.jamcha;
+package eu.fbk.dh.jamcha.feature;
 
-import eu.fbk.dh.jamcha.feature.FeatureParameters;
-import eu.fbk.dh.jamcha.feature.FeaturesSchema;
 import eu.fbk.dh.jamcha.feature.FeaturesSchema.Line;
 import eu.fbk.utils.svm.Classifier;
 import eu.fbk.utils.svm.LabelledVector;
@@ -16,31 +14,45 @@ import java.util.HashSet;
 import java.util.List;
 import javax.annotation.Nonnull;
 
+/**
+ * Create model, save and load model and all data that will be used in future sessions
+ */
 public class ModelDataManager
 {
-    private final FeaturesSchema schema;
+    private static final String FOLDER_ROOT = "Data";
+
+    private final List<Line> features;
+    private final FeatureParameters parameters;
     private HashMap<Integer, String> tagsMap;
     private Classifier classifier;
 
+    /**
+     * Constructor
+     *
+     * @param featuresSchema schema containing feature parameters and all integrated features
+     */
     public ModelDataManager(@Nonnull final FeaturesSchema featuresSchema)
     {
-        this.schema = featuresSchema;
+        if (featuresSchema.getIntegratedFeatures() == null)
+        {
+            featuresSchema.integrate(null);
+        }
+        this.features = featuresSchema.getIntegratedFeatures();
+        this.parameters = featuresSchema.getFeatureParameters();
     }
 
     public boolean createModel()
     {
-        boolean retval = false;
-        // Create tags indexes map
-        if (schema.getIntegratedFeatures() == null)
+        if (features == null)
         {
-            schema.integrate(null);
+            return false;
         }
+        boolean retval = false;
         int counter = 0;
-        List<Line> features = schema.getIntegratedFeatures();
         if (features != null)
         {
-            List<LabelledVector> labVectors = new ArrayList<>(schema.getLinesCount());
-            tagsMap = new HashMap<>(schema.getLinesCount());
+            List<LabelledVector> labVectors = new ArrayList<>(features.size());
+            tagsMap = new HashMap<>(features.size());
             HashSet<String> tagsInserted = new HashSet<>(tagsMap.size());
             for (Line line : features)
             {
@@ -68,7 +80,6 @@ public class ModelDataManager
             {
                 System.out.println(e.getLocalizedMessage());
             }
-
         }
         return retval;
     }
@@ -81,22 +92,42 @@ public class ModelDataManager
      * @throws IOException default
      * @see IOException
      */
-    public void saveModelAndData(@Nonnull Path folderPath) throws IOException
+    public void saveTo(@Nonnull final Path folderPath) throws IOException
     {
-        if ( ! Files.isDirectory(folderPath))
-        {
-            folderPath = folderPath.getParent();
-        }
         if (classifier != null)
         {
-            classifier.writeTo(folderPath);
-            FeatureParameters params = schema.getFeatureParameters();
-            params.saveTo(folderPath);
+            Path correctPath = validateBasePath(folderPath);
+            // Save model
+            classifier.writeTo(correctPath);
+            // Save features parameters
+            parameters.saveTo(correctPath);
         }
     }
 
     public static Classifier loadModel(Path folderPath) throws IOException
     {
-        return Classifier.readFrom(folderPath);
+        Path correctPath = validateBasePath(folderPath);
+        return Classifier.readFrom(correctPath);
+    }
+
+    public static FeatureParameters loadFeatureParameters(Path folderPath) throws IOException
+    {
+        Path correctPath = validateBasePath(folderPath);
+        return FeatureParameters.loadFrom(correctPath);
+    }
+
+    private static Path validateBasePath(final Path pathToCheck)
+    {
+        Path retval = Paths.get(pathToCheck.toString());
+        // Build correct path
+        if ( ! Files.isDirectory(retval))
+        {
+            retval = retval.getParent();
+        }
+        if ( ! retval.endsWith(FOLDER_ROOT))
+        {
+            retval = Paths.get(retval.toString(), FOLDER_ROOT);
+        }
+        return retval;
     }
 }

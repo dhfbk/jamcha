@@ -93,7 +93,7 @@ public class FeatureParameters
      *
      * @throws IOException invalid folderPath
      */
-    public void saveTo(@Nonnull Path folderPath) throws IOException
+    protected void saveTo(@Nonnull Path folderPath) throws IOException
     {
         if ( ! Files.isDirectory(folderPath))
         {
@@ -119,7 +119,7 @@ public class FeatureParameters
      *
      * @throws IOException invalid modelFolderPath or file does not contain valid data
      */
-    public static FeatureParameters loadFrom(Path folderPath) throws IOException
+    protected static FeatureParameters loadFrom(Path folderPath) throws IOException
     {
         if ( ! Files.isDirectory(folderPath))
         {

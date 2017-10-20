@@ -48,16 +48,4 @@ public class FeatureParametersTest
         Multimap<Integer, Integer> resultMap = FeatureParameters.fromColRowsToRowCols(testMap);
         Assert.assertEquals(featureMapCorrect, resultMap);
     }
-
-//   @Test
-//   public void testSaveTo() throws Exception
-//   {
-//      //TODO:implementare testSaveTo
-//   }
-//
-//   @Test
-//   public void testLoadFrom() throws Exception
-//   {
-//      //TODO:implementare testLoadFrom
-//   }
 }
