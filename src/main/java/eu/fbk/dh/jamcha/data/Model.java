@@ -123,14 +123,34 @@ public class Model
         return model;
     }
 
-    public List<Line> predict(@Nonnull List<Line> features)
+    /**
+     * Guess the most likely tag for each features line
+     *
+     * @param features list of the features lines we want to get the most likely tag
+     *
+     * @return list of feature lines each with its calculated tag
+     */
+    public List<Line> predict(@Nonnull final List<Line> features)
     {
-        //TODO: trasformare features in labelledvector usando tagmap già caricata dalla load
-        Vector.Builder builder = Vector.builder();
-        builder.build();
+        ArrayList<Vector> vectors = new ArrayList<>(features.size());
+        //TODO: trasformare features in labelledvector
+        for (Line line : features)
+        {
+            Vector vector = Vector.builder().set(line.getWords()).build();
+            vectors.add(vector);
+        }
+
         // chiamare classifier.predict->ottengo lista di labelled vector
+        List<LabelledVector> predictResult = classifier.predict(true, vectors);
+
         // convertire labelledvector in line usando la tagmap
         ArrayList<Line> retval = new ArrayList<>(features.size());
+        for (LabelledVector vector : predictResult)
+        {
+            String tag = tagsMap.get(vector.getLabel());
+            Line line = new Line(-1, -1, tag, vector.getFeatures());
+            retval.add(line);
+        }
 
         return retval;
     }
