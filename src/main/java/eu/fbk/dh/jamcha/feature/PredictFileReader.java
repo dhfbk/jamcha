@@ -38,9 +38,9 @@ public final class PredictFileReader extends FeatureFileReader
     @Override
     protected void checkLineWordsCount(@Nonnull String[] line) throws IOException
     {
-        if (line.length < COLUMNS_COUNT_BASE - 1)
+        if (line.length < WORDS_LINE_COUNT_BASE - 1)
         {
-            throw new IOException("Line words count is less than " + (COLUMNS_COUNT_BASE - 1));
+            throw new IOException("Line words count is less than " + (WORDS_LINE_COUNT_BASE - 1));
         }
     }
 }

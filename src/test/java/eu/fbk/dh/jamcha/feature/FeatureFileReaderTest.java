@@ -33,7 +33,7 @@ public class FeatureFileReaderTest
 
         // PREDICT READER TEST
         filePath = getResourceFilePath(DEFAULT_PREDICT_FILE_PATH.toString());
-        PredictFileReader predictReader = new PredictFileReader(filePath, trainReader.COLUMNS_COUNT_BASE);
+        PredictFileReader predictReader = new PredictFileReader(filePath, trainReader.WORDS_LINE_COUNT_BASE);
         predictReader.read();
         Assert.assertEquals(expectedResultPredict, predictReader.getFeatures());
     }

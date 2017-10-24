@@ -13,95 +13,92 @@ import org.junit.Test;
 
 public class FeaturesSchemaTest
 {
-    private FeaturesSchema schema;
-    private final FeatureParameters params;
-    private FeatureParametersTest paramsTest;
+   private FeaturesSchema schema;
+   private final FeatureParameters params;
+   private FeatureParametersTest paramsTest;
 
-    public FeaturesSchemaTest() throws IOException
-    {
-        Path filePath = FeatureFileReaderTest.getResourceFilePath(FeatureFileReaderTest.DEFAULT_TRAIN_FILE_PATH.toString());
-        TrainFileReader reader = new TrainFileReader(filePath);
-        paramsTest = new FeatureParametersTest();
-        params = FeatureParameters.build(paramsTest.featuresList, paramsTest.columnsCount);
-        schema = FeaturesSchema.build(reader, params);
-    }
+   public FeaturesSchemaTest() throws IOException
+   {
+      Path filePath = FeatureFileReaderTest.getResourceFilePath(FeatureFileReaderTest.DEFAULT_TRAIN_FILE_PATH.toString());
+      TrainFileReader reader = new TrainFileReader(filePath);
+      paramsTest = new FeatureParametersTest();
+      params = FeatureParameters.build(paramsTest.featuresList, paramsTest.columnsCount);
+      schema = new FeaturesSchema(reader, params);
+   }
 
-    @Test
-    public void testIntegrate() throws IOException
-    {
-        // TEST INTEGRATE TRAIN FILE
-        // Load correct integrated features
-        List<Line> correctIntegrated = loadTestIntegratedFeatures("IntegratedFeatures.txt");
+   @Test
+   public void testIntegrate() throws IOException
+   {
+      // TEST INTEGRATE TRAIN FILE
+      // Load correct integrated features
+      List<Line> correctIntegrated = loadTestIntegratedFeatures("IntegratedFeatures.txt");
 
-        schema.integrate(null);
-        for (int i = 0; i < correctIntegrated.size(); i ++)
-        {
-            schema.getIntegratedFeatures().get(i).getWords().sort(null);
-            correctIntegrated.get(i).getWords().sort(null);
-        }
-        Assert.assertEquals(correctIntegrated, schema.getIntegratedFeatures());
+      schema.integrate(null);
+      for (int i = 0; i < correctIntegrated.size(); i ++)
+      {
+         correctIntegrated.get(i).getWords().sort(null);
+      }
+      Assert.assertEquals(correctIntegrated, schema.getIntegratedFeatures());
 
-        // TEST INTEGRATE PREDICT FILE
-        correctIntegrated = loadTestIntegratedFeatures("IntegratedFeaturesPredict.txt");
+      // TEST INTEGRATE PREDICT FILE
+      correctIntegrated = loadTestIntegratedFeatures("IntegratedFeaturesPredict.txt");
 
-        Path filePath = FeatureFileReaderTest.getResourceFilePath(FeatureFileReaderTest.DEFAULT_PREDICT_FILE_PATH.toString());
-        PredictFileReader predictReader = new PredictFileReader(filePath, paramsTest.columnsCount);
-        schema = FeaturesSchema.build(predictReader, params);
-        schema.integrate(null);
-        for (int i = 0; i < correctIntegrated.size(); i ++)
-        {
-            List<String> testfeatures = schema.getIntegratedFeatures().get(i).getWords();
-            testfeatures.sort(null);
-            correctIntegrated.get(i).getWords().sort(null);
-        }
-        for (int i = 0; i < correctIntegrated.size(); i ++)
-        {
-            Line correctLine = correctIntegrated.get(i);
-            Line testLine = schema.getIntegratedFeatures().get(i);
-            if ( ! correctLine.equals(testLine))
+      Path filePath = FeatureFileReaderTest.getResourceFilePath(FeatureFileReaderTest.DEFAULT_PREDICT_FILE_PATH.toString());
+      PredictFileReader predictReader = new PredictFileReader(filePath, paramsTest.columnsCount);
+      schema = new FeaturesSchema(predictReader, params);
+      schema.integrate(null);
+      for (int i = 0; i < correctIntegrated.size(); i ++)
+      {
+         correctIntegrated.get(i).getWords().sort(null);
+      }
+//      for (int i = 0; i < correctIntegrated.size(); i ++)
+//      {
+//         Line correctLine = correctIntegrated.get(i);
+//         Line testLine = schema.getIntegratedFeatures().get(i);
+//         if ( ! correctLine.equals(testLine))
+//         {
+//            break;
+//         }
+//      }
+      Assert.assertEquals(correctIntegrated, schema.getIntegratedFeatures());
+   }
+
+   private List<Line> loadTestIntegratedFeatures(@Nonnull String fileName) throws IOException
+   {
+      ArrayList<Line> retval = new ArrayList<>();
+      Path tmp = FeatureFileReaderTest.getResourceFilePath(fileName);
+      try (BufferedReader reader = Files.newBufferedReader(tmp))
+      {
+         String line;
+         int lineCounter = 0;
+
+         // Read all lines
+         while ((line = reader.readLine()) != null)
+         {
+            String[] lineWords = line.split(" ");
+
+            // Sequence is last word of line
+            int sequence = Integer.parseInt(lineWords[lineWords.length - 1]);
+
+            // Tag is second-last word of line
+            String tag = null;
+            if ( ! (lineWords[lineWords.length - 2]).equals("null"))
             {
-                break;
+               tag = lineWords[lineWords.length - 2];
             }
-        }
-        Assert.assertEquals(correctIntegrated, schema.getIntegratedFeatures());
-    }
 
-    private List<Line> loadTestIntegratedFeatures(@Nonnull String fileName) throws IOException
-    {
-        ArrayList<Line> retval = new ArrayList<>();
-        Path tmp = FeatureFileReaderTest.getResourceFilePath(fileName);
-        try (BufferedReader reader = Files.newBufferedReader(tmp))
-        {
-            String line;
-            int lineCounter = 0;
-
-            // Read all lines
-            while ((line = reader.readLine()) != null)
+            // Add all feature to line except last word (that is sequence index)
+            ArrayList<String> features = new ArrayList<>(lineWords.length);
+            for (int i = 0; i < lineWords.length - 2; i ++)
             {
-                String[] lineWords = line.split(" ");
-
-                // Sequence is last word of line
-                int sequence = Integer.parseInt(lineWords[lineWords.length - 1]);
-
-                // Tag is second-last word of line
-                String tag = null;
-                if ( ! (lineWords[lineWords.length - 2]).equals("null"))
-                {
-                    tag = lineWords[lineWords.length - 2];
-                }
-
-                // Add all feature to line except last word (that is sequence index)
-                ArrayList<String> features = new ArrayList<>(lineWords.length);
-                for (int i = 0; i < lineWords.length - 2; i ++)
-                {
-                    features.add(lineWords[i]);
-                }
-
-                Line newLine = new Line(lineCounter, sequence, tag, features);
-                retval.add(newLine);
-                lineCounter ++;
+               features.add(lineWords[i]);
             }
-        }
-        return retval;
-    }
+
+            Line newLine = new Line(lineCounter, sequence, tag, features);
+            retval.add(newLine);
+            lineCounter ++;
+         }
+      }
+      return retval;
+   }
 }

@@ -37,7 +37,7 @@ public final class TrainFileReader extends FeatureFileReader
     }
 
     /**
-     * Return number of columns of a train file. It reads first file line and assumes that all file lines have same columns count
+     * Return number of words of a train file line. It reads first file line and assumes that all file lines have same columns count
      *
      * @return number of file columns
      *
@@ -56,9 +56,9 @@ public final class TrainFileReader extends FeatureFileReader
     @Override
     protected void checkLineWordsCount(@Nonnull String[] line) throws IOException
     {
-        if (line.length != this.COLUMNS_COUNT_BASE)
+        if (line.length != this.WORDS_LINE_COUNT_BASE)
         {
-            throw new IOException("Line words count is not equal to " + COLUMNS_COUNT_BASE);
+            throw new IOException("Line words count is not equal to " + WORDS_LINE_COUNT_BASE);
         }
     }
 }
