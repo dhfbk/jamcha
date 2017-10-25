@@ -1,5 +1,6 @@
 package eu.fbk.dh.jamcha.feature;
 
+import eu.fbk.dh.jamcha.feature.FeatureParameters.FeatureParser;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -8,6 +9,7 @@ import java.util.Objects;
 import javax.annotation.Nonnegative;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import jdk.internal.org.objectweb.asm.tree.analysis.Value;
 
 public class FeaturesSchema
 {
@@ -20,7 +22,7 @@ public class FeaturesSchema
     * All the features of the training file with additions resulting from the integration process, performed with tuning parameters passed to the integrated method
     */
    private ArrayList<Line> integratedFeatures;
-   
+
    @Nonnull
    private FeatureParameters featureParameters;
 
@@ -61,7 +63,7 @@ public class FeaturesSchema
       {
          return;
       }
-      
+
       if (parameters != null)
       {
          this.featureParameters = parameters;
@@ -71,7 +73,7 @@ public class FeaturesSchema
       this.integratedFeatures = new ArrayList<>(this.defaultFeatures.size());
       FeatureIntegrator.integrateFeatures(this);
    }
-   
+
    public int getLinesCount()
    {
       return this.defaultFeatures.size();
@@ -123,60 +125,48 @@ public class FeaturesSchema
          for (int actualLine = 0; actualLine < schema.defaultFeatures.size(); actualLine ++)
          {
             ArrayList<String> integratedLine = new ArrayList<>();
+
             // Add to this line previous or later lines features according to features parameters (static and dynamic)
             for (int desideredRowOffset : parameters.getParameters().keySet())
             {
                int requestedLine = actualLine + desideredRowOffset;
+               int defSeq = schema.defaultFeatures.get(actualLine).getSequence();
 
                // requestedLine and actualLine must belong to same sentence
-               if (requestedLine >= 0 && requestedLine < schema.defaultFeatures.size() && schema.defaultFeatures.get(actualLine).getSequence() == schema.defaultFeatures.get(
-                     requestedLine).getSequence())
+               if (requestedLine >= 0 && requestedLine < schema.defaultFeatures.size() && defSeq == schema.defaultFeatures.get(requestedLine).getSequence())
                {
-                  List<String> requestedLineFeaturesToAdd = extractLineFeaturesValue(schema, parameters, actualLine + desideredRowOffset, desideredRowOffset);
+                  List<String> requestedLineFeaturesToAdd = extractLineFeaturesValue(schema, requestedLine, desideredRowOffset);
                   integratedLine.addAll(requestedLineFeaturesToAdd);
                }
             }
             String tag = schema.defaultFeatures.get(actualLine).getTag();
+            integratedLine.sort(null);
             Line rowToAdd = new Line(actualLine, schema.defaultFeatures.get(actualLine).getSequence(), tag, integratedLine);
-            rowToAdd.getWords().sort(null);
             schema.integratedFeatures.add(rowToAdd);
          }
       }
 
       /**
-       * Take all features values of co passed as parameter. (all features that must be considered according to features parameters)
+       * Take all features values of line passed as parameter. (all features that must be considered according to features parameters)
        *
-       * @param requestedline co of which we want the features. Must be between 0(inclusive) and lines count (exclusive)
+       * @param requestedline line of which we want the features. Must be between 0(inclusive) and lines count (exclusive). ATTENTION: there is no value check
        *
        * @return features values of considered co that we must consider
        */
       @Nonnull
-      private static List<String> extractLineFeaturesValue(@Nonnull FeaturesSchema schema, @Nonnull FeatureParameters parameters, int requestedline, int offset)
+      private static List<String> extractLineFeaturesValue(@Nonnull FeaturesSchema schema, int requestedline, int offset)
       {
-         if (requestedline < 0 || requestedline >= schema.defaultFeatures.size())
-         {
-            String error = "Requested line must be between zero and " + (schema.defaultFeatures.size() - 1) + "(inclusive)";
-            throw new IllegalArgumentException(error);
-         }
          // List of columns numbers to consider of the requested line
-         Collection<Integer> columnsToAdd = parameters.getParameters().get(offset);
+         Collection<Integer> wordsToAdd = schema.getFeatureParameters().getParameters().get(offset);
 
          // Contains all columns values for this line
-         ArrayList<String> retval = new ArrayList<>(schema.defaultFeatures.get(0).features.size());
+         ArrayList<String> retval = new ArrayList<>(schema.getFeatureParameters().getValuesCount());
 
-         // Take all line columns that have a valid column number (a number passed by columnsToAdd)
-         for (int column : columnsToAdd)
+         // Take all line columns that have a valid word number (a number passed by wordsToAdd)
+         Line line = schema.defaultFeatures.get(requestedline);
+         for (int word : wordsToAdd)
          {
-            String columnFeature;
-            if (column != FeatureParameters.FeatureParser.TAG_COLUMN_INDEX)
-            {
-               columnFeature = schema.defaultFeatures.get(requestedline).features.get(column);
-            }
-            else
-            {
-               columnFeature = schema.defaultFeatures.get(requestedline).getTag();
-            }
-            
+            String columnFeature = word != FeatureParser.TAG_COLUMN_INDEX ? line.features.get(word) : line.getTag();
             if (columnFeature != null)
             {
                retval.add(columnFeature);
@@ -227,32 +217,32 @@ public class FeaturesSchema
          this.tag = tag;
          this.features = lineFeatures != null ? new ArrayList<>(lineFeatures) : new ArrayList<>(0);
       }
-      
+
       public int getLine()
       {
          return this.line;
       }
-      
+
       public String getTag()
       {
          return this.tag;
       }
-      
+
       public int getSequence()
       {
          return this.sequenceIndex;
       }
-      
+
       public List<String> getWords()
       {
          return this.features;
       }
-      
+
       public void setTag(@Nullable String tag)
       {
          this.tag = tag;
       }
-      
+
       @Override
       public boolean equals(Object o)
       {
@@ -265,7 +255,7 @@ public class FeaturesSchema
          }
          return retval;
       }
-      
+
       @Override
       public int hashCode()
       {

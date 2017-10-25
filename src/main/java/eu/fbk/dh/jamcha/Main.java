@@ -76,7 +76,6 @@ public class Main
                   List<Line> predictedLines = data.getModel().predict(features);
                   DataIO.saveFeatures(predictedLines, paramsReader.getModelPath());
                }
-
                break;
             }
          }
@@ -84,8 +83,6 @@ public class Main
       catch (IOException e)
       {
          System.out.println(e.getLocalizedMessage());
-         System.out.println(e.getCause());
-         e.printStackTrace();
          System.exit(1);
       }
    }

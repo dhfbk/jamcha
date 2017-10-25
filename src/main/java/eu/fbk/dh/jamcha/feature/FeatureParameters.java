@@ -29,6 +29,7 @@ public class FeatureParameters
    private TreeMultimap<Integer, Integer> featuresParametersMap;
    @Nonnegative
    private final int columnsCount;
+   private final int valuesCount;
 
    private FeatureParameters(@Nonnull String feature, @Nonnull Multimap<Integer, Integer> featuresMap, int columnsCount)
    {
@@ -40,6 +41,7 @@ public class FeatureParameters
       this.columnsCount = columnsCount;
       featuresMap = fromColRowsToRowCols(featuresMap);
       featuresParametersMap = TreeMultimap.create(featuresMap);
+      valuesCount = featuresParametersMap.values().size();
    }
 
    /**
@@ -178,6 +180,11 @@ public class FeatureParameters
    public int getWordsLineCount()
    {
       return this.columnsCount;
+   }
+
+   public int getValuesCount()
+   {
+      return this.valuesCount;
    }
 
    @Nonnull

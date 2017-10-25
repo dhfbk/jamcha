@@ -66,7 +66,7 @@ public class Model
             labVectors.add(vector);
          }
       }
-      Classifier.Parameters classParams = Classifier.Parameters.forSVMPolyKernel(tagsMapTmp.size(), null, null, null, null, null);
+      Classifier.Parameters classParams = Classifier.Parameters.forSVMRBFKernel(tagsMapTmp.size(), null, null, null);
       Classifier classifierTmp = Classifier.train(classParams, labVectors);
 
       Model model = new Model();
