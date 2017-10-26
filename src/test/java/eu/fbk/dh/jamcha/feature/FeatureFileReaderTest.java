@@ -1,6 +1,6 @@
 package eu.fbk.dh.jamcha.feature;
 
-import eu.fbk.dh.jamcha.feature.FeaturesSchema.Line;
+import eu.fbk.dh.jamcha.feature.Line;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;

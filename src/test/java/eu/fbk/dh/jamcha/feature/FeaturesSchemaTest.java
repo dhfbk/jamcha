@@ -1,6 +1,6 @@
 package eu.fbk.dh.jamcha.feature;
 
-import eu.fbk.dh.jamcha.feature.FeaturesSchema.Line;
+import eu.fbk.dh.jamcha.feature.Line;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -13,7 +13,7 @@ import org.junit.Test;
 
 public class FeaturesSchemaTest
 {
-   private FeaturesSchema schema;
+   private FeaturesIntegrator schema;
    private final FeatureParameters params;
    private FeatureParametersTest paramsTest;
 
@@ -23,7 +23,7 @@ public class FeaturesSchemaTest
       TrainFileReader reader = new TrainFileReader(filePath);
       paramsTest = new FeatureParametersTest();
       params = FeatureParameters.build(paramsTest.featuresList, paramsTest.columnsCount);
-      schema = new FeaturesSchema(reader, params);
+      schema = new FeaturesIntegrator(reader, params);
    }
 
    @Test
@@ -45,7 +45,7 @@ public class FeaturesSchemaTest
 
       Path filePath = FeatureFileReaderTest.getResourceFilePath(FeatureFileReaderTest.DEFAULT_PREDICT_FILE_PATH.toString());
       PredictFileReader predictReader = new PredictFileReader(filePath, paramsTest.columnsCount);
-      schema = new FeaturesSchema(predictReader, params);
+      schema = new FeaturesIntegrator(predictReader, params);
       schema.integrate(null);
       for (int i = 0; i < correctIntegrated.size(); i ++)
       {

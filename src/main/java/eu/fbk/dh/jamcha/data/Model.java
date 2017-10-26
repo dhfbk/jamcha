@@ -1,7 +1,8 @@
 package eu.fbk.dh.jamcha.data;
 
-import eu.fbk.dh.jamcha.feature.FeaturesSchema;
-import eu.fbk.dh.jamcha.feature.FeaturesSchema.Line;
+import eu.fbk.dh.jamcha.feature.FeaturesIntegrator;
+import eu.fbk.dh.jamcha.feature.Line;
+import eu.fbk.dh.jamcha.feature.Line;
 import eu.fbk.utils.svm.Classifier;
 import eu.fbk.utils.svm.LabelledVector;
 import eu.fbk.utils.svm.Vector;
@@ -23,7 +24,6 @@ import javax.annotation.Nonnull;
 public class Model
 {
    private static final String TAGS_INDEX_MAP_FILENAME = "tagsIndexes.txt";
-
    @Nonnull
    private HashMap<Integer, String> tagsMap;
    private Classifier classifier;
@@ -34,8 +34,11 @@ public class Model
 
    /**
     * Create feature model from a list of line features
+    *
     * @param features integrated line features,using feature tuning parameters, from which to generate model
+    *
     * @return model instance containing feature generated model and a tgs map
+    *
     * @throws IOException default
     * @see IOException
     */
@@ -47,7 +50,7 @@ public class Model
       HashMap<Integer, String> tagsMapTmp = new HashMap<>(features.size());
       HashMap<String, Integer> tagIndex = new HashMap<>(tagsMapTmp.size());
 
-      for (FeaturesSchema.Line line : features)
+      for (Line line : features)
       {
          String tag = line.getTag();
          if (tag != null)
@@ -83,9 +86,12 @@ public class Model
 
    /**
     * Load saved data from path
+    *
     * @param folderPath folder path where data to load are located
+    *
     * @return
-    * @throws IOException 
+    *
+    * @throws IOException
     */
    protected static Model load(@Nonnull Path folderPath) throws IOException
    {
@@ -132,33 +138,14 @@ public class Model
    /**
     * Guess the most likely tag for each features line
     *
-    * @param features list of the features lines we want to get the most likely tag
+    * @param integrator {@link FeaturesIntegrator}
     *
     * @return list of feature lines each with its calculated tag
     */
-   public List<Line> predict(@Nonnull final List<Line> features)
+   public List<Line> predict(@Nonnull final FeaturesIntegrator integrator)
    {
-      ArrayList<Vector> vectors = new ArrayList<>(features.size());
-      //TODO: trasformare features in labelledvector
-      for (Line line : features)
-      {
-         Vector vector = Vector.builder().set(line.getWords()).build();
-         vectors.add(vector);
-      }
-
-      // chiamare classifier.predict->ottengo lista di labelled vector
-      List<LabelledVector> predictResult = classifier.predict(true, vectors);
-
-      // convertire labelledvector in line usando la tagmap
-      ArrayList<Line> retval = new ArrayList<>(features.size());
-      for (LabelledVector vector : predictResult)
-      {
-         String tag = tagsMap.get(vector.getLabel());
-         Line line = new Line(0, 0, tag, vector.getFeatures());
-         retval.add(line);
-      }
-
-      return retval;
+      integrator.integrateWithPrediction(this);
+      return integrator.getDefaultFeatures();
    }
 
    @Nonnull

@@ -4,8 +4,8 @@ import eu.fbk.dh.jamcha.data.DataIO;
 import eu.fbk.dh.jamcha.data.Model;
 import eu.fbk.dh.jamcha.feature.FeatureFileReader;
 import eu.fbk.dh.jamcha.feature.FeatureParameters;
-import eu.fbk.dh.jamcha.feature.FeaturesSchema;
-import eu.fbk.dh.jamcha.feature.FeaturesSchema.Line;
+import eu.fbk.dh.jamcha.feature.FeaturesIntegrator;
+import eu.fbk.dh.jamcha.feature.Line;
 import eu.fbk.dh.jamcha.feature.PredictFileReader;
 import eu.fbk.dh.jamcha.feature.TrainFileReader;
 import eu.fbk.dh.jamcha.parametersReader.ParametersReader;
@@ -47,8 +47,8 @@ public class Main
                FeatureParameters featureParameters = FeatureParameters.build(trainParams.getRawFeaturesParameters(), fileReader.getLineWordsCount());
 
                // Build feature schema and integrate
-               FeaturesSchema schema = new FeaturesSchema(fileReader.getFeatures(), featureParameters);
-               schema.integrate(null);
+               FeaturesIntegrator schema = new FeaturesIntegrator(fileReader.getFeatures(), featureParameters);
+               schema.integrate();
 
                // Train features and save data
                Model model = Model.train(schema.getIntegratedFeatures());
@@ -66,7 +66,7 @@ public class Main
                fileReader.read();
 
                // Build feature schema and integrate
-               FeaturesSchema schema = new FeaturesSchema(fileReader.getFeatures(), data.getFeatureParameters());
+               FeaturesIntegrator schema = new FeaturesIntegrator(fileReader.getFeatures(), data.getFeatureParameters());
                schema.integrate(null);
 
                // Predict tags and save data

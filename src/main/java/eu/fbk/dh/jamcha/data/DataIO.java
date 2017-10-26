@@ -1,7 +1,7 @@
 package eu.fbk.dh.jamcha.data;
 
 import eu.fbk.dh.jamcha.feature.FeatureParameters;
-import eu.fbk.dh.jamcha.feature.FeaturesSchema.Line;
+import eu.fbk.dh.jamcha.feature.Line;
 import java.io.BufferedWriter;
 import java.io.IOException;
 import java.nio.file.Files;

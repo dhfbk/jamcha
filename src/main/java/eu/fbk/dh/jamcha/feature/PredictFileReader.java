@@ -1,44 +1,43 @@
 package eu.fbk.dh.jamcha.feature;
 
-import java.io.IOException;
 import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.List;
 import javax.annotation.Nonnegative;
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 /**
  * Reader for a file that must be classified
  */
 public final class PredictFileReader extends FeatureFileReader
 {
-    /**
-     * Constructor
-     *
-     * @param filePath              path of file to read
-     * @param trainFileColumnsCount number of columns of train file (train file must have a fixed number of columns). Number must be 3 or greater
-     */
-    public PredictFileReader(@Nonnull Path filePath, @Nonnegative int trainFileColumnsCount)
-    {
-        super(filePath, trainFileColumnsCount);
-    }
+   /**
+    * Constructor
+    *
+    * @param filePath              path of file to read
+    * @param trainFileColumnsCount number of columns of train file (train file must have a fixed number of columns). Number must be 3 or greater
+    */
+   public PredictFileReader(@Nonnull Path filePath, @Nonnegative int trainFileColumnsCount)
+   {
+      this(filePath, trainFileColumnsCount, null);
+   }
 
-    /**
-     * Constructor
-     *
-     * @param filePath              path of file to read
-     * @param trainFileColumnsCount number of columns of train file (train file must have a fixed number of columns). Number must be 3 or greater
-     * @param sentenceSeparator     separator of two sentences
-     */
-    public PredictFileReader(@Nonnull Path filePath, @Nonnegative int trainFileColumnsCount, final String sentenceSeparator)
-    {
-        super(filePath, trainFileColumnsCount, sentenceSeparator);
-    }
+   /**
+    * Constructor
+    *
+    * @param filePath              path of file to read
+    * @param trainFileColumnsCount number of columns of train file (train file must have a fixed number of columns). Number must be 3 or greater
+    * @param sentenceSeparator     separator of two sentences
+    */
+   public PredictFileReader(@Nonnull Path filePath, @Nonnegative int trainFileColumnsCount, @Nullable final String sentenceSeparator)
+   {
+      super(filePath, trainFileColumnsCount, sentenceSeparator);
+   }
 
-    @Override
-    protected void checkLineWordsCount(@Nonnull String[] line) throws IOException
-    {
-        if (line.length < WORDS_LINE_COUNT_BASE - 1)
-        {
-            throw new IOException("Line words count is less than " + (WORDS_LINE_COUNT_BASE - 1));
-        }
-    }
+   @Override
+   protected boolean checkLineWordsCount(@Nonnull String[] line)
+   {
+      return line.length < (WORDS_LINE_COUNT_BASE - 1);
+   }
 }

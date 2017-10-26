@@ -1,6 +1,6 @@
 package eu.fbk.dh.jamcha.feature;
 
-import eu.fbk.dh.jamcha.feature.FeaturesSchema.Line;
+import eu.fbk.dh.jamcha.feature.Line;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -31,18 +31,7 @@ public abstract class FeatureFileReader
 
    @Nonnull
    private final Path filePath;
-   private ArrayList<Line> features;
-
-   /**
-    * Constructor
-    *
-    * @param filePath            path of file to read
-    * @param columnsCountWithTag minimun number of words for every line
-    */
-   protected FeatureFileReader(@Nonnull Path filePath, int columnsCountWithTag)
-   {
-      this(filePath, columnsCountWithTag, null);
-   }
+   protected ArrayList<Line> features;
 
    /**
     * Constructor
@@ -95,8 +84,10 @@ public abstract class FeatureFileReader
                // Split read line and check possible incorrect number of words(columns)
                String[] lineWords = line.split(" ");
 
-               checkLineWordsCount(lineWords);
-
+               if ( ! checkLineWordsCount(lineWords))
+               {
+                  throw new IOException("Line " + rowCounter + " has an invalid words count");
+               }
                String tag = lineWords.length >= WORDS_LINE_COUNT_BASE ? lineWords[columnsTagIndex] : null;
 
                //Put row features to global structure
@@ -135,7 +126,7 @@ public abstract class FeatureFileReader
     *
     * @param line line words
     *
-    * @throws IOException line words count is not a permitted value
+    * @return true if line length is correct
     */
-   protected abstract void checkLineWordsCount(@Nonnull String[] line) throws IOException;
+   protected abstract boolean checkLineWordsCount(@Nonnull String[] line);
 }
