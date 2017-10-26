@@ -27,8 +27,6 @@ public final class PredictFileReader extends FeatureFileReader
      * @param filePath              path of file to read
      * @param trainFileColumnsCount number of columns of train file (train file must have a fixed number of columns). Number must be 3 or greater
      * @param sentenceSeparator     separator of two sentences
-     *
-     * @throws java.io.IOException file path not valid
      */
     public PredictFileReader(@Nonnull Path filePath, @Nonnegative int trainFileColumnsCount, final String sentenceSeparator)
     {

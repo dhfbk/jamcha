@@ -16,10 +16,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 
 /**
- *
+ * Creates features model using feature tuning parameters. Tags map is generated automatically
  */
 public class Model
 {
@@ -33,6 +32,13 @@ public class Model
    {
    }
 
+   /**
+    * Create feature model from a list of line features
+    * @param features integrated line features,using feature tuning parameters, from which to generate model
+    * @return model instance containing feature generated model and a tgs map
+    * @throws IOException default
+    * @see IOException
+    */
    @Nonnull
    public static Model train(@Nonnull List<Line> features) throws IOException
    {
@@ -75,6 +81,12 @@ public class Model
       return model;
    }
 
+   /**
+    * Load saved data from path
+    * @param folderPath folder path where data to load are located
+    * @return
+    * @throws IOException 
+    */
    protected static Model load(@Nonnull Path folderPath) throws IOException
    {
       Model model = new Model();

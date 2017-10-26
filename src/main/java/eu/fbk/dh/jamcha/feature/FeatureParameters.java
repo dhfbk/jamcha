@@ -47,10 +47,10 @@ public class FeatureParameters
    /**
     * Builder of FeatureParameters
     *
-    * @param allFeatures             single feature or a list of features separated by one whitespace char
-    * @param trainFileLineWordsCount number of words of a line of train file (every line of train file has same number of words). Check {@value FeatureFileReader.COLUMNS_COUNT_MIN}
+    * @param allFeatures single feature or a list of features separated by one whitespace char. e.gT:-3.. F:-2..3:-6..-1 etc
+    * @param trainFileLineWordsCount number of words of a line of train file (every line of train file has same number of words). Check {@code  FeatureFileReader.COLUMNS_COUNT_MIN}
     *
-    * @return
+    * @return instance of FeatureParameters built from a string cointaining all tuning features
     */
    @Nonnull
    public static FeatureParameters build(@Nonnull String allFeatures, final int trainFileLineWordsCount)
@@ -69,9 +69,9 @@ public class FeatureParameters
    }
 
    /**
-    * Switch from column->rows to row->cols. In other words, input is a list of line to consider for each column. Output is a list of all columns to consider for each line
+    * Switch from a view column-rows to a view row-cols. In other words, input is a list of line to consider for each column. Output is a list of all columns to consider for each line
     *
-    * @param featuresParameters features multimap with this structure: column->rows
+    * @param featuresParameters features multimap with this structure: a column-multiple rows
     *
     * @return list of all columns to consider for each line (e.g. for line 4 consider feature-column number 0,3,4)
     */

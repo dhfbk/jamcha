@@ -9,8 +9,10 @@ import java.util.Objects;
 import javax.annotation.Nonnegative;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import jdk.internal.org.objectweb.asm.tree.analysis.Value;
 
+/**
+ * Class that integrates line features using feature tuning parameters
+ */
 public class FeaturesSchema
 {
    /**
@@ -140,7 +142,6 @@ public class FeaturesSchema
                }
             }
             String tag = schema.defaultFeatures.get(actualLine).getTag();
-            integratedLine.sort(null);
             Line rowToAdd = new Line(actualLine, schema.defaultFeatures.get(actualLine).getSequence(), tag, integratedLine);
             schema.integratedFeatures.add(rowToAdd);
          }

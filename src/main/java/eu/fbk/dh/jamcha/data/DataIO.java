@@ -7,13 +7,10 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.Collection;
-import java.util.List;
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 
 /**
- * save and load all data that will be used in future sessions. Manage persistent data.
+ * Save and load all data that will be used in future sessions. Manage persistent data.
  */
 public class DataIO
 {
@@ -30,7 +27,13 @@ public class DataIO
       private static final String LINES = "predictionResult.txt";
    }
 
-   public DataIO(@Nonnull Model model, @Nonnull FeatureParameters parameters, Path baseFolderPath)
+  /**
+   * Constructor
+   * @param model model with classifier and tag map
+   * @param parameters feature tuning parameters that have been used to integrate feature line and used to create model
+   * @param baseFolderPath folder path where will be saved all data. Do not insert file path
+   */
+  public DataIO(@Nonnull Model model, @Nonnull FeatureParameters parameters, Path baseFolderPath)
    {
       this.parameters = parameters;
       this.model = model;
@@ -49,20 +52,20 @@ public class DataIO
    }
 
    /**
-    * Load feature parameters and train model(with association map tag->int)
+    * Load feature parameters and train model(with association map tag-int)
     *
-    * @param folderPath base folder path where all files are saved. Path must ends with: {@link FILE_NAME.FOLDER_ROOT }
+    * @param folderPath base folder path where all files are saved. Path must ends with: {@code FILE_NAME.FOLDER_ROOT }
     *
     * @return an instance containing features parameters and training model
     *
-    * @throws IllegalArgumentException
-    * @throws IOException
+    * @throws IllegalArgumentException invalid path
+    * @throws IOException default
     */
    public static DataIO load(@Nonnull Path folderPath) throws IllegalArgumentException, IOException
    {
       if ( ! isBasePath(folderPath))
       {
-         throw new IllegalArgumentException("Invalid path");
+         throw new IllegalArgumentException("Invalid path: cannot load persistent data(model, etc)");
       }
 
       FeatureParameters parameters = FeatureParameters.loadFrom(folderPath);

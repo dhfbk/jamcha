@@ -18,16 +18,16 @@ public class Main
    private static final int MODE = 1;
    private static final String[] trainArguments =
    {
-      "train", "CORPUS=C:\\Users\\dan92\\Documents\\DefaultTrain.txt", "MODEL=C:\\Users\\dan92\\Documents", "FEATURES=F:-2..1:0..1 F:-3..-2:1..2 T:-4..-1 T:-5..-3"
+      "train", "CORPUS=/home/mazzetti/Documents/DefaultTrain.txt", "MODEL=/home/mazzetti/Documents", "FEATURES=F:-2..1:0..1 F:-3..-2:1..2 T:-4..-1 T:-5..-3"
    };
    private static final String[] predictArguments =
    {
-      "predict", "CORPUS=C:\\Users\\dan92\\Documents\\DefaultPredict.txt", "MODEL=C:\\Users\\dan92\\Documents\\Data"
+      "predict", "CORPUS=/home/mazzetti/Documents/DefaultPredict.txt", "MODEL=/home/mazzetti/Documents/Data"
    };
 
    public static void main(String[] args)
    {
-      args = MODE == 0 ? trainArguments : predictArguments;
+      //args = MODE == 0 ? trainArguments : predictArguments;
 
       ParametersReader paramsReader = ParametersReader.build(args);
       ParametersReader.COMMAND_TYPE paramsType = paramsReader.readParameters(args);
