@@ -2,7 +2,6 @@ package eu.fbk.dh.jamcha.data;
 
 import eu.fbk.dh.jamcha.feature.FeaturesIntegrator;
 import eu.fbk.dh.jamcha.feature.Line;
-import eu.fbk.dh.jamcha.feature.Line;
 import eu.fbk.utils.svm.Classifier;
 import eu.fbk.utils.svm.LabelledVector;
 import eu.fbk.utils.svm.Vector;

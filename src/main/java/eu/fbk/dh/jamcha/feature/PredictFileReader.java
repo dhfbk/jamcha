@@ -1,8 +1,6 @@
 package eu.fbk.dh.jamcha.feature;
 
 import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.List;
 import javax.annotation.Nonnegative;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;

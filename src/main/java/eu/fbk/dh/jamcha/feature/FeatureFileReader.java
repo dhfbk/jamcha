@@ -1,6 +1,5 @@
 package eu.fbk.dh.jamcha.feature;
 
-import eu.fbk.dh.jamcha.feature.Line;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.nio.file.Files;
