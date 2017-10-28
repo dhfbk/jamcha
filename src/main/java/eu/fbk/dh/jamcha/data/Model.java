@@ -1,6 +1,7 @@
 package eu.fbk.dh.jamcha.data;
 
-import eu.fbk.dh.jamcha.feature.FeaturesIntegrator;
+import eu.fbk.dh.jamcha.feature.Integrator;
+import eu.fbk.dh.jamcha.feature.IntegratorPredictor;
 import eu.fbk.dh.jamcha.feature.Line;
 import eu.fbk.utils.svm.Classifier;
 import eu.fbk.utils.svm.LabelledVector;
@@ -74,7 +75,8 @@ public class Model
             labVectors.add(vector);
          }
       }
-      Classifier.Parameters classParams = Classifier.Parameters.forSVMRBFKernel(tagsMapTmp.size(), null, null, null);
+      //Classifier.Parameters classParams = Classifier.Parameters.forSVMPolyKernel(tagsMapTmp.size(), null, null, null, null, null);
+      Classifier.Parameters classParams = Classifier.Parameters.forSVMSigmoidKernel(tagsMapTmp.size(), null, null, null, null);
       Classifier classifierTmp = Classifier.train(classParams, labVectors);
 
       Model model = new Model();
@@ -137,14 +139,13 @@ public class Model
    /**
     * Guess the most likely tag for each features line
     *
-    * @param integrator {@link FeaturesIntegrator}
+    * @param integrator {@link Integrator}
     *
     * @return list of feature lines each with its calculated tag
     */
-   public List<Line> predict(@Nonnull final FeaturesIntegrator integrator)
+   public List<Line> predict(@Nonnull final IntegratorPredictor integrator)
    {
-      integrator.integrateWithPrediction(this);
-      return integrator.getDefaultFeatures();
+      return integrator.integrate();
    }
 
    @Nonnull

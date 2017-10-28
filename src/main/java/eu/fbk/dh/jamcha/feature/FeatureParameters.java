@@ -19,17 +19,27 @@ import javax.annotation.Nonnull;
 /**
  * Class that represent feature parameters that influence feature integration (eg. static and dynamic features)
  */
-public class FeatureParameters
+public final class FeatureParameters
 {
    /**
     * File name where will be saved features parameters and columns count
     */
    public static final String FILE_NAME = "featuresParameters.txt";
    private String features;
-   private TreeMultimap<Integer, Integer> featuresParametersMap;
+   private TreeMultimap<Integer, Integer> parametersMap;
    @Nonnegative
    private final int columnsCount;
    private final int valuesCount;
+
+   /**
+    * All features values that will be saved in a file.
+    */
+   private static class SaveOptions
+   {
+      private final static String WORDS_COUNT = "LINE_WORDS_COUNT";
+      private final static String FEATURES = "FEATURES_PARAMETERS";
+      private final static String SEPARATOR = " ";
+   }
 
    private FeatureParameters(@Nonnull String feature, @Nonnull Multimap<Integer, Integer> featuresMap, int columnsCount)
    {
@@ -40,20 +50,20 @@ public class FeatureParameters
       }
       this.columnsCount = columnsCount;
       featuresMap = fromColRowsToRowCols(featuresMap);
-      featuresParametersMap = TreeMultimap.create(featuresMap);
-      valuesCount = featuresParametersMap.values().size();
+      parametersMap = TreeMultimap.create(featuresMap);
+      valuesCount = parametersMap.values().size();
    }
 
    /**
     * Builder of FeatureParameters
     *
-    * @param allFeatures single feature or a list of features separated by one whitespace char. e.gT:-3.. F:-2..3:-6..-1 etc
-    * @param trainFileLineWordsCount number of words of a line of train file (every line of train file has same number of words). Check {@code  FeatureFileReader.COLUMNS_COUNT_MIN}
+    * @param allFeatures    single feature or a list of features separated by one whitespace char. e.gT:-3.. F:-2..3:-6..-1 etc
+    * @param lineWordsCount number of words of a line of train file (every line of train file has same number of words). Check {@code  FeatureFileReader.COLUMNS_COUNT_MIN}
     *
     * @return instance of FeatureParameters built from a string cointaining all tuning features
     */
    @Nonnull
-   public static FeatureParameters build(@Nonnull String allFeatures, final int trainFileLineWordsCount)
+   public static FeatureParameters build(@Nonnull String allFeatures, final int lineWordsCount)
    {
       String[] features = allFeatures.split(" ");
 
@@ -61,10 +71,10 @@ public class FeatureParameters
       // Getting values map of each feature
       for (String feature : features)
       {
-         Multimap<Integer, Integer> singleFeatureMap = FeatureParser.parseFeature(feature, trainFileLineWordsCount);
+         Multimap<Integer, Integer> singleFeatureMap = FeatureParser.parseFeature(feature, lineWordsCount);
          featuresMap.putAll(singleFeatureMap);
       }
-      FeatureParameters retval = new FeatureParameters(allFeatures, featuresMap, trainFileLineWordsCount);
+      FeatureParameters retval = new FeatureParameters(allFeatures, featuresMap, lineWordsCount);
       return retval;
    }
 
@@ -190,7 +200,7 @@ public class FeatureParameters
    @Nonnull
    protected Multimap<Integer, Integer> getParameters()
    {
-      return this.featuresParametersMap;
+      return this.parametersMap;
    }
 
    /**
@@ -402,7 +412,7 @@ public class FeatureParameters
                // If empty will be used default max value otherwise will be used parsed value
                // If value is present will be used parsed value
                /**
-                * If value is absent there are two scenarios: 1) format x.. is permitted upperLineMaxValue becomes second value 2) format x.. is not permitted, and there is an exception
+                * If value is absent there are two scenarios: 1) format x.. is permitted and upperLineMaxValue becomes second value 2) format x.. is not permitted, and there is an exception
                 * Example: take static feature F:-2..5:-6.. : in the first section after -2.. a value must be present (otherwise there will be raised an exception). In the second section
                 * after -6.. you can or not put a value. If there is no value, upperLineMaxValue is taken
                 */
@@ -422,19 +432,22 @@ public class FeatureParameters
                   secondValue = Integer.parseInt(valuesList[1]);
                }
 
-               // If firstValue and upperLineMaxValue are valid, will be created and added to list all numbers from firstValue to upperLineMaxValue (a sequence from firstValue to secondValue)
-               if (isWithin(ROWS_MIN_OFFSET, upperLineMaxValue, firstValue) && isWithin(ROWS_MIN_OFFSET, upperLineMaxValue, secondValue))
+               firstValue = uniformValue(ROWS_MIN_OFFSET, upperLineMaxValue, firstValue);
+               secondValue = uniformValue(ROWS_MIN_OFFSET, upperLineMaxValue, secondValue);
+//               // If firstValue and upperLineMaxValue are valid, will be created and added to list all numbers from firstValue to upperLineMaxValue (a sequence from firstValue to secondValue)
+//               if (isWithin(ROWS_MIN_OFFSET, upperLineMaxValue, firstValue) && isWithin(ROWS_MIN_OFFSET, upperLineMaxValue, secondValue))
+//               {
+//
+//               }
+//               else
+//               {
+//
+//                  throw new IllegalArgumentException(sectionToParse + " contains an invalid value");
+//               }
+               for (int i = firstValue; i <= secondValue; i ++)
                {
-                  for (int i = firstValue; i <= secondValue; i ++)
-                  {
-                     list.add(i);
-                  }
+                  list.add(i);
                }
-               else
-               {
-                  throw new IllegalArgumentException(sectionToParse + " contains an invalid value");
-               }
-
             }
             else
             {
@@ -457,15 +470,26 @@ public class FeatureParameters
       {
          return min <= value && value <= max;
       }
-   }
 
-   /**
-    * All features values that will be saved in a file.
-    */
-   private static class SaveOptions
-   {
-      private final static String WORDS_COUNT = "LINE_WORDS_COUNT";
-      private final static String FEATURES = "FEATURES_PARAMETERS";
-      private final static String SEPARATOR = " ";
+      private static int uniformValue(int min, int max, int value)
+      {
+         int retval;
+         if (value > max)
+         {
+            retval = max;
+         }
+         else
+         {
+            if (value < min)
+            {
+               retval = min;
+            }
+            else
+            {
+               retval = value;
+            }
+         }
+         return retval;
+      }
    }
 }

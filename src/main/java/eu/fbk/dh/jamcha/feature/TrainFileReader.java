@@ -58,6 +58,6 @@ public final class TrainFileReader extends FeatureFileReader
    @Override
    protected boolean checkLineWordsCount(@Nonnull String[] line)
    {
-      return line.length != this.WORDS_LINE_COUNT_BASE;
+      return line.length == this.WORDS_LINE_COUNT_BASE;
    }
 }

@@ -36,6 +36,6 @@ public final class PredictFileReader extends FeatureFileReader
    @Override
    protected boolean checkLineWordsCount(@Nonnull String[] line)
    {
-      return line.length < (WORDS_LINE_COUNT_BASE - 1);
+      return  ! (line.length < (WORDS_LINE_COUNT_BASE - 1));
    }
 }

@@ -87,7 +87,6 @@ public abstract class FeatureFileReader
                {
                   throw new IOException("Line " + rowCounter + " has an invalid words count");
                }
-               String tag = lineWords.length >= WORDS_LINE_COUNT_BASE ? lineWords[columnsTagIndex] : null;
 
                //Put row features to global structure
                ArrayList<String> lineFeatures = new ArrayList<>(columnsNoTagMaxIndex);
@@ -95,7 +94,7 @@ public abstract class FeatureFileReader
                {
                   lineFeatures.add(lineWords[column]);
                }
-
+               String tag = lineWords.length >= WORDS_LINE_COUNT_BASE ? lineWords[columnsTagIndex] : null;
                Line row = new Line(rowCounter, sequenceIndex, tag, lineFeatures);
                features.add(row);
                rowCounter ++;
@@ -110,7 +109,7 @@ public abstract class FeatureFileReader
    }
 
    @Nullable
-   public List<Line> getFeatures()
+   public List<Line> getLines()
    {
       return this.features;
    }

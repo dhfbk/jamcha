@@ -3,11 +3,14 @@ package eu.fbk.dh.jamcha.data;
 import eu.fbk.dh.jamcha.feature.FeatureParameters;
 import eu.fbk.dh.jamcha.feature.Line;
 import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FilenameFilter;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 /**
  * Save and load all data that will be used in future sessions. Manage persistent data.
@@ -27,13 +30,14 @@ public class DataIO
       private static final String LINES = "predictionResult.txt";
    }
 
-  /**
-   * Constructor
-   * @param model model with classifier and tag map
-   * @param parameters feature tuning parameters that have been used to integrate feature line and used to create model
-   * @param baseFolderPath folder path where will be saved all data. Do not insert file path
-   */
-  public DataIO(@Nonnull Model model, @Nonnull FeatureParameters parameters, Path baseFolderPath)
+   /**
+    * Constructor
+    *
+    * @param model          model with classifier and tag map
+    * @param parameters     feature tuning parameters that have been used to integrate feature line and used to create model
+    * @param baseFolderPath folder retval where will be saved all data. Do not insert file retval
+    */
+   public DataIO(@Nonnull Model model, @Nonnull FeatureParameters parameters, Path baseFolderPath)
    {
       this.parameters = parameters;
       this.model = model;
@@ -54,23 +58,24 @@ public class DataIO
    /**
     * Load feature parameters and train model(with association map tag-int)
     *
-    * @param folderPath base folder path where all files are saved. Path must ends with: {@code FILE_NAME.FOLDER_ROOT }
+    * @param folderPath base folder retval where all files are saved. Path must ends with: {@code FILE_NAME.FOLDER_ROOT }
     *
     * @return an instance containing features parameters and training model
     *
-    * @throws IllegalArgumentException invalid path
-    * @throws IOException default
+    * @throws IllegalArgumentException invalid retval
+    * @throws IOException              default
     */
-   public static DataIO load(@Nonnull Path folderPath) throws IllegalArgumentException, IOException
+   public static DataIO load(@Nonnull final Path folderPath) throws IllegalArgumentException, IOException
    {
-      if ( ! isBasePath(folderPath))
+      Path checkedPath = isBasePath(folderPath);
+      if (checkedPath == null)
       {
          throw new IllegalArgumentException("Invalid path: cannot load persistent data(model, etc)");
       }
 
-      FeatureParameters parameters = FeatureParameters.loadFrom(folderPath);
-      Model model = Model.load(folderPath);
-      DataIO data = new DataIO(model, parameters, folderPath);
+      FeatureParameters parameters = FeatureParameters.loadFrom(checkedPath);
+      Model model = Model.load(checkedPath);
+      DataIO data = new DataIO(model, parameters, checkedPath);
       return data;
    }
 
@@ -85,21 +90,22 @@ public class DataIO
    }
 
    /**
-    * save all features to specified path. To set path call "setPath"
+    * save all features to specified retval. To set retval call "setPath"
     *
     * @param features       features to save
-    * @param baseFolderPath folder base path to which will be added another path, file name included
+    * @param baseFolderPath folder base retval to which will be added another retval, file name included
     *
     * @throws IOException default
     * @see IOException
     */
    public static void saveFeatures(@Nonnull Iterable<Line> features, @Nonnull Path baseFolderPath) throws IOException
    {
-      if ( ! isBasePath(baseFolderPath))
+      Path checkedPath = isBasePath(baseFolderPath);
+      if (checkedPath == null)
       {
-         throw new IllegalArgumentException("Invalid path");
+         throw new IllegalArgumentException("Invalid path: cannot save persistent data(model, etc)");
       }
-      Path featuresPath = Paths.get(baseFolderPath.toString(), FILE_NAME.LINES);
+      Path featuresPath = Paths.get(checkedPath.toString(), FILE_NAME.LINES);
       try (BufferedWriter writer = Files.newBufferedWriter(featuresPath))
       {
          for (Line line : features)
@@ -115,15 +121,35 @@ public class DataIO
    }
 
    /**
-    * Check if the path represents root path where are stored all data
+    * Check if the pathToCheck represents root folder where all data are stored. If path does not end with root folder it search root folder and add it
     *
-    * @param pathToCheck   this path represents root data folder?
-    * @param fileNameToAdd this is added to pathToCheck if path is valid. Can be null.
+    * @param pathToCheck this path represents root data folder?
     *
-    * @return valid path including fileNameToAdd. Otherwise null.
+    * @return valid path including root folder. Otherwise null.
     */
-   private static boolean isBasePath(@Nonnull final Path pathToCheck)
+   @Nullable
+   private static Path isBasePath(@Nonnull final Path pathToCheck)
    {
-      return pathToCheck.endsWith(FILE_NAME.FOLDER_ROOT);
+      Path retval = null;
+      if (pathToCheck.endsWith(FILE_NAME.FOLDER_ROOT))
+      {
+         if (Files.isDirectory(pathToCheck))
+         {
+            retval = Paths.get(pathToCheck.toString());
+         }
+      }
+      else
+      {
+         File[] directories = new File(pathToCheck.toString()).listFiles(File::isDirectory);
+         for (File file : directories)
+         {
+            if (file.getName().equals(FILE_NAME.FOLDER_ROOT))
+            {
+               retval = Paths.get(pathToCheck.toString(), file.getName());
+               break;
+            }
+         }
+      }
+      return retval;
    }
 }

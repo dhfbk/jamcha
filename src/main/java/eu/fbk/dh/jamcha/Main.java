@@ -4,30 +4,33 @@ import eu.fbk.dh.jamcha.data.DataIO;
 import eu.fbk.dh.jamcha.data.Model;
 import eu.fbk.dh.jamcha.feature.FeatureFileReader;
 import eu.fbk.dh.jamcha.feature.FeatureParameters;
-import eu.fbk.dh.jamcha.feature.FeaturesIntegrator;
+import eu.fbk.dh.jamcha.feature.Integrator;
+import eu.fbk.dh.jamcha.feature.IntegratorPredictor;
 import eu.fbk.dh.jamcha.feature.Line;
 import eu.fbk.dh.jamcha.feature.PredictFileReader;
 import eu.fbk.dh.jamcha.feature.TrainFileReader;
 import eu.fbk.dh.jamcha.parametersReader.ParametersReader;
 import eu.fbk.dh.jamcha.parametersReader.TrainParametersReader;
 import java.io.IOException;
+import java.text.DecimalFormat;
 import java.util.List;
 
 public class Main
 {
+   //"FEATURES=F:-2..1:0..1 F:-3..-2:1..2 T:-4..-1 T:-5..-3"
    private static final int MODE = 1;
    private static final String[] trainArguments =
    {
-      "train", "CORPUS=/home/mazzetti/Documents/DefaultTrain.txt", "MODEL=/home/mazzetti/Documents", "FEATURES=F:-2..1:0..1 F:-3..-2:1..2 T:-4..-1 T:-5..-3"
+      "train", "CORPUS=C:\\Users\\dan92\\Documents\\train.txt", "MODEL=C:\\Users\\dan92\\Documents", "FEATURES=F:0..0:0.. T:-7..-1"
    };
    private static final String[] predictArguments =
    {
-      "predict", "CORPUS=/home/mazzetti/Documents/DefaultPredict.txt", "MODEL=/home/mazzetti/Documents/Data"
+      "predict", "CORPUS=C:\\Users\\dan92\\Documents\\train.txt", "MODEL=C:\\Users\\dan92\\Documents"
    };
 
    public static void main(String[] args)
    {
-      //args = MODE == 0 ? trainArguments : predictArguments;
+      args = MODE == 0 ? trainArguments : predictArguments;
 
       ParametersReader paramsReader = ParametersReader.build(args);
       ParametersReader.COMMAND_TYPE paramsType = paramsReader.readParameters(args);
@@ -46,12 +49,12 @@ public class Main
                TrainParametersReader trainParams = (TrainParametersReader) paramsReader;
                FeatureParameters featureParameters = FeatureParameters.build(trainParams.getRawFeaturesParameters(), fileReader.getLineWordsCount());
 
-               // Build feature schema and integrate
-               FeaturesIntegrator schema = new FeaturesIntegrator(fileReader.getFeatures(), featureParameters);
-               schema.integrate();
+               // Build feature integrator and integrate
+               Integrator integrator = new Integrator(fileReader.getLines(), featureParameters);
+               integrator.integrate();
 
                // Train features and save data
-               Model model = Model.train(schema.getIntegratedFeatures());
+               Model model = Model.train(integrator.getIntegratedLines());
                DataIO data = new DataIO(model, featureParameters, trainParams.getModelPath());
                data.save();
                break;
@@ -65,17 +68,16 @@ public class Main
                fileReader = new PredictFileReader(paramsReader.getCorpusPath(), data.getFeatureParameters().getWordsLineCount());
                fileReader.read();
 
-               // Build feature schema and integrate
-               FeaturesIntegrator schema = new FeaturesIntegrator(fileReader.getFeatures(), data.getFeatureParameters());
-               schema.integrate(null);
+               // Build feature integrator
+               IntegratorPredictor integrator = new IntegratorPredictor(fileReader.getLines(), data.getFeatureParameters(), data.getModel());
 
-               // Predict tags and save data
-               List<Line> features = schema.getIntegratedFeatures();
-               if (features != null)
-               {
-                  List<Line> predictedLines = data.getModel().predict(features);
-                  DataIO.saveFeatures(predictedLines, paramsReader.getModelPath());
-               }
+               // Predict tags and integrateand save data
+               List<Line> predicted = data.getModel().predict(integrator);
+               DataIO.saveFeatures(predicted, paramsReader.getModelPath());
+               int guessed = integrator.getGuessedTags();
+               int linesCount = integrator.getLinesCount();
+               System.out.println("Guessed tags: " + guessed + "/" + linesCount);
+               System.out.println("Prediction precision: " + new DecimalFormat("###.#").format(guessed * 100.0 / linesCount) + "%");
                break;
             }
          }
