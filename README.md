@@ -7,9 +7,9 @@ In this mode, jamcha creates its own model using feature tuning parameters and a
   - Each line of train file contains a list of words separated by a white space character.
   - Every line must have same words count. Put `__nil__` as a placeholder: this will be skipped.  
 - **TAG**
-  -Last line word must be the `TAG`.
+  - Last line word must be the `TAG`.
 - **SENTENCE**
-  -To separate two different sentences put an empty line between last line of previous sentence and first lline of next sentence.
+  - To separate two different sentences put an empty line between last line of previous sentence and first lline of next sentence.
 
 ### FEATURES TUNING PARAMETERS
 Jamcha uses features tuning parameters to influence trainining and therefore model creation.
