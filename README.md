@@ -13,7 +13,7 @@ In this mode, jamcha creates its own model using feature tuning parameters and a
 
 ### FEATURES TUNING PARAMETERS
 Jamcha uses features tuning parameters to influence trainining and therefore model creation.
-Read original YamCha [feature tuning parameters](http://chasen.org/~taku/software/yamcha/#tuning)
+Read original YamCha [Re-definition of features (changing window-size)](http://chasen.org/~taku/software/yamcha/#tuning)
 
 ### USAGE: command line parameters
 `train CORPUS=train_file_path MODEL=folder_path FEATURES="feature_tuning_parameters"`  
