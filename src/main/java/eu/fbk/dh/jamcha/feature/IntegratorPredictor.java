@@ -19,6 +19,13 @@ public class IntegratorPredictor extends Integrator
    private ArrayList<String> tagsList;
    int tagsCorrectGuessed = -1;
 
+   /**
+   * Constructor
+   *
+   * @param model model that will be used to predict TAG
+   * @param defaultLines list of all lines and their features.
+   * @param parameters   feature parameters that will be used to integrate features read by reader
+   */
    public IntegratorPredictor(@Nonnull Collection<Line> defaultLines, @Nonnull FeatureParameters parameters, @Nonnull Model model)
    {
       super(defaultLines, parameters);
@@ -27,10 +34,7 @@ public class IntegratorPredictor extends Integrator
 
    /**
     * Add the features of the previous or later lines according to features tuning parameters values. Integrate line
-    *
-    * @param model
-    *
-    * @return
+    * @return all integrated lines. Equivalent to {@code integrate(); getIntegratedLines()};
     */
    @Override
    public List<Line> integrate()
@@ -48,7 +52,7 @@ public class IntegratorPredictor extends Integrator
 
          // Predict label and convert it to string tag
          vector = Vector.builder().set(integratedLine.getWords()).build();
-         int label = classifier.predict(false, vector).getLabel();
+         int label = classifier.predict(true, vector).getLabel();
          String tag = model.getTagsIndexes().get(label);
          integratedLine.setTag(tag);
          this.defaultLines.get(actualLine).setTag(tag);
@@ -75,9 +79,9 @@ public class IntegratorPredictor extends Integrator
    }
 
    /**
-    * How many tags have been correctly guessed
+    * How many tags have been correctly guessed?
     *
-    * @return count of correctly guessed tags. -1 if {@code integrateWithPrediction} have been never called.
+    * @return count of correctly guessed tags. -1 if {@code integrate()} have been never called or predict features file does not have TAGs
     */
    @Nullable
    public int getGuessedTags()
@@ -86,7 +90,7 @@ public class IntegratorPredictor extends Integrator
    }
 
    /**
-    * Copy all default features tag
+    * Copy all default feature tags of file to predict
     */
    private void createTagsList()
    {

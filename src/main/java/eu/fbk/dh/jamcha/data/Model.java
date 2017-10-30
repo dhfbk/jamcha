@@ -19,10 +19,14 @@ import java.util.Map;
 import javax.annotation.Nonnull;
 
 /**
- * Creates features model using feature tuning parameters. Tags map is generated automatically
+ * Creates features model using feature tuning parameters. Tags map is generated automatically.
+ * This class does not use serialization to avoid compatibility issues
  */
 public class Model
 {
+  /**
+   * Name of file in which will be saved association number - tag (as as string) e.g. 2 - B
+   */
    private static final String TAGS_INDEX_MAP_FILENAME = "tagsIndexes.txt";
    @Nonnull
    private HashMap<Integer, String> tagsMap;
@@ -86,13 +90,14 @@ public class Model
    }
 
    /**
-    * Load saved data from path
+    * Load saved model data from specified path
     *
     * @param folderPath folder path where data to load are located
     *
-    * @return
+    * @return model saved instance
     *
-    * @throws IOException
+    * @throws IOException default
+    * @see IOException
     */
    protected static Model load(@Nonnull Path folderPath) throws IOException
    {

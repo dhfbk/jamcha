@@ -444,6 +444,7 @@ public final class FeatureParameters
 //
 //                  throw new IllegalArgumentException(sectionToParse + " contains an invalid value");
 //               }
+//TODO: warning se parametri sforano numero colonne
                for (int i = firstValue; i <= secondValue; i ++)
                {
                   list.add(i);
