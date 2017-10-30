@@ -6,12 +6,13 @@
 
     <groupId>eu.fbk.dh</groupId>
     <artifactId>jamcha</artifactId>
-    <version>1.0-SNAPSHOT</version>
-    <build>
+    <version>1.0</version>
+    <build>       
         <plugins>
             <plugin>
       <artifactId>maven-assembly-plugin</artifactId>
       <configuration>
+          <finalName>jamcha</finalName>
         <archive>
           <manifest>
             <mainClass>eu.fbk.dh.jamcha.Main</mainClass>
@@ -20,6 +21,7 @@
         <descriptorRefs>
           <descriptorRef>jar-with-dependencies</descriptorRef>
         </descriptorRefs>
+        <appendAssemblyId>false</appendAssemblyId>
       </configuration>
     </plugin>
 <!--            <plugin>

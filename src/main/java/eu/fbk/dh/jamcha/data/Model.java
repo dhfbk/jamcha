@@ -76,7 +76,7 @@ public class Model
          }
       }
       //Classifier.Parameters classParams = Classifier.Parameters.forSVMPolyKernel(tagsMapTmp.size(), null, null, null, null, null);
-      Classifier.Parameters classParams = Classifier.Parameters.forSVMSigmoidKernel(tagsMapTmp.size(), null, null, null, null);
+      Classifier.Parameters classParams = Classifier.Parameters.forSVMLinearKernel(tagsMapTmp.size(), null, null);
       Classifier classifierTmp = Classifier.train(classParams, labVectors);
 
       Model model = new Model();

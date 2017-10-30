@@ -44,14 +44,19 @@ public class IntegratorPredictor extends Integrator
       {
          // Integrate line
          Line integratedLine = doIntegrateLine(actualLine);
+         System.out.println(actualLine +" "+ integratedLine.getWords());
 
          // Predict label and convert it to string tag
          vector = Vector.builder().set(integratedLine.getWords()).build();
-         int label = classifier.predict(true, vector).getLabel();
+         int label = classifier.predict(false, vector).getLabel();
          String tag = model.getTagsIndexes().get(label);
          integratedLine.setTag(tag);
          this.defaultLines.get(actualLine).setTag(tag);
+         System.out.println("Tag: " + tag);
+         System.out.println();
       }
+      
+      // Compare how many tag are correctly guessed if file to predict has "correct tags"
       if (tagsList != null)
       {
          int tagsCounter = 0;

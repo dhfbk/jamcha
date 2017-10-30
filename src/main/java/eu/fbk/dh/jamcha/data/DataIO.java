@@ -88,36 +88,34 @@ public class DataIO
    {
       return this.parameters;
    }
-
+   
    /**
-    * save all features to specified retval. To set retval call "setPath"
+    * Save all features to specified path. A default name will be used
     *
     * @param features       features to save
-    * @param baseFolderPath folder base retval to which will be added another retval, file name included
+    * @param baseFolderPath folder base path to which will be added a default file name
     *
     * @throws IOException default
     * @see IOException
     */
    public static void saveFeatures(@Nonnull Iterable<Line> features, @Nonnull Path baseFolderPath) throws IOException
    {
-      Path checkedPath = isBasePath(baseFolderPath);
-      if (checkedPath == null)
-      {
-         throw new IllegalArgumentException("Invalid path: cannot save persistent data(model, etc)");
-      }
-      Path featuresPath = Paths.get(checkedPath.toString(), FILE_NAME.LINES);
-      try (BufferedWriter writer = Files.newBufferedWriter(featuresPath))
-      {
-         for (Line line : features)
-         {
-            for (String feature : line.getWords())
-            {
-               writer.append(feature).append(" ");
-            }
-            writer.append(line.getTag() != null ? line.getTag() : "null");
-            writer.newLine();
-         }
-      }
+     doSaveFeatures(features, baseFolderPath, null);
+   }
+   
+   /**
+    * Save all features to specified path and file name
+    *
+    * @param features       features to save
+    * @param baseFolderPath folder base path to which will be added parameter "filename"
+    * @param filename name of file where all lines will be saved
+    *
+    * @throws IOException default
+    * @see IOException
+    */
+   public static void saveFeatures(@Nonnull Iterable<Line> features, @Nonnull Path baseFolderPath, @Nonnull String filename) throws IOException
+   {
+      doSaveFeatures(features, baseFolderPath, filename);
    }
 
    /**
@@ -152,4 +150,37 @@ public class DataIO
       }
       return retval;
    }
+   
+   /**
+    * Save all features to specified path
+    *
+    * @param features       features to save
+     * @param baseFolderPath folder base path to which will be added parameter "filename" if not null
+    * @param filename name of file where all lines will be saved. If null default name will be used
+    *
+    * @throws IOException default
+    * @see IOException
+    */
+   private static void doSaveFeatures(@Nonnull Iterable<Line> features, @Nonnull Path baseFolderPath, @Nullable String filename) throws IOException
+   {
+      Path checkedPath = isBasePath(baseFolderPath);
+      if (checkedPath == null)
+      {
+         throw new IllegalArgumentException("Invalid path: cannot save persistent data(model, etc)");
+      }
+      
+      Path featuresPath = filename!=null? Paths.get(checkedPath.toString(), filename):Paths.get(checkedPath.toString(), FILE_NAME.LINES);
+      try (BufferedWriter writer = Files.newBufferedWriter(featuresPath))
+      {
+         for (Line line : features)
+         {
+            for (String feature : line.getWords())
+            {
+               writer.append(feature).append(" ");
+            }
+            writer.append(line.getTag() != null ? line.getTag() : "null");
+            writer.newLine();
+         }
+      }
+   } 
 }

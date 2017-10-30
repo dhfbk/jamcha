@@ -20,7 +20,8 @@ public class Integrator
    /**
     * All the features of the training file with additions resulting from the integration process, performed with tuning parameters passed to the integrated method
     */
-   protected ArrayList<Line> integratedLines;
+   @Nonnull
+   protected ArrayList<Line> integratedLines=new ArrayList<>(1);
 
    @Nonnull
    private FeatureParameters featureParameters;
@@ -40,6 +41,7 @@ public class Integrator
 
    /**
     * For each integratedLine, add the features of the previous or later lines according to features tuning parameters values.
+   * @return all integrated lines. Equivalent to {@code integrate(); getIntegratedLines();
     */
    public List<Line> integrate()
    {
@@ -87,7 +89,7 @@ public class Integrator
     *
     * @return list of all integrated features or null if "integrate" method has never been called
     */
-   @Nullable
+   @Nonnull
    public final List<Line> getIntegratedLines()
    {
       return this.integratedLines;

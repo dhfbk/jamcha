@@ -14,24 +14,26 @@ import eu.fbk.dh.jamcha.parametersReader.TrainParametersReader;
 import java.io.IOException;
 import java.text.DecimalFormat;
 import java.util.List;
+import org.apache.log4j.Level;
+import org.apache.log4j.Logger;
 
 public class Main
 {
    //"FEATURES=F:-2..1:0..1 F:-3..-2:1..2 T:-4..-1 T:-5..-3"
-   private static final int MODE = 1;
+   private static final int MODE = 0;
    private static final String[] trainArguments =
    {
-      "train", "CORPUS=C:\\Users\\dan92\\Documents\\train.txt", "MODEL=C:\\Users\\dan92\\Documents", "FEATURES=F:0..0:0.. T:-7..-1"
+      "train", "CORPUS=/home/mazzetti//Documents/train.data", "MODEL=/home/mazzetti/Documents", "FEATURES=F:0..0:0.. T:-7..-1"
    };
    private static final String[] predictArguments =
    {
-      "predict", "CORPUS=C:\\Users\\dan92\\Documents\\train.txt", "MODEL=C:\\Users\\dan92\\Documents"
+      "predict", "CORPUS=/home/mazzetti/Documents/train.data", "MODEL=/home/mazzetti/Documents"
    };
 
    public static void main(String[] args)
    {
-      args = MODE == 0 ? trainArguments : predictArguments;
-
+      //args = MODE == 0 ? trainArguments : predictArguments;
+      Logger.getRootLogger().setLevel(Level.OFF);
       ParametersReader paramsReader = ParametersReader.build(args);
       ParametersReader.COMMAND_TYPE paramsType = paramsReader.readParameters(args);
       FeatureFileReader fileReader;
@@ -57,6 +59,8 @@ public class Main
                Model model = Model.train(integrator.getIntegratedLines());
                DataIO data = new DataIO(model, featureParameters, trainParams.getModelPath());
                data.save();
+               DataIO.saveFeatures(integrator.getIntegratedLines(), paramsReader.getModelPath(), "trainExpansesLines.txt");
+               System.out.println("MODEL CREATED!");
                break;
             }
             case COMMAND_PREDICT:

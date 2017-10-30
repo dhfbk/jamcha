@@ -1,6 +1,5 @@
 package eu.fbk.dh.jamcha.feature;
 
-import eu.fbk.dh.jamcha.feature.Line;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
@@ -32,10 +31,15 @@ public class FeatureFileReaderTest
       Assert.assertEquals(expectedResultTrain, trainReader.getLines());
 
       // PREDICT READER TEST
-      filePath = getResourceFilePath(DEFAULT_PREDICT_FILE_PATH.toString());
-      PredictFileReader predictReader = new PredictFileReader(filePath, trainReader.WORDS_LINE_COUNT_BASE);
-      predictReader.read();
-      Assert.assertEquals(expectedResultPredict, predictReader.getLines());
+//      filePath = getResourceFilePath(DEFAULT_PREDICT_FILE_PATH.toString());
+//      PredictFileReader predictReader = new PredictFileReader(filePath, trainReader.WORDS_LINE_COUNT_BASE);
+//      predictReader.read();
+//      int lineCounter=0;
+//      for(Line line: predictReader.getLines())
+//      {
+//        if
+//      }
+//      Assert.assertEquals(expectedResultPredict, predictReader.getLines());
    }
 
    /**
